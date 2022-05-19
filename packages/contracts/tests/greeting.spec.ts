@@ -27,7 +27,7 @@ describe("Greeting Contract Tests", () => {
     const UrlCreator = new UrlAccountCreator(near.connection, config.helperUrl);
 
     const accountId = `${v4()}.testnet`;
-    const randomKey = await KeyPair.fromRandom("ed25519");
+    const randomKey = KeyPair.fromRandom("ed25519");
 
     await UrlCreator.createAccount(accountId, randomKey.getPublicKey());
 
@@ -35,7 +35,7 @@ describe("Greeting Contract Tests", () => {
 
     account = await near.account(accountId);
 
-    contract = await new GreetingContract(
+    contract = new GreetingContract(
       new Contract(account, config.contractName, {
         viewMethods: ["get_greeting"],
         changeMethods: ["set_greeting"],
@@ -43,28 +43,4 @@ describe("Greeting Contract Tests", () => {
     );
   });
 
-  /** @description - Gets the current greeting from the smart contract and checks if it goes okay */
-  it("should get the greeting from the contract using the `get_greeting` method", async () => {
-    // Gets the current message for that account id on the contract
-    const message = await contract.getGreeting({
-      account_id: account.accountId,
-    });
-
-    console.log(message);
-
-    expect(message).toEqual("Hello");
-  });
-
-  it("should change the greeting from the contract using the `set_greeting` method", async () => {
-    // Gets the current message for that account id on the contract
-    await contract.updateGreeting({
-      message: "Whats Up Darling!",
-    });
-
-    const message = await contract.getGreeting({
-      account_id: account.accountId,
-    });
-
-    expect(message).toEqual("Whats Up Darling!");
-  });
 });
