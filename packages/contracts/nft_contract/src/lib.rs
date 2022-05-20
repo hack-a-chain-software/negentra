@@ -16,10 +16,13 @@ use modified_contract_standards::non_fungible_token::royalty::{Royalty, Payout};
 use modified_contract_standards::non_fungible_token::events::{NftBurn};
 use std::convert::TryInto;
 
+use token_format::ItemType;
+
 pub mod burn;
 pub mod impl_royalties;
 pub mod mint;
 pub mod owner;
+pub mod token_format;
 
 near_sdk::setup_alloc!();
 
@@ -33,15 +36,15 @@ pub struct Contract {
     pub tokens: NonFungibleToken,
     pub metadata: LazyOption<NFTContractMetadata>,
 
+    pub item_types: LookupMap<u128, ItemType>,
+    pub item_count: u128,
+    pub random_minting: LookupMap<u128, u128>,
     
-    
-    pub funds_beneficiary: AccountId,
     pub perpetual_royalties: HashMap<AccountId, u128>,
-    pub whitelist: LookupMap<AccountId, u128>,
     pub mint_cost: u128,
     pub sales_locked: bool,
-    pub only_whitelist: bool,
-    pub random_minting: Vector<u128>,
+
+    
 
     pub url_media_base: String,
     pub url_reference_base: String
@@ -115,9 +118,7 @@ impl Contract {
 
 }
 
-modified_contract_standards::impl_non_fungible_token_core!(Contract, tokens);
 modified_contract_standards::impl_non_fungible_token_approval!(Contract, tokens);
-modified_contract_standards::impl_non_fungible_token_enumeration!(Contract, tokens);
 
 #[near_bindgen]
 impl NonFungibleTokenMetadataProvider for Contract {
@@ -126,3 +127,8 @@ impl NonFungibleTokenMetadataProvider for Contract {
     }
 }
 
+impl Contract {
+    fn only_owner(&self) {
+        assert_eq!(env::predecessor_account_id(), self.tokens.owner, "Only owner can call this function");
+    }
+}
