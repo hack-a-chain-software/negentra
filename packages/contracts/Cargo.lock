@@ -158,6 +158,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "ft_contract"
+version = "1.0.0"
+dependencies = [
+ "modified-contract-standards",
+ "near-sdk",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
