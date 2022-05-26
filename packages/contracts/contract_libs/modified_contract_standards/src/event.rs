@@ -8,7 +8,7 @@ use near_sdk::log;
 #[serde(rename_all = "snake_case")]
 pub(crate) enum NearEvent<'a> {
     Nep171(crate::non_fungible_token::events::Nep171Event<'a>),
-    // Nep141(crate::fungible_token::events::Nep141Event<'a>),
+    //Nep141(crate::fungible_token::events::Nep141Event<'a>),
 }
 
 impl<'a> NearEvent<'a> {

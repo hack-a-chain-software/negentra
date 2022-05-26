@@ -11,6 +11,7 @@ impl Contract {
         msg: String,
     ) -> PromiseOrValue<U128> {
         PromiseOrValue::Value(U128(1))
+        //random pick
     }
     /// Mint a new token with ID=`token_id` belonging to `receiver_id`.
     ///
@@ -22,8 +23,7 @@ impl Contract {
     /// initialization call to `new`.
 
     //minter must be whitelisted possibility to mint multiple nfts in batch
-    #[payable]
-    pub fn nft_mint(
+    fn nft_mint(
         &mut self,
         quantity: U128
     ) -> Vec<Token> {

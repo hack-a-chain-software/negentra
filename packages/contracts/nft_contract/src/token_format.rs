@@ -1,6 +1,6 @@
 use crate::*;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, BorshDeserialize, BorshSerialize)]
 #[serde(crate = "near_sdk::serde")]
 pub struct ItemType {
     pub total_supply: U128,
@@ -13,14 +13,14 @@ pub struct ItemType {
 impl ItemType {
 
     fn mint_item_update_count(&mut self) {
-        self.mint_item += 1;
-        self.supply_available -= 1;
+        self.minted_items = U128(self.minted_items.0 + 1);
+        self.supply_available = U128(self.supply_available.0 - 1);
     }
 
     fn internal_change_supply(&mut self, new_total: U128) {
-        assert!(minted_items <= new_total, "Cannot reduce total to number inferior to minted_items");
+        assert!(self.minted_items.0 <= new_total.0, "Cannot reduce total to number inferior to minted_items");
         self.total_supply = new_total;
-        self.supply_available = self.total_supply - self.minted_items;
+        self.supply_available = U128(self.total_supply.0 - self.minted_items.0);
     }
 
     fn update_metadata(&mut self, new_metadata: TokenMetadata) {
@@ -32,9 +32,12 @@ impl ItemType {
 #[near_bindgen]
 impl Contract {
 
+    #[payable]
     pub fn create_new_item(&mut self, total_supply: U128, title: String, description: String,
                            media: String, reference: String) -> bool {
         
+        assert_one_yocto();
+        self.only_owner();
         let item_id = self.item_count.clone();
         self.item_count += 1;
         let new_item = ItemType {
@@ -71,9 +74,13 @@ impl Contract {
 
     }
 
+    #[payable]
     pub fn update_item(&mut self, item_id: U128, total_supply: U128, title: String, description: String,
                         media: String, reference: String) -> bool {
-            
+        
+        assert_one_yocto();
+        self.only_owner();
+
         let mut old_item = self.item_types.get(&item_id.0).expect("Error: No item found with this item_id");
         
         let new_metadata = TokenMetadata {
@@ -125,15 +132,15 @@ impl Contract {
 
     fn vec_remove_store_loc(&mut self, loc: u64) {
         let last_item = self.random_minting.len() - 1;
-        let removed = self.random_minting.swap_remove(&loc);
+        let removed = self.random_minting.swap_remove(loc);
         
         //if last element was removed, will return None in get
         //handle None by doing nothing and Some by replacing
         //locations inside item Struct
-        if let Some(item_id) = self.random_minting.get(&loc) {
+        if let Some(item_id) = self.random_minting.get(loc) {
             let mut item_struct = self.item_types.get(&item_id).unwrap();
             item_struct.random_minting_locations.remove(&last_item);
-            item_struct.random_minting_locations.insert(&loc, true);
+            item_struct.random_minting_locations.insert(loc, true);
         }
 
     }

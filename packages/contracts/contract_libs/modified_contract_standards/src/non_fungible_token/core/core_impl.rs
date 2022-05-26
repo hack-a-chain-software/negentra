@@ -148,7 +148,7 @@ impl NonFungibleToken {
                     extra: None,
                     reference: None,
                     reference_hash: None,
-                    nft_type: None,
+                    item_id: None
                 },
             );
         }
