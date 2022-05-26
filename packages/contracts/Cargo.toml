@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "./nft_contract",
+    "./token_contract"
 ]
 
 [profile.release]

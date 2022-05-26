@@ -1,5 +1,7 @@
 use crate::fungible_token::core::FungibleTokenCore;
 use crate::fungible_token::resolver::FungibleTokenResolver;
+use crate::fungible_token::events::{FtBurn, FtMint, FtTransfer};
+
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LookupMap;
 use near_sdk::json_types::{ValidAccountId, U128};
@@ -7,6 +9,8 @@ use near_sdk::{
     assert_one_yocto, env, ext_contract, log, AccountId, Balance, Gas, IntoStorageKey,
     PromiseOrValue, PromiseResult, StorageUsage,
 };
+
+
 
 const GAS_FOR_RESOLVE_TRANSFER: Gas = 5_000_000_000_000;
 const GAS_FOR_FT_TRANSFER_CALL: Gas = 25_000_000_000_000 + GAS_FOR_RESOLVE_TRANSFER;
@@ -132,10 +136,20 @@ impl FungibleToken {
         assert!(amount > 0, "The amount should be a positive number");
         self.internal_withdraw(sender_id, amount);
         self.internal_deposit(receiver_id, amount);
-        log!("Transfer {} from {} to {}", amount, sender_id, receiver_id);
-        if let Some(memo) = memo {
-            log!("Memo: {}", memo);
-        }
+        
+        FtTransfer { old_owner_id: sender_id, new_owner_id: receiver_id ,amount: &amount.to_string() , memo: memo.as_ref()}.emit();
+
+    }
+
+    pub fn internal_burn(
+        &mut self,
+        sender_id: &AccountId,
+        amount: Balance,
+        memo: Option<String>,
+    ) {
+        assert!(amount > 0, "The amount should be a positive number");
+        self.internal_withdraw(sender_id, amount);
+        // no need to emit event here -> on burn.rs ft_burn already emits the event
     }
 
     pub fn internal_register_account(&mut self, account_id: &AccountId) {
