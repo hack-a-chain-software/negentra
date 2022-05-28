@@ -1,25 +1,28 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LazyOption, LookupMap};
-use near_sdk::json_types::{ValidAccountId, U128};
-use near_sdk::{env, log, near_bindgen, AccountId, Balance, PanicOnDefault, PromiseOrValue};
+use near_sdk::json_types::{ValidAccountId, U128, U64};
+use near_sdk::{env, log, near_bindgen, AccountId, Balance, BorshStorageKey, PanicOnDefault};
 
+pub mod errors;
 pub mod investment;
 pub mod schema;
+pub mod utils;
 
-use crate::errors::{ERR_001};
+use crate::errors::{ERR_001, ERR_002, ERR_003, ERR_004};
+use crate::utils::create_investment_id;
 
 use investment::Investment;
-use schema::Schema; 
+use schema::{CurveType, Schema};
 
 pub const FRACTION_BASE: u128 = 10_000;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
-struct Contract {
-    owner: AccountId,
-    token_contract: AccountId,
-    schemas: LookupMap<String, Schema>,
-    investments: LookupMap<String, Investment>,
+pub struct Contract {
+    pub owner: AccountId,
+    pub token_contract: AccountId,
+    pub schemas: LookupMap<String, Schema>,
+    pub investments: LookupMap<String, Investment>,
 }
 
 #[derive(BorshStorageKey, BorshSerialize)]
@@ -44,15 +47,70 @@ impl Contract {
             token_contract,
             schemas: LookupMap::new(StorageKey::Schemas), // inicializa o lupmap
             investments: LookupMap::new(StorageKey::Investments),
-        };
+        }
     }
 }
 
-impl Contract{
-    pub fn only_owner(&self){
+//utils
+impl Contract {
+    pub fn only_owner(&self) {
         assert_eq!(env::predecessor_account_id(), self.owner, "{}", ERR_001);
     }
+}
 
+// high level functions
+impl Contract {
+    pub fn new_schema(
+        &mut self,
+        category: String,
+        total_quantity: U128,
+        initial_release: U128, //releases should be a fraction
+        cliff_release: U128,
+        final_release: U128,
+        initial_timestamp: U64,
+        cliff_delta: U64,
+        final_delta: U64,
+        curve_type: CurveType,
+    ) {
+        assert!(!self.schemas.contains_key(&category), "{}", ERR_002);
+
+        let schema = Schema::new(
+            category.clone(),
+            total_quantity.0,
+            initial_release.0,
+            cliff_release.0,
+            final_release.0,
+            initial_timestamp.0,
+            cliff_delta.0,
+            final_delta.0,
+            curve_type,
+        );
+
+        self.schemas.insert(&category, &schema);
+    }
+
+    pub fn new_investment(
+        &mut self,
+        category: String,
+        account: AccountId,
+        total_value: U128,
+        date_in: Option<U64>,
+    ) {
+        let investment_id = create_investment_id(category.clone(), account.clone());
+        assert!(
+            !self.investments.contains_key(&investment_id),
+            "{}",
+            ERR_003
+        );
+
+        let schema = self.schemas.get(&category).expect(ERR_002);
+        let allocated_quantity = schema.aloccated_quantity + total_value.0;
+        assert!(allocated_quantity <= schema.total_quantity, "{}", ERR_004);
+
+        let investment = Investment::new(account, total_value.0, date_in.map(|v| v.0));
+
+        self.investments.insert(&investment_id, &investment);
+    }
 }
 
 //----------------------------------- TEST -------------------------------------------------
@@ -103,8 +161,10 @@ mod tests {
 
     pub fn init_contract() -> Contract {
         Contract {
-            token: FungibleToken::new(b"a".to_vec()),
-            metadata: LazyOption::new(b"m".to_vec(), Some(&get_test_meta())),
+            owner: OWNER_ACCOUNT.to_string(),
+            token_contract: TOKEN_ACCOUNT.to_string(),
+            schemas: LookupMap::new(StorageKey::Schemas), // inicializa o lupmap
+            investments: LookupMap::new(StorageKey::Investments),
         }
     }
 
@@ -121,7 +181,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Already initialized")]
     fn test_default() {
-        let mut context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string()), 0;
+        let mut context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
         testing_env!(context);
         let _contract = Contract::default();
     }
