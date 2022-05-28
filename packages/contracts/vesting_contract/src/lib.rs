@@ -8,8 +8,8 @@ pub mod investment;
 pub mod schema;
 pub mod utils;
 
-use crate::errors::{ERR_001, ERR_002, ERR_003, ERR_004};
-use crate::utils::create_investment_id;
+use crate::errors::{ERR_001, ERR_002, ERR_003, ERR_004, ERR_005, ERR_006};
+use crate::utils::{create_investment_id, split_investment_id};
 
 use investment::Investment;
 use schema::{CurveType, Schema};
@@ -110,6 +110,47 @@ impl Contract {
         let investment = Investment::new(account, total_value.0, date_in.map(|v| v.0));
 
         self.investments.insert(&investment_id, &investment);
+    }
+
+    pub fn calculate_avalibe_withdraw(
+        &self,
+        curent_time_stamp: u64,
+        investment_id: String,
+    ) -> u128 {
+        let schema_id = split_investment_id(investment_id.clone()).remove(0);
+
+        let schema = self.schemas.get(&schema_id).expect(ERR_005);
+        let investment = self.investments.get(&investment_id).expect(ERR_006);
+
+        let initial_timestamp: u64;
+
+        if let Some(time_stamp) = investment.date_in {
+            initial_timestamp = time_stamp;
+        } else {
+            initial_timestamp = schema.initial_timestamp;
+        }
+
+        let release: u128;
+
+        if curent_time_stamp >= (initial_timestamp + schema.cliff_delta + schema.final_delta) {
+            release = FRACTION_BASE;
+        } else if curent_time_stamp >= (initial_timestamp + schema.cliff_delta) {
+            let elapsed_curve_time = curent_time_stamp - initial_timestamp - schema.cliff_delta;
+
+            release = schema.initial_release
+                + schema.curve_type.calculate_curve_return(
+                    schema.final_delta,
+                    schema.cliff_release,
+                    elapsed_curve_time,
+                );
+        } else if curent_time_stamp >= initial_timestamp {
+            release = schema.initial_release;
+        } else {
+            release = 0;
+        }
+
+        let total_vested = (release * investment.total_value) / FRACTION_BASE;
+        total_vested - investment.withdrawn_value
     }
 }
 

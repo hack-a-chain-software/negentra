@@ -1,4 +1,4 @@
-use crate::errors::ERR_101;
+use crate::errors::{ERR_101, ERR_102};
 use crate::*;
 
 #[derive(BorshSerialize, BorshDeserialize)]
@@ -11,13 +11,33 @@ pub struct Schema {
     pub final_release: u128,
     pub initial_timestamp: u64,
     pub cliff_delta: u64,
-    pub final_delta: u64,
+    pub final_delta: u64, // final delta is the period AFTER the cliff, NOT FROM initial_timestamp
     pub curve_type: CurveType,
 }
 
 #[derive(BorshSerialize, BorshDeserialize)]
 pub enum CurveType {
-    Linear,
+    Linear { discrete_period: u64 },
+}
+
+impl CurveType {
+    pub fn calculate_curve_return(
+        &self,
+        final_delta: u64,
+        cliff_release: u128,
+        elapsed_curve_time: u64,
+    ) -> u128 {
+        match self {
+            CurveType::Linear { discrete_period } => {
+                let percentage_elapsed =
+                    (elapsed_curve_time as u128 * FRACTION_BASE) / final_delta as u128;
+                let discrete_percentage_elapsed = percentage_elapsed / (*discrete_period as u128);
+
+                (cliff_release * discrete_percentage_elapsed) / FRACTION_BASE
+            }
+            _ => panic!(ERR_102),
+        }
+    }
 }
 
 impl Schema {
