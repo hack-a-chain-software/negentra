@@ -1,7 +1,8 @@
-use crate::errors::{ERR_301, ERR_302, ERR_303};
+use crate::errors::{ERR_301, ERR_302, ERR_303, ERR_304};
+use crate::ext_interface::*;
 use crate::*;
 pub use near_sdk::serde_json::{self, json, Value};
-use near_sdk::{env, near_bindgen};
+use near_sdk::{env, near_bindgen, utils::assert_one_yocto, Promise};
 
 //blockchain exposed
 
@@ -106,5 +107,37 @@ impl Contract {
         //validate that the sender is the contract owner
         self.only_owner();
         self.new_investment(category, account, total_value, date_in);
+    }
+
+    #[payable]
+    pub fn owner_withdraw_investments(
+        &mut self,
+        value_to_withdraw: U128,
+        category: String,
+        investor_account: AccountId,
+    ) -> Promise {
+        assert_one_yocto();
+        self.only_owner();
+        assert!(env::prepaid_gas() >= BASE_GAS * 3, "{}", ERR_304);
+        let now = env::block_timestamp();
+
+        let investment_id = create_investment_id(category.clone(), investor_account.clone());
+        self.withdraw_investment(now, investment_id.clone(), value_to_withdraw.0);
+
+        token_contract::ft_transfer(
+            investor_account.clone(),
+            value_to_withdraw,
+            "Vesting withdraw".to_string(),
+            &self.token_contract,
+            1,
+            BASE_GAS,
+        )
+        .then(ext_self::undo_transfer(
+            value_to_withdraw,
+            investment_id,
+            &env::current_account_id(),
+            0,
+            BASE_GAS,
+        ))
     }
 }
