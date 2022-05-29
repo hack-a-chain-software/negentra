@@ -3,7 +3,7 @@ use near_sdk::collections::LookupMap;
 use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
-// pub mod actions;
+pub mod actions;
 pub mod errors;
 pub mod investment;
 pub mod schema;
@@ -111,7 +111,7 @@ impl Contract {
         self.investments.insert(&investment_id, &investment);
     }
 
-    pub fn calculate_avalibe_withdraw(
+    pub fn calculate_availble_withdraw(
         &self,
         curent_time_stamp: u64,
         investment_id: String,
@@ -161,7 +161,7 @@ impl Contract {
         let mut investment = self.investments.get(&investment_id).expect(ERR_006);
 
         let available_withdraw =
-            self.calculate_avalibe_withdraw(curent_time_stamp, investment_id.clone());
+            self.calculate_availble_withdraw(curent_time_stamp, investment_id.clone());
         assert!(value_to_withdraw <= available_withdraw, "{}", ERR_007);
 
         investment.increase_withdrawn_value(value_to_withdraw);
@@ -234,5 +234,49 @@ mod tests {
         let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
         testing_env!(context);
         let _contract = Contract::default();
+    }
+
+    #[test]
+    fn implementation_test_calculate_avalibe_withdraw() {
+        // This is an implementation test. It's used to assert that implementation of code is correct
+        // in case of refactoring you can safely disregard this test and erase it
+        // Asserts that calculate_availble_withdraw method of Contract is calculating the correct
+        // amount.
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
+        testing_env!(context);
+        let mut contract = init_contract();
+        
+        let schema_name = "schema".to_string();
+        let investor_name = "investor".to_string();
+
+
+        let schema1 = schema::Schema {
+            category: schema_name.clone(),
+            allocated_quantity: 0,
+            total_quantity: 1_000_000_000,
+            initial_release: 30,
+            cliff_release: 50,
+            final_release: 20,
+            initial_timestamp: 0,
+            cliff_delta: 100_000,
+            final_delta: 100_000,
+            curve_type: schema::CurveType::Linear { discrete_period: 10}
+        };
+
+        contract.schemas.insert(&schema_name, &schema1);
+
+        let sample_investment = |withdrawn_value: u128| -> investment::Investment {
+            investment::Investment {
+                account: investor_name,
+                total_value: 1_000_000_000,
+                withdrawn_value,
+                date_in: None
+            }
+        };
+
+        //first iteration
+        
+        contract.calculate_availble_withdraw();
+
     }
 }
