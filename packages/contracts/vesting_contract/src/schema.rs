@@ -20,6 +20,7 @@ pub enum CurveType {
     Linear { discrete_period: u64 },
 }
 
+#[allow(unreachable_patterns)]
 impl CurveType {
     pub fn calculate_curve_return(
         &self,
@@ -35,7 +36,7 @@ impl CurveType {
 
                 (cliff_release * discrete_percentage_elapsed) / FRACTION_BASE
             }
-            _ => panic!(ERR_102),
+            _ => panic!("{}", ERR_102),
         }
     }
 }
