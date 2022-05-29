@@ -239,7 +239,7 @@ mod tests {
     fn implementation_test_calculate_avalibe_withdraw() {
         // This is an implementation test. It's used to assert that implementation of code is correct
         // in case of refactoring you can safely disregard this test and erase it
-        // Asserts that calculate_availble_withdraw method of Contract is calculating the correct
+        // Asserts that calculate_available_withdraw method of Contract is calculating the correct
         // amount.
         let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
         testing_env!(context);
@@ -283,8 +283,8 @@ mod tests {
         contract.investments.insert(&investment_id, &investment);
 
         //assert initial stage
-        assert_eq!(contract.calculate_availble_withdraw(0, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
-        assert_eq!(contract.calculate_availble_withdraw(100_000, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
+        assert_eq!(contract.calculate_available_withdraw(0, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
+        assert_eq!(contract.calculate_available_withdraw(100_000, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
 
         //assert curve stage
         let curve_percentage = schema.curve_type.calculate_curve_return(
@@ -293,18 +293,18 @@ mod tests {
             30_000,
         );
         println!("{}", curve_percentage);
-        assert_eq!(contract.calculate_availble_withdraw(130_000, investment_id.clone()), ((initial_release * total_quantity) + (curve_percentage * total_quantity)) / FRACTION_BASE);
+        assert_eq!(contract.calculate_available_withdraw(130_000, investment_id.clone()), ((initial_release * total_quantity) + (curve_percentage * total_quantity)) / FRACTION_BASE);
 
         //assert final stage
-        assert_eq!(contract.calculate_availble_withdraw(200_000, investment_id.clone()), total_quantity);
+        assert_eq!(contract.calculate_available_withdraw(200_000, investment_id.clone()), total_quantity);
 
         let withdrawn_amount = 100;
         investment.withdrawn_value = withdrawn_amount;
         contract.investments.insert(&investment_id, &investment);
 
         //assert initial stage
-        assert_eq!(contract.calculate_availble_withdraw(0, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
-        assert_eq!(contract.calculate_availble_withdraw(100_000, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
+        assert_eq!(contract.calculate_available_withdraw(0, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
+        assert_eq!(contract.calculate_available_withdraw(100_000, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
 
         //assert curve stage
         let curve_percentage1 = schema.curve_type.calculate_curve_return(
@@ -312,10 +312,10 @@ mod tests {
             schema.cliff_release,
             30_000,
         );
-        assert_eq!(contract.calculate_availble_withdraw(130_000, investment_id.clone()), (((initial_release * total_quantity) + (curve_percentage1 * total_quantity)) / FRACTION_BASE) - withdrawn_amount);
+        assert_eq!(contract.calculate_available_withdraw(130_000, investment_id.clone()), (((initial_release * total_quantity) + (curve_percentage1 * total_quantity)) / FRACTION_BASE) - withdrawn_amount);
 
         //assert final stage
-        assert_eq!(contract.calculate_availble_withdraw(200_000, investment_id.clone()), total_quantity - withdrawn_amount);
+        assert_eq!(contract.calculate_available_withdraw(200_000, investment_id.clone()), total_quantity - withdrawn_amount);
 
     }
 }
