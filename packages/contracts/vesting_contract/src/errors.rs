@@ -22,7 +22,7 @@ pub(crate) const ERR_005: &str = "Vesting: Contract: Schema: Schema does not exi
 pub(crate) const ERR_006: &str = "Vesting: Contract: Investment: Investment does not exist ";
 
 pub(crate) const ERR_007: &str =
-    "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
+   "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
     this investment's balance ";
 
 pub(crate) const ERR_101: &str = "Vesting: Schema: Cannot create schema:  sum of 
