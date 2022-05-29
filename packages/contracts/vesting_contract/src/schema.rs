@@ -30,11 +30,12 @@ impl CurveType {
     ) -> u128 {
         match self {
             CurveType::Linear { discrete_period } => {
+                let discrete_elapsed = elapsed_curve_time as u128 / *discrete_period as u128;
+                let discrete_final = final_delta as u128 / *discrete_period as u128;
                 let percentage_elapsed =
-                    (elapsed_curve_time as u128 * FRACTION_BASE) / final_delta as u128;
-                let discrete_percentage_elapsed = percentage_elapsed / (*discrete_period as u128);
+                    ( discrete_elapsed * FRACTION_BASE) / discrete_final;
 
-                (cliff_release * discrete_percentage_elapsed) / FRACTION_BASE
+                (cliff_release * percentage_elapsed) / FRACTION_BASE
             }
             _ => panic!("{}", ERR_102),
         }
@@ -106,3 +107,40 @@ impl Schema {
 }
 
 //view_schema_data(id) → show schema data
+#[cfg(test)]
+mod tests {
+    // use crate::tests::*;
+
+    use super::*;
+
+    #[test]
+    fn implementation_test_calculate_curve_return_linear() {
+        // This is an implementation test. It's used to assert that implementation of code is correct
+        // in case of refactoring you can safely disregard this test and erase it
+        // Asserts that calculate_curve_return method of CurveType is giving the
+        // correct result for the Linear variant
+        let one_day: u64 = 1_000_000_000 * 60 * 60 * 24;
+
+        let curve_type: CurveType = CurveType::Linear{ discrete_period: one_day * 3 };
+
+        let final_delta = one_day * 360;
+        let cliff_release = 100;
+        let elapsed_curve_time = one_day * 10;
+        assert_eq!(curve_type.calculate_curve_return(final_delta, cliff_release, elapsed_curve_time), 2);
+
+        let curve_type2: CurveType = CurveType::Linear{ discrete_period: one_day * 30 };
+
+        let final_delta2 = one_day * 90;
+        let cliff_release2 = 100;
+        let elapsed_curve_time2 = one_day * 45;
+        assert_eq!(curve_type2.calculate_curve_return(final_delta2, cliff_release2, elapsed_curve_time2), 33);
+
+        let curve_type3: CurveType = CurveType::Linear{ discrete_period: one_day * 30 };
+
+        let final_delta3 = one_day * 150;
+        let cliff_release3 = 100;
+        let elapsed_curve_time3 = one_day * 149;
+        assert_eq!(curve_type3.calculate_curve_return(final_delta3, cliff_release3, elapsed_curve_time3), 80);
+    }
+
+}

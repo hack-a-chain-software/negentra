@@ -3,7 +3,7 @@ use near_sdk::collections::LookupMap;
 use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
-pub mod actions;
+// pub mod actions;
 pub mod errors;
 pub mod investment;
 pub mod schema;
@@ -170,13 +170,11 @@ impl Contract {
     }
 }
 
-//----------------------------------- TEST -------------------------------------------------
-
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     pub use near_sdk::{MockedBlockchain, testing_env, Balance, VMContext};
 
-    use super::*;
+    pub use super::*;
 
     pub const CONTRACT_ACCOUNT: &str = "contract.testnet";
     pub const TOKEN_ACCOUNT: &str = "token.testnet";
@@ -217,21 +215,6 @@ mod tests {
             token_contract: TOKEN_ACCOUNT.to_string(),
             schemas: LookupMap::new(StorageKey::Schemas),
             investments: LookupMap::new(StorageKey::Investments),
-        }
-    }
-    
-    pub fn init_schema() -> Schema {
-        Schema{
-            category: "category".to_string(),
-            allocated_quantity: 0,
-            total_quantity: 0,
-            initial_release: 0,
-            cliff_release: 0,
-            final_release: 0,
-            initial_timestamp: 0,
-            cliff_delta: 0,
-            final_delta: 0,
-            curve_type: CurveType::Linear { discrete_period: 0 },
         }
     }
 
