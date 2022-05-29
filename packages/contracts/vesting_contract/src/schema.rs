@@ -4,7 +4,7 @@ use crate::*;
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Schema {
     pub category: String,
-    pub alloccated_quantity: u128, // how many tokens from this schema were already 'locked'
+    pub allocated_quantity: u128, // how many tokens from this schema were already 'locked'
     pub total_quantity: u128, //the schemas's total avlible tokens (all the investments from this category)
     pub initial_release: u128, //releases should be a fraction
     pub cliff_release: u128,
@@ -62,7 +62,7 @@ impl Schema {
 
         Self {
             category,
-            alloccated_quantity: 0,
+            allocated_quantity: 0,
             total_quantity,
             initial_release,
             cliff_release,
@@ -92,7 +92,7 @@ impl Schema {
             ERR_101
         );
 
-        assert!(total_quantity >= self.alloccated_quantity, "{}", ERR_103);
+        assert!(total_quantity >= self.allocated_quantity, "{}", ERR_103);
 
         self.total_quantity = total_quantity;
         self.initial_release = initial_release;
