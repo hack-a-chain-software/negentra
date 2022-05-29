@@ -3,8 +3,8 @@ use near_sdk::collections::LookupMap;
 use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
+pub mod actions;
 pub mod errors;
-pub mod events;
 pub mod investment;
 pub mod schema;
 pub mod utils;
@@ -105,7 +105,7 @@ impl Contract {
         );
 
         let schema = self.schemas.get(&category).expect(ERR_002);
-        let allocated_quantity = schema.alloccated_quantity + total_value.0;
+        let allocated_quantity = schema.allocated_quantity + total_value.0;
         assert!(allocated_quantity <= schema.total_quantity, "{}", ERR_004);
         let investment = Investment::new(account, total_value.0, date_in.map(|v| v.0));
         self.investments.insert(&investment_id, &investment);
@@ -170,7 +170,9 @@ impl Contract {
     }
 }
 
-#[cfg(test)]
+//----------------------------------- TEST -------------------------------------------------
+
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use near_sdk::testing_env;
     use near_sdk::MockedBlockchain;

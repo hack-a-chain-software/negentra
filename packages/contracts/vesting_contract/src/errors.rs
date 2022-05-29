@@ -37,3 +37,7 @@ total value cannot be SMALLER then the value that is already allocated for this 
 
 pub(crate) const ERR_201: &str = "Vesting: Schema: Cannot withdraw value:  sum of 
 self.withdrawn_value + value_to_withdraw  MUST be SMALLER or EQUAL to self.total_value "; //padrao constante de string
+
+pub(crate) const ERR_301: &str = "Actions: owner_actions: function is private to owner";
+
+pub(crate) const ERR_302: &str = "Actions: owner_actions: function is private to owner";
