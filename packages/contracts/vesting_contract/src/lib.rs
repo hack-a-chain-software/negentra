@@ -64,26 +64,26 @@ impl Contract {
     pub fn new_schema(
         &mut self,
         category: String,
-        total_quantity: U128,
-        initial_release: U128, //releases should be a fraction
-        cliff_release: U128,
-        final_release: U128,
-        initial_timestamp: U64,
-        cliff_delta: U64,
-        final_delta: U64,
+        total_quantity: u128,
+        initial_release: u128, //releases should be a fraction
+        cliff_release: u128,
+        final_release: u128,
+        initial_timestamp: u64,
+        cliff_delta: u64,
+        final_delta: u64,
         curve_type: CurveType,
     ) {
         assert!(!self.schemas.contains_key(&category), "{}", ERR_002);
 
         let schema = Schema::new(
             category.clone(),
-            total_quantity.0,
-            initial_release.0,
-            cliff_release.0,
-            final_release.0,
-            initial_timestamp.0,
-            cliff_delta.0,
-            final_delta.0,
+            total_quantity,
+            initial_release,
+            cliff_release,
+            final_release,
+            initial_timestamp,
+            cliff_delta,
+            final_delta,
             curve_type,
         );
 
@@ -111,7 +111,7 @@ impl Contract {
         self.investments.insert(&investment_id, &investment);
     }
 
-    pub fn calculate_availble_withdraw(
+    pub fn calculate_available_withdraw(
         &self,
         curent_time_stamp: u64,
         investment_id: String,
@@ -161,7 +161,7 @@ impl Contract {
         let mut investment = self.investments.get(&investment_id).expect(ERR_006);
 
         let available_withdraw =
-            self.calculate_availble_withdraw(curent_time_stamp, investment_id.clone());
+            self.calculate_available_withdraw(curent_time_stamp, investment_id.clone());
         assert!(value_to_withdraw <= available_withdraw, "{}", ERR_007);
 
         investment.increase_withdrawn_value(value_to_withdraw);
@@ -172,7 +172,7 @@ impl Contract {
 
 #[cfg(test)]
 mod tests {
-    pub use near_sdk::{MockedBlockchain, testing_env, Balance, VMContext};
+    pub use near_sdk::{testing_env, Balance, MockedBlockchain, VMContext};
 
     pub use super::*;
 
@@ -208,7 +208,6 @@ mod tests {
             epoch_height: 19,
         }
     }
-    
     pub fn init_contract() -> Contract {
         Contract {
             owner: OWNER_ACCOUNT.to_string(),
@@ -245,10 +244,8 @@ mod tests {
         let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
         testing_env!(context);
         let mut contract = init_contract();
-        
         let schema_name = "schema".to_string();
         let investor_name = "investor".to_string();
-
 
         let schema1 = schema::Schema {
             category: schema_name.clone(),
@@ -260,7 +257,9 @@ mod tests {
             initial_timestamp: 0,
             cliff_delta: 100_000,
             final_delta: 100_000,
-            curve_type: schema::CurveType::Linear { discrete_period: 10}
+            curve_type: schema::CurveType::Linear {
+                discrete_period: 10,
+            },
         };
 
         contract.schemas.insert(&schema_name, &schema1);
@@ -270,13 +269,12 @@ mod tests {
                 account: investor_name,
                 total_value: 1_000_000_000,
                 withdrawn_value,
-                date_in: None
+                date_in: None,
             }
         };
 
         //first iteration
-        
-        contract.calculate_availble_withdraw();
 
+        contract.calculate_availble_withdraw();
     }
 }
