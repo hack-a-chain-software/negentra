@@ -13,6 +13,7 @@ pub struct Schema {
     pub cliff_delta: u64,
     pub final_delta: u64, // final delta is the period AFTER the cliff, NOT FROM initial_timestamp
     pub curve_type: CurveType,
+    pub investments: Vec<String>,
 }
 
 #[derive(BorshSerialize, BorshDeserialize)]
@@ -72,6 +73,7 @@ impl Schema {
             cliff_delta,
             final_delta,
             curve_type,
+            investments: Vec::new()
         }
     }
 
