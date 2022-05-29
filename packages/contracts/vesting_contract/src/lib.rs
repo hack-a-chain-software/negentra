@@ -161,8 +161,6 @@ mod tests {
     use near_sdk::MockedBlockchain;
     use near_sdk::{testing_env};
 
-    use guerrilla;
-
     use super::*;
 
     use unit_testing::*;
@@ -185,98 +183,6 @@ mod tests {
         let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
         testing_env!(context);
         let _contract = Contract::default();
-    }
-
-    
-    #[test]
-    #[serial]
-    fn test_new_schema_happy() {
-        // Assert that method inserts schema into schemas LookupMap
-        // does not care for the implementation of Schema::new() nor its logic
-        let (_new_patch, _change_patch, _curve_patch) = patch_schema();
-
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
-        testing_env!(context);
-
-        let schema_category = "category".to_string();
-        let mut contract = init_contract();
-        assert!(!contract.schemas.contains_key(&schema_category));
-
-        contract.new_schema(
-            schema_category.clone(),
-            U128(1),
-            U128(2),
-            U128(3),
-            U128(4),
-            U64(1),
-            U64(2),
-            U64(3),
-            crate::schema::CurveType::Linear { discrete_period: 1 },
-        );
-
-        assert!(contract.schemas.contains_key(&schema_category));
-
-    }
-
-    
-    #[test]
-    #[should_panic(expected = "Vesting: Contract: new_schema: There is already a Schema with this category 
-    (the category is the schema id)")]
-    #[serial]
-    fn test_new_schema_unhappy_repeated_category() {
-        // Assert that method panics in attempts to create new schema
-        // with a category name already used
-        // does not care for the implementation of Schema::new() nor its logic
-        let (_new_patch, _change_patch, _curve_patch) = patch_schema();
-
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
-        testing_env!(context);
-
-        let schema_category = "category".to_string();
-        let mut contract = init_contract();
-        
-        assert!(!contract.schemas.contains_key(&schema_category));
-
-        let mut call = || {
-            contract.new_schema(
-                schema_category.clone(),
-                U128(1),
-                U128(2),
-                U128(3),
-                U128(4),
-                U64(1),
-                U64(2),
-                U64(3),
-                crate::schema::CurveType::Linear { discrete_period: 1 },
-            );
-        };
-        call();
-        call();
-
-    }
-
-    #[test]
-    fn test_new_investment_happy() {
-        // Assert that method inserts new investment into investments LookupMap
-        // mocks the state to have schema saved
-
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
-        testing_env!(context);
-
-        let schema_category = "category".to_string();
-        let mut contract = init_contract();
-
-        contract.schemas.insert(&schema_category, &init_schema());
-
-        contract.new_investment(
-            schema_category.clone(),
-            SIGNER_ACCOUNT.to_string(),
-            U128(0),
-            None,
-        );
-
-        assert!(contract.investments.contains_key(&create_investment_id(schema_category, SIGNER_ACCOUNT.to_string())));
-
     }
 
 }
