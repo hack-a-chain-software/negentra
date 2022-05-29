@@ -1,7 +1,7 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::{LookupMap};
+use near_sdk::collections::LookupMap;
 use near_sdk::json_types::{U128, U64};
-use near_sdk::{env, near_bindgen, AccountId,  BorshStorageKey, PanicOnDefault};
+use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
 pub mod errors;
 pub mod events;
@@ -9,7 +9,7 @@ pub mod investment;
 pub mod schema;
 pub mod utils;
 
-use crate::errors::{ERR_001, ERR_002, ERR_003, ERR_004, ERR_005, ERR_006};
+use crate::errors::{ERR_001, ERR_002, ERR_003, ERR_004, ERR_005, ERR_006, ERR_007};
 use crate::utils::{create_investment_id, split_investment_id};
 
 use investment::Investment;
@@ -105,11 +105,9 @@ impl Contract {
         );
 
         let schema = self.schemas.get(&category).expect(ERR_002);
-        let allocated_quantity = schema.aloccated_quantity + total_value.0;
+        let allocated_quantity = schema.alloccated_quantity + total_value.0;
         assert!(allocated_quantity <= schema.total_quantity, "{}", ERR_004);
-        
         let investment = Investment::new(account, total_value.0, date_in.map(|v| v.0));
-        
         self.investments.insert(&investment_id, &investment);
     }
 
@@ -153,12 +151,29 @@ impl Contract {
         let total_vested = (release * investment.total_value) / FRACTION_BASE;
         total_vested - investment.withdrawn_value
     }
+
+    pub fn withdraw_investment(
+        &mut self,
+        curent_time_stamp: u64,
+        investment_id: String,
+        value_to_withdraw: u128,
+    ) {
+        let mut investment = self.investments.get(&investment_id).expect(ERR_006);
+
+        let available_withdraw =
+            self.calculate_avalibe_withdraw(curent_time_stamp, investment_id.clone());
+        assert!(value_to_withdraw <= available_withdraw, "{}", ERR_007);
+
+        investment.increase_withdrawn_value(value_to_withdraw);
+
+        self.investments.insert(&investment_id, &investment);
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use near_sdk::testing_env;
     use near_sdk::MockedBlockchain;
-    use near_sdk::{testing_env};
 
     use super::*;
 
@@ -183,5 +198,4 @@ mod tests {
         testing_env!(context);
         let _contract = Contract::default();
     }
-
 }
