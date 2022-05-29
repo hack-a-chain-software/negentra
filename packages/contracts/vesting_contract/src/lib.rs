@@ -5,6 +5,7 @@ use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
 pub mod actions;
 pub mod errors;
+pub mod ext_interface;
 pub mod investment;
 pub mod schema;
 pub mod utils;
@@ -16,6 +17,7 @@ use investment::Investment;
 use schema::{CurveType, Schema};
 
 pub const FRACTION_BASE: u128 = 10_000;
+pub const BASE_GAS: u64 = 50_000_000_000_000;
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
@@ -168,6 +170,14 @@ impl Contract {
 
         self.investments.insert(&investment_id, &investment);
     }
+
+    pub fn undo_withdraw_investment(&mut self, investment_id: String, value_to_return: u128) {
+        let mut investment = self.investments.get(&investment_id).expect(ERR_006);
+
+        investment.withdrawn_value -= value_to_return;
+
+        self.investments.insert(&investment_id, &investment);
+    }
 }
 
 #[cfg(test)]
@@ -244,19 +254,16 @@ mod tests {
         let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
         testing_env!(context);
         let mut contract = init_contract();
-        
         let total_quantity: u128 = 1_000_000_000;
         let schema_name = "schema".to_string();
         let investor_name = "investor".to_string();
         let investment_id = create_investment_id(schema_name.clone(), investor_name.clone());
-
 
         let initial_release = 30;
         let cliff_release = 50;
         let final_release = 20;
 
         let schema = schema::Schema {
-
             category: schema_name.clone(),
             allocated_quantity: 0,
             total_quantity,
@@ -267,24 +274,30 @@ mod tests {
             cliff_delta: 100_000,
             final_delta: 100_000,
 
-            curve_type: schema::CurveType::Linear { discrete_period: 10 }
-
+            curve_type: schema::CurveType::Linear {
+                discrete_period: 10,
+            },
         };
 
         contract.schemas.insert(&schema_name, &schema);
-
 
         let mut investment = investment::Investment {
             account: investor_name,
             total_value: total_quantity,
             withdrawn_value: 0,
-            date_in: None
+            date_in: None,
         };
         contract.investments.insert(&investment_id, &investment);
 
         //assert initial stage
-        assert_eq!(contract.calculate_available_withdraw(0, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
-        assert_eq!(contract.calculate_available_withdraw(100_000, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
+        assert_eq!(
+            contract.calculate_available_withdraw(0, investment_id.clone()),
+            (initial_release * total_quantity) / FRACTION_BASE
+        );
+        assert_eq!(
+            contract.calculate_available_withdraw(100_000, investment_id.clone()),
+            (initial_release * total_quantity) / FRACTION_BASE
+        );
 
         //assert curve stage
         let curve_percentage = schema.curve_type.calculate_curve_return(
@@ -293,18 +306,31 @@ mod tests {
             30_000,
         );
         println!("{}", curve_percentage);
-        assert_eq!(contract.calculate_available_withdraw(130_000, investment_id.clone()), ((initial_release * total_quantity) + (curve_percentage * total_quantity)) / FRACTION_BASE);
+        assert_eq!(
+            contract.calculate_available_withdraw(130_000, investment_id.clone()),
+            ((initial_release * total_quantity) + (curve_percentage * total_quantity))
+                / FRACTION_BASE
+        );
 
         //assert final stage
-        assert_eq!(contract.calculate_available_withdraw(200_000, investment_id.clone()), total_quantity);
+        assert_eq!(
+            contract.calculate_available_withdraw(200_000, investment_id.clone()),
+            total_quantity
+        );
 
         let withdrawn_amount = 100;
         investment.withdrawn_value = withdrawn_amount;
         contract.investments.insert(&investment_id, &investment);
 
         //assert initial stage
-        assert_eq!(contract.calculate_available_withdraw(0, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
-        assert_eq!(contract.calculate_available_withdraw(100_000, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
+        assert_eq!(
+            contract.calculate_available_withdraw(0, investment_id.clone()),
+            ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount
+        );
+        assert_eq!(
+            contract.calculate_available_withdraw(100_000, investment_id.clone()),
+            ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount
+        );
 
         //assert curve stage
         let curve_percentage1 = schema.curve_type.calculate_curve_return(
@@ -312,10 +338,17 @@ mod tests {
             schema.cliff_release,
             30_000,
         );
-        assert_eq!(contract.calculate_available_withdraw(130_000, investment_id.clone()), (((initial_release * total_quantity) + (curve_percentage1 * total_quantity)) / FRACTION_BASE) - withdrawn_amount);
+        assert_eq!(
+            contract.calculate_available_withdraw(130_000, investment_id.clone()),
+            (((initial_release * total_quantity) + (curve_percentage1 * total_quantity))
+                / FRACTION_BASE)
+                - withdrawn_amount
+        );
 
         //assert final stage
-        assert_eq!(contract.calculate_available_withdraw(200_000, investment_id.clone()), total_quantity - withdrawn_amount);
-
+        assert_eq!(
+            contract.calculate_available_withdraw(200_000, investment_id.clone()),
+            total_quantity - withdrawn_amount
+        );
     }
 }

@@ -58,8 +58,16 @@ pub(crate) const ERR_303: &str = r#"Actions: owner_actions:ft_on_transfer: Canno
         "discrete_period": " "
     }"#;
 
+pub(crate) const ERR_304: &str =
+    "Vesting: Owner Actions: owner_withdraw_investments: Not enough gas was attatched on the transaction  - attach at least
+    150 Tgas ";
+
 pub(crate) const ERR_401: &str =
     "Vesting: Investor Actions: view_investments: Investment does not exist ";
 
 pub(crate) const ERR_402: &str =
     "Vesting: Investor Actions: view_investments: Schema does not exist ";
+
+pub(crate) const ERR_403: &str =
+    "Vesting: Investor Actions: withdraw_your_investments: Not enough gas was attatched on the transaction  - attach at least
+    150 Tgas";
