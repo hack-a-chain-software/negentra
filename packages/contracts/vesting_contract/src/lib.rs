@@ -3,7 +3,7 @@ use near_sdk::collections::LookupMap;
 use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
-// pub mod actions;
+pub mod actions;
 pub mod errors;
 pub mod investment;
 pub mod schema;
