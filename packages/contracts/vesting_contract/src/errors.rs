@@ -22,7 +22,7 @@ pub(crate) const ERR_005: &str = "Vesting: Contract: Schema: Schema does not exi
 pub(crate) const ERR_006: &str = "Vesting: Contract: Investment: Investment does not exist ";
 
 pub(crate) const ERR_007: &str =
-   "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
+    "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
     this investment's balance ";
 
 pub(crate) const ERR_101: &str = "Vesting: Schema: Cannot create schema:  sum of 
@@ -38,6 +38,22 @@ total value cannot be SMALLER then the value that is already allocated for this 
 pub(crate) const ERR_201: &str = "Vesting: Schema: Cannot withdraw value:  sum of 
 self.withdrawn_value + value_to_withdraw  MUST be SMALLER or EQUAL to self.total_value "; //padrao constante de string
 
-pub(crate) const ERR_301: &str = "Actions: owner_actions: function is private to owner";
+pub(crate) const ERR_301: &str =
+    "Actions: owner_actions:ft_on_transfer: function is private to owner";
 
-pub(crate) const ERR_302: &str = "Actions: owner_actions: function is private to owner";
+pub(crate) const ERR_302: &str =
+    "Actions: owner_actions:ft_on_transfer: only the vesting token contract can be used 
+    - no other token can be used on this contract";
+
+pub(crate) const ERR_303: &str = r#"Actions: owner_actions:ft_on_transfer: Cannot parse the message - please use the following format: 
+    {
+        "category": " ",
+        "initial_release" : " ",
+        "cliff_release" : " ", 
+        "final_release": " ",
+        "initial_timestamp": " ",
+        "cliff_delta" : " ",
+        "final_delta" : " ",
+        "curve_type" : " ",
+        "discrete_period": " "
+    }"#;
