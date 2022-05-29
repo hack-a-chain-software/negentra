@@ -1,5 +1,5 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::collections::LookupMap;
+use near_sdk::collections::{LookupMap, UnorderedMap};
 use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
 
@@ -22,7 +22,7 @@ pub const FRACTION_BASE: u128 = 10_000;
 pub struct Contract {
     pub owner: AccountId,
     pub token_contract: AccountId,
-    pub schemas: LookupMap<String, Schema>,
+    pub schemas: UnorderedMap<String, Schema>,
     pub investments: LookupMap<String, Investment>,
 }
 
@@ -46,7 +46,7 @@ impl Contract {
         Self {
             owner,
             token_contract,
-            schemas: LookupMap::new(StorageKey::Schemas), // inicializa o lupmap
+            schemas: UnorderedMap::new(StorageKey::Schemas), // inicializa o lupmap
             investments: LookupMap::new(StorageKey::Investments),
         }
     }
@@ -73,7 +73,9 @@ impl Contract {
         final_delta: u64,
         curve_type: CurveType,
     ) {
-        assert!(!self.schemas.contains_key(&category), "{}", ERR_002);
+        if let Some(_value) = self.schemas.get(&category) {
+            panic!("{}", ERR_002);
+        }
 
         let schema = Schema::new(
             category.clone(),
@@ -104,11 +106,13 @@ impl Contract {
             ERR_003
         );
 
-        let schema = self.schemas.get(&category).expect(ERR_002);
+        let mut schema = self.schemas.get(&category).expect(ERR_002);
+        schema.investments.push(investment_id.clone());
         let allocated_quantity = schema.allocated_quantity + total_value.0;
         assert!(allocated_quantity <= schema.total_quantity, "{}", ERR_004);
         let investment = Investment::new(account, total_value.0, date_in.map(|v| v.0));
         self.investments.insert(&investment_id, &investment);
+        self.schemas.insert(&category, &schema);
     }
 
     pub fn calculate_available_withdraw(
@@ -178,7 +182,6 @@ mod tests {
 
     pub const CONTRACT_ACCOUNT: &str = "contract.testnet";
     pub const TOKEN_ACCOUNT: &str = "token.testnet";
-    pub const SIGNER_ACCOUNT: &str = "signer.testnet";
     pub const OWNER_ACCOUNT: &str = "owner.testnet";
 
     pub fn get_context(
@@ -212,7 +215,7 @@ mod tests {
         Contract {
             owner: OWNER_ACCOUNT.to_string(),
             token_contract: TOKEN_ACCOUNT.to_string(),
-            schemas: LookupMap::new(StorageKey::Schemas),
+            schemas: UnorderedMap::new(StorageKey::Schemas),
             investments: LookupMap::new(StorageKey::Investments),
         }
     }
@@ -266,9 +269,8 @@ mod tests {
             initial_timestamp: 0,
             cliff_delta: 100_000,
             final_delta: 100_000,
-
-            curve_type: schema::CurveType::Linear { discrete_period: 10 }
-
+            curve_type: schema::CurveType::Linear { discrete_period: 10 },
+            investments: Vec::new()
         };
 
         contract.schemas.insert(&schema_name, &schema);
