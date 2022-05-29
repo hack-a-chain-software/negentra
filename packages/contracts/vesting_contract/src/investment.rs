@@ -4,8 +4,8 @@ use crate::*;
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct Investment {
     pub account: AccountId,
-    pub total_value: u128,
-    pub withdrawn_value: u128,
+    pub total_value: u128, // all the tokens avalible for this investor -  wont change
+    pub withdrawn_value: u128, // the amount of tokens that the user already withdrew - will change
     pub date_in: Option<u64>, // Option - None: uses Schema date
 }
 
@@ -19,7 +19,8 @@ impl Investment {
         }
     }
 
-    pub fn increase_withdraw_value(&mut self, value_to_withdraw: u128) {
+    // call this function when user withdraws money
+    pub fn increase_withdrawn_value(&mut self, value_to_withdraw: u128) {
         assert!(
             (self.withdrawn_value + value_to_withdraw) <= self.total_value,
             "{}",
