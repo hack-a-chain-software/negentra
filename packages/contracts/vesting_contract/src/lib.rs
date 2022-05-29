@@ -4,6 +4,7 @@ use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId,  BorshStorageKey, PanicOnDefault};
 
 pub mod errors;
+pub mod events;
 pub mod investment;
 pub mod schema;
 pub mod utils;
@@ -154,9 +155,7 @@ impl Contract {
     }
 }
 
-//----------------------------------- TEST -------------------------------------------------
-
-#[cfg(all(test, not(target_arch = "wasm32")))]
+#[cfg(test)]
 mod tests {
     use near_sdk::MockedBlockchain;
     use near_sdk::{testing_env};
