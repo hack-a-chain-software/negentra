@@ -16,7 +16,6 @@ pub use patching::*;
 pub mod mocking;
 pub mod patching;
 
-pub const TOTAL_SUPPLY: Balance = 1_000;
 pub const CONTRACT_ACCOUNT: &str = "contract.testnet";
 pub const TOKEN_ACCOUNT: &str = "token.testnet";
 pub const SIGNER_ACCOUNT: &str = "signer.testnet";
