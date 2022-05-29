@@ -241,40 +241,81 @@ mod tests {
         // in case of refactoring you can safely disregard this test and erase it
         // Asserts that calculate_availble_withdraw method of Contract is calculating the correct
         // amount.
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
         testing_env!(context);
         let mut contract = init_contract();
+        
+        let total_quantity: u128 = 1_000_000_000;
         let schema_name = "schema".to_string();
         let investor_name = "investor".to_string();
+        let investment_id = create_investment_id(schema_name.clone(), investor_name.clone());
 
-        let schema1 = schema::Schema {
+
+        let initial_release = 30;
+        let cliff_release = 50;
+        let final_release = 20;
+
+        let schema = schema::Schema {
+
             category: schema_name.clone(),
             allocated_quantity: 0,
-            total_quantity: 1_000_000_000,
-            initial_release: 30,
-            cliff_release: 50,
-            final_release: 20,
+            total_quantity,
+            initial_release,
+            cliff_release,
+            final_release,
             initial_timestamp: 0,
             cliff_delta: 100_000,
             final_delta: 100_000,
-            curve_type: schema::CurveType::Linear {
-                discrete_period: 10,
-            },
+
+            curve_type: schema::CurveType::Linear { discrete_period: 10 }
+
         };
 
-        contract.schemas.insert(&schema_name, &schema1);
+        contract.schemas.insert(&schema_name, &schema);
 
-        let sample_investment = |withdrawn_value: u128| -> investment::Investment {
-            investment::Investment {
-                account: investor_name,
-                total_value: 1_000_000_000,
-                withdrawn_value,
-                date_in: None,
-            }
+
+        let mut investment = investment::Investment {
+            account: investor_name,
+            total_value: total_quantity,
+            withdrawn_value: 0,
+            date_in: None
         };
+        contract.investments.insert(&investment_id, &investment);
 
-        //first iteration
+        //assert initial stage
+        assert_eq!(contract.calculate_availble_withdraw(0, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
+        assert_eq!(contract.calculate_availble_withdraw(100_000, investment_id.clone()), (initial_release * total_quantity) / FRACTION_BASE);
 
-        contract.calculate_availble_withdraw();
+        //assert curve stage
+        let curve_percentage = schema.curve_type.calculate_curve_return(
+            schema.final_delta,
+            schema.cliff_release,
+            30_000,
+        );
+        println!("{}", curve_percentage);
+        assert_eq!(contract.calculate_availble_withdraw(130_000, investment_id.clone()), ((initial_release * total_quantity) + (curve_percentage * total_quantity)) / FRACTION_BASE);
+
+        //assert final stage
+        assert_eq!(contract.calculate_availble_withdraw(200_000, investment_id.clone()), total_quantity);
+
+        let withdrawn_amount = 100;
+        investment.withdrawn_value = withdrawn_amount;
+        contract.investments.insert(&investment_id, &investment);
+
+        //assert initial stage
+        assert_eq!(contract.calculate_availble_withdraw(0, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
+        assert_eq!(contract.calculate_availble_withdraw(100_000, investment_id.clone()), ((initial_release * total_quantity) / FRACTION_BASE) - withdrawn_amount);
+
+        //assert curve stage
+        let curve_percentage1 = schema.curve_type.calculate_curve_return(
+            schema.final_delta,
+            schema.cliff_release,
+            30_000,
+        );
+        assert_eq!(contract.calculate_availble_withdraw(130_000, investment_id.clone()), (((initial_release * total_quantity) + (curve_percentage1 * total_quantity)) / FRACTION_BASE) - withdrawn_amount);
+
+        //assert final stage
+        assert_eq!(contract.calculate_availble_withdraw(200_000, investment_id.clone()), total_quantity - withdrawn_amount);
+
     }
 }
