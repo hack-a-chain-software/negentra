@@ -140,7 +140,7 @@ impl NonFungibleToken {
                     copies: Some(1),
                     reference: None,
                     reference_hash: None,
-                    item_id: None,
+                    item_id: 0,
                 },
             );
         }

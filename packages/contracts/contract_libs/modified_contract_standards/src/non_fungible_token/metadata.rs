@@ -31,7 +31,7 @@ pub struct TokenMetadata {
     pub reference_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
 
     // special metadata
-    pub item_id: u128,
+    pub item_id: u64,
 }
 
 /// Offers details on the contract-level metadata.

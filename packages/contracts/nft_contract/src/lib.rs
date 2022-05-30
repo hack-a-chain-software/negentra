@@ -35,9 +35,9 @@ pub struct Contract {
     pub tokens: NonFungibleToken,
     pub metadata: LazyOption<NFTContractMetadata>,
 
-    pub item_types: LookupMap<u128, ItemType>,
-    pub item_count: u128,
-    pub random_minting: Vector<u128>,
+    pub item_types: LookupMap<u64, ItemType>,
+    pub item_count: u64,
+    pub random_minting: Vector<u64>,
     pub perpetual_royalties: HashMap<AccountId, u128>,
 
     pub mint_token: AccountId,

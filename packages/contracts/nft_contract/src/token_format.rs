@@ -48,7 +48,7 @@ impl Contract {
         self.only_owner();
         let item_id = self.item_count.clone();
         self.item_count += 1;
-        let new_item = ItemType {
+        let mut new_item = ItemType {
             total_supply,
             minted_items: 0,
             supply_available: total_supply,
@@ -66,13 +66,13 @@ impl Contract {
             }),
         };
 
-        let random_minting_next_index = self.random_minting.len() as u128;
-        let i = 0;
+        let random_minting_next_index = self.random_minting.len();
+        let mut i = 0;
         while i < total_supply {
             self.random_minting.push(&item_id);
             new_item
                 .random_minting_locations
-                .insert(random_minting_next_index + i.into(), true);
+                .insert(random_minting_next_index + i, true);
             i += 1;
         }
 
@@ -84,7 +84,7 @@ impl Contract {
     #[payable]
     pub fn update_item(
         &mut self,
-        item_id: U128,
+        item_id: u64,
         total_supply: u64,
         title: String,
         description: String,
@@ -96,7 +96,7 @@ impl Contract {
 
         let mut old_item = self
             .item_types
-            .get(&item_id.0)
+            .get(&item_id)
             .expect("Error: No item found with this item_id");
         let new_metadata = TokenMetadata {
             title: Some(title),
@@ -104,11 +104,6 @@ impl Contract {
             media: Some(media),
             media_hash: None,
             copies: Some(total_supply),
-            issued_at: None,
-            expires_at: None,
-            starts_at: None,
-            updated_at: None,
-            extra: None,
             reference: Some(reference),
             reference_hash: None,
             item_id,
@@ -116,13 +111,13 @@ impl Contract {
 
         if total_supply >= old_item.total_supply {
             let new_items = total_supply - old_item.total_supply;
-            let random_minting_next_index = self.random_minting.len() as u128;
-            let i = 0u64;
+            let random_minting_next_index = self.random_minting.len();
+            let mut i = 0u64;
             while i < new_items {
-                self.random_minting.push(&item_id.0);
+                self.random_minting.push(&item_id);
                 old_item
                     .random_minting_locations
-                    .insert(random_minting_next_index + i.into(), true);
+                    .insert(random_minting_next_index + i, true);
                 i += 1;
             }
         } else {
@@ -130,7 +125,7 @@ impl Contract {
             //use remove reorder function
             let items_to_remove = old_item.total_supply - total_supply;
             let mut keys_iterator = old_item.random_minting_locations.keys();
-            let i = 0;
+            let mut i = 0;
             while i < items_to_remove {
                 self.vec_remove_store_loc(*keys_iterator.next().unwrap());
             }
@@ -138,7 +133,7 @@ impl Contract {
 
         old_item.internal_change_supply(total_supply);
         old_item.update_metadata(new_metadata);
-        self.item_types.insert(&item_id.0, &old_item);
+        self.item_types.insert(&item_id, &old_item);
 
         true
     }

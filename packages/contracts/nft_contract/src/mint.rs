@@ -9,16 +9,12 @@ impl Contract {
         amount: U128,
         msg: String,
     ) -> PromiseOrValue<U128> {
-        assert_eq!(env::predecessor_account_id, "", "");
+        assert_eq!(env::predecessor_account_id(), "", "");
         assert!(amount.0 >= self.mint_cost, "");
 
         let refund = amount.0 - self.mint_cost;
 
-        if refund > 0 {
-            PromiseOrValue::Promise(Promise::new(sender_id.to_string()).transfer(refund))
-        } else {
-            PromiseOrValue::Value(U128(1))
-        }
+        PromiseOrValue::Value(U128(refund))
     }
     /// Mint a new token with ID=`token_id` belonging to `receiver_id`.
     ///
