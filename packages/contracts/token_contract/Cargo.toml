@@ -1,5 +1,5 @@
 [package]
-name = "ft_contract"
+name = "token_contract"
 version = "1.0.0"
 authors = ["vote for pedro"]
 edition = "2018"

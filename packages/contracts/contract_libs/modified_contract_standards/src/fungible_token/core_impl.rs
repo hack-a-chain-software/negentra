@@ -1,6 +1,6 @@
 use crate::fungible_token::core::FungibleTokenCore;
 use crate::fungible_token::resolver::FungibleTokenResolver;
-use crate::fungible_token::events::{FtBurn, FtMint, FtTransfer};
+use crate::fungible_token::events::{FtTransfer};
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LookupMap;
@@ -141,6 +141,7 @@ impl FungibleToken {
 
     }
 
+    #[allow(unused_variables)]
     pub fn internal_burn(
         &mut self,
         sender_id: &AccountId,
