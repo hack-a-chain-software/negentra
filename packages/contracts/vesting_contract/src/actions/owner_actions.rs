@@ -168,7 +168,15 @@ mod tests {
         // (5) Create a new Schema instance in the self.schemas UnorderedMap with the data from msg and
         //     total_quantity equal to the transferred amount of tokens;
         // (6) Return U128(0) after a succesful run;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -235,7 +243,15 @@ mod tests {
     fn test_ft_on_tranfer_1() {
         // Asserts:
         // (1) Assert that tokens transferred where from self.token_contract;
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -250,7 +266,15 @@ mod tests {
     fn test_ft_on_tranfer_2() {
         // Asserts:
         // (2) Assert that initializor of the transfer was self.owner;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -264,7 +288,15 @@ mod tests {
     fn test_ft_on_tranfer_3() {
         // Asserts:
         // (3) Assert that cliff_release + final_release + final_delta equal FRACTION_BASE;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -303,7 +335,15 @@ mod tests {
     fn test_ft_on_tranfer_4() {
         // Asserts:
         // (4) Assert that msg is correctly formatted;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -338,7 +378,15 @@ mod tests {
     fn test_create_investment_6() {
         // Asserts:
         // (6) Create Investment instance and persist it in self.investments at investment_id key
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -393,7 +441,15 @@ mod tests {
     fn test_create_investment_1() {
         // Asserts:
         // (1) Assert that initializor of the transaction was self.owner;
-        let context = get_context(vec![], false, 1, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -413,7 +469,41 @@ mod tests {
     fn test_create_investment_2() {
         // Asserts:
         // (2) Assert that caller deposited 1 yoctoNear
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.create_investment(
+            "category".to_string(),
+            "account".to_string(),
+            U128(100),
+            None,
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Vesting: Contract: Schema: Schema does not exist")]
+    fn test_create_investment_3() {
+        // Asserts:
+        // (3) Assert that the schema associated with the new investment exists;
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -428,33 +518,23 @@ mod tests {
 
     #[test]
     #[should_panic(
-        expected = "Vesting: Contract: Schema: Schema does not exist"
-    )]
-    fn test_create_investment_3() {
-        // Asserts:
-        // (3) Assert that the schema associated with the new investment exists;
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
-        testing_env!(context);
-
-        let mut contract = init_contract();
-
-        contract.create_investment(
-            "category".to_string(),
-            "account".to_string(),
-            U128(100),
-            None,
-        );
-    }
-
-    #[test]
-    #[should_panic( expected = "Vesting: Contract: new_investment: The allocated amount for this investment 
+        expected = "Vesting: Contract: new_investment: The allocated amount for this investment 
     is greater than the amount of tokens available on that  schema category:  
-    (schema.aloccated_quantity + total_value) MUST be SMALLER then or EQUAL to schema.total_value")]
+    (schema.aloccated_quantity + total_value) MUST be SMALLER then or EQUAL to schema.total_value"
+    )]
     fn test_create_investment_4() {
         // Asserts:
         // (4) Assert that the total_value allocated to the investment is within the
         //     availability of the schema;
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -487,17 +567,25 @@ mod tests {
             U128(total_value + 1),
             date_in,
         );
-
     }
 
-    
     #[test]
-    #[should_panic( expected = "Vesting: Contract: new_investment: There is already an Investment with this ID 
-    (it uses the same schema and same acconunt)")]
+    #[should_panic(
+        expected = "Vesting: Contract: new_investment: There is already an Investment with this ID 
+    (it uses the same schema and same acconunt)"
+    )]
     fn test_create_investment_5() {
         // Asserts:
         // (5) Assert that there is no existing Investment with the same id;
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -526,12 +614,15 @@ mod tests {
             },
         );
 
-        contract.investments.insert(&investment_id, &investment::Investment {
-            account: account.clone(),
-            total_value,
-            withdrawn_value: 0,
-            date_in: None
-        });
+        contract.investments.insert(
+            &investment_id,
+            &investment::Investment {
+                account: account.clone(),
+                total_value,
+                withdrawn_value: 0,
+                date_in: None,
+            },
+        );
 
         contract.create_investment(
             category.clone(),
@@ -539,6 +630,273 @@ mod tests {
             U128(total_value),
             date_in,
         );
+    }
 
+    // owner_withdraw_investments TEST_SUITE
+    // Asserts the correct behaviour of owner_withdraw_investments.
+    // Cross Contract Calls cannot be tested on unit tests, therefore, testing for this
+    // function won't cover all it's workings. Integration tests are needed
+    // Method must:
+    // (1) Assert that caller is the owner;
+    // (2) Assert that 1 yoctoNear was sent with the transaction;
+    // (3) Assert that the necessary gas was passed to the transaction;
+    // (4) Assert that the investment_id (Investment of the sender's account in the
+    //     informed schema exists);
+    // (5) Assert that the investor has enough vested funds to withdraw;
+    // (6) Persist the total amount of funds that have been withdrawn from a given Investment;
+    // Tests must not:
+    // (a) prove the mathematical correctness of the funds released. This is proved in
+    //     internal unit tests (refer to implementation_tests in lib.rs and schema.rs);
+    // (b) prove the correctness of the cross crontract calls flow, which needs to be tested
+    //     with integration tests
+    #[test]
+    #[should_panic(
+        expected = "Vesting: Contract: function is private to owner"
+    )]
+    fn test_withdraw_your_investments_1() {
+        // Asserts:
+        // (1) Assert that caller is the owner;
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.owner_withdraw_investments(
+            U128(10),
+            "category".to_string(),
+            "investor".to_string(),
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "assertion failed: `(left == right)`\n  left: `0`,\n right: `1`: Requires attached deposit of exactly 1 yoctoNEAR"
+    )]
+    fn test_withdraw_your_investments_2() {
+        // Asserts:
+        // (2) Assert that 1 yoctoNear was sent with the transaction;
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.owner_withdraw_investments(
+            U128(10),
+            "category".to_string(),
+            "investor".to_string(),
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "Vesting: Owner Actions: owner_withdraw_investments: Not enough gas was attatched on the transaction  - attach at least
+    150 Tgas"
+    )]
+    fn test_withdraw_your_investments_3() {
+        // Asserts:
+        // (3) Assert that the necessary gas was passed to the transaction;
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            BASE_GAS * 3 - 1,
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.owner_withdraw_investments(
+            U128(10),
+            "category".to_string(),
+            "investor".to_string(),
+        );
+    }
+    #[test]
+    #[should_panic(expected = "Vesting: Contract: Investment: Investment does not exist")]
+    fn test_withdraw_your_investments_4() {
+        // Asserts:
+        // (4) Assert that the investment_id (Investment of the sender's account in the
+        //     informed schema exists);
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            BASE_GAS * 3,
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let category = "category".to_string();
+
+        contract.schemas.insert(
+            &category,
+            &schema::Schema {
+                category: category.clone(),
+                allocated_quantity: 0,
+                total_quantity: 100,
+                initial_release: 10,
+                cliff_release: 10,
+                final_release: 80,
+                initial_timestamp: 0,
+                cliff_delta: 100,
+                final_delta: 100,
+                curve_type: schema::CurveType::Linear { discrete_period: 1 },
+                investments: Vec::new(),
+            },
+        );
+
+        contract.owner_withdraw_investments(
+            U128(10),
+            "category".to_string(),
+            "investor".to_string(),
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
+    this investment's balance"
+    )]
+    fn test_withdraw_your_investments_5() {
+        // Asserts:
+        // (5) Assert that the investor has enough vested funds to withdraw;
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            BASE_GAS * 3,
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let category = "category".to_string();
+        let total_value = 100;
+
+        let investment_id = create_investment_id(category.clone(), TOKEN_ACCOUNT.to_string());
+
+        contract.schemas.insert(
+            &category,
+            &schema::Schema {
+                category: category.clone(),
+                allocated_quantity: 0,
+                total_quantity: total_value,
+                initial_release: 10,
+                cliff_release: 10,
+                final_release: 80,
+                initial_timestamp: 0,
+                cliff_delta: 100,
+                final_delta: 100,
+                curve_type: schema::CurveType::Linear { discrete_period: 1 },
+                investments: Vec::new(),
+            },
+        );
+
+        contract.investments.insert(
+            &investment_id,
+            &investment::Investment {
+                account: TOKEN_ACCOUNT.to_string(),
+                total_value,
+                withdrawn_value: 0,
+                date_in: None,
+            },
+        );
+
+        contract.owner_withdraw_investments(
+            U128(total_value + 1),
+            category,
+            TOKEN_ACCOUNT.to_string(),
+        );
+    }
+
+    #[test]
+    fn test_withdraw_your_investments_6() {
+        // Asserts:
+        // (6) Persist the total amount of funds that have been withdrawn from a given Investment;
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            200,
+            BASE_GAS * 3,
+        );
+        testing_env!(context.clone());
+
+        let mut contract = init_contract();
+
+        let category = "category".to_string();
+        let total_value = 100;
+
+        let investment_id = create_investment_id(category.clone(), TOKEN_ACCOUNT.to_string());
+
+        contract.schemas.insert(
+            &category,
+            &schema::Schema {
+                category: category.clone(),
+                allocated_quantity: 0,
+                total_quantity: total_value,
+                initial_release: 10,
+                cliff_release: 10,
+                final_release: 80,
+                initial_timestamp: 0,
+                cliff_delta: 100,
+                final_delta: 100,
+                curve_type: schema::CurveType::Linear { discrete_period: 1 },
+                investments: Vec::new(),
+            },
+        );
+
+        let first_withdrawal = 10;
+        let second_withdrawal = 10;
+        contract.investments.insert(
+            &investment_id,
+            &investment::Investment {
+                account: TOKEN_ACCOUNT.to_string(),
+                total_value,
+                withdrawn_value: first_withdrawal,
+                date_in: None,
+            },
+        );
+        contract.owner_withdraw_investments(
+            U128(second_withdrawal),
+            category.clone(),
+            TOKEN_ACCOUNT.to_string(),
+        );
+        assert_eq!(
+            contract
+                .investments
+                .get(&investment_id)
+                .unwrap()
+                .withdrawn_value,
+            first_withdrawal + second_withdrawal
+        );
     }
 }

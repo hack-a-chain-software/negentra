@@ -206,11 +206,10 @@ mod tests {
         contract.withdraw_your_investments(U128(total_value + 1), category);
     }
 
-    // (5) Persist the total amount of funds that have been withdrawn from a given Investment;
     #[test]
     fn test_withdraw_your_investments_5() {
         // Asserts:
-        // (4) Assert that the investor has enough vested funds to withdraw;
+        // (5) Persist the total amount of funds that have been withdrawn from a given Investment;
         let context = get_context(
             vec![],
             false,
