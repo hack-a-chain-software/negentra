@@ -9,9 +9,11 @@ pub mod ext_interface;
 pub mod investment;
 pub mod schema;
 pub mod utils;
+pub mod events;
 
 use crate::errors::{ERR_001, ERR_002, ERR_003, ERR_004, ERR_005, ERR_006, ERR_007};
 use crate::utils::{create_investment_id, split_investment_id};
+use crate::events::{event_create_investment, event_create_schema};
 
 use investment::Investment;
 use schema::{CurveType, Schema};
@@ -92,6 +94,7 @@ impl Contract {
         );
 
         self.schemas.insert(&category, &schema);
+        event_create_schema(category.as_str(), total_quantity.to_string().as_str());
     }
 
     pub fn new_investment(
@@ -112,9 +115,11 @@ impl Contract {
         schema.investments.push(investment_id.clone());
         let allocated_quantity = schema.allocated_quantity + total_value.0;
         assert!(allocated_quantity <= schema.total_quantity, "{}", ERR_004);
-        let investment = Investment::new(account, total_value.0, date_in.map(|v| v.0));
+        let investment = Investment::new(account.clone(), total_value.0, date_in.map(|v| v.0));
         self.investments.insert(&investment_id, &investment);
         self.schemas.insert(&category, &schema);
+
+        event_create_investment(category.as_str(), account.as_str(), total_value.0.to_string().as_str(), date_in.map(|v| v.0));
     }
 
     pub fn calculate_available_withdraw(

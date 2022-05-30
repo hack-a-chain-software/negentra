@@ -8,5 +8,5 @@ trait FungibleToken {
 
 #[ext_contract(ext_self)]
 trait LogInfo {
-    fn undo_transfer(value_to_return: U128, investment_id: String);
+    fn undo_transfer(value_to_return: U128, investment_id: String, required_by: String);
 }

@@ -135,6 +135,7 @@ impl Contract {
         .then(ext_self::undo_transfer(
             value_to_withdraw,
             investment_id,
+            self.owner.clone(),
             &env::current_account_id(),
             0,
             BASE_GAS,
