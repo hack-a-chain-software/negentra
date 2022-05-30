@@ -308,6 +308,7 @@ impl NonFungibleToken {
         (owner_id, approved_account_ids)
     }
 
+    #[allow(unused_variables)]
     pub fn internal_mint(
         &mut self,
         token_id: TokenId,
