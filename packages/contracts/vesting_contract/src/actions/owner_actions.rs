@@ -168,7 +168,7 @@ mod tests {
         // (5) Create a new Schema instance in the self.schemas UnorderedMap with the data from msg and
         //     total_quantity equal to the transferred amount of tokens;
         // (6) Return U128(0) after a succesful run;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -235,7 +235,7 @@ mod tests {
     fn test_ft_on_tranfer_1() {
         // Asserts:
         // (1) Assert that tokens transferred where from self.token_contract;
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -250,7 +250,7 @@ mod tests {
     fn test_ft_on_tranfer_2() {
         // Asserts:
         // (2) Assert that initializor of the transfer was self.owner;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -264,7 +264,7 @@ mod tests {
     fn test_ft_on_tranfer_3() {
         // Asserts:
         // (3) Assert that cliff_release + final_release + final_delta equal FRACTION_BASE;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -303,7 +303,7 @@ mod tests {
     fn test_ft_on_tranfer_4() {
         // Asserts:
         // (4) Assert that msg is correctly formatted;
-        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -338,7 +338,7 @@ mod tests {
     fn test_create_investment_6() {
         // Asserts:
         // (6) Create Investment instance and persist it in self.investments at investment_id key
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -393,7 +393,7 @@ mod tests {
     fn test_create_investment_1() {
         // Asserts:
         // (1) Assert that initializor of the transaction was self.owner;
-        let context = get_context(vec![], false, 1, 0, TOKEN_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 1, 0, TOKEN_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -413,7 +413,7 @@ mod tests {
     fn test_create_investment_2() {
         // Asserts:
         // (2) Assert that caller deposited 1 yoctoNear
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -433,7 +433,7 @@ mod tests {
     fn test_create_investment_3() {
         // Asserts:
         // (3) Assert that the schema associated with the new investment exists;
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -454,7 +454,7 @@ mod tests {
         // Asserts:
         // (4) Assert that the total_value allocated to the investment is within the
         //     availability of the schema;
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -497,7 +497,7 @@ mod tests {
     fn test_create_investment_5() {
         // Asserts:
         // (5) Assert that there is no existing Investment with the same id;
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
 
         let mut contract = init_contract();

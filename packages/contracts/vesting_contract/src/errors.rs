@@ -19,7 +19,7 @@ pub(crate) const ERR_004: &str =
 
 pub(crate) const ERR_005: &str = "Vesting: Contract: Schema: Schema does not exist";
 
-pub(crate) const ERR_006: &str = "Vesting: Contract: Investment: Investment does not exist ";
+pub(crate) const ERR_006: &str = "Vesting: Contract: Investment: Investment does not exist";
 
 pub(crate) const ERR_007: &str =
     "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
@@ -62,13 +62,13 @@ pub(crate) const ERR_303: &str =
 
 pub(crate) const ERR_304: &str =
     "Vesting: Owner Actions: owner_withdraw_investments: Not enough gas was attatched on the transaction  - attach at least
-    150 Tgas ";
+    150 Tgas";
 
 pub(crate) const ERR_401: &str =
-    "Vesting: Investor Actions: view_investments: Investment does not exist ";
+    "Vesting: Investor Actions: view_investments: Investment does not exist";
 
 pub(crate) const ERR_402: &str =
-    "Vesting: Investor Actions: view_investments: Schema does not exist ";
+    "Vesting: Investor Actions: view_investments: Schema does not exist";
 
 pub(crate) const ERR_403: &str =
     "Vesting: Investor Actions: withdraw_your_investments: Not enough gas was attatched on the transaction  - attach at least

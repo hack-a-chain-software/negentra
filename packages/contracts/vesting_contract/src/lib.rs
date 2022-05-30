@@ -206,6 +206,7 @@ mod tests {
         account_balance: u128,
         signer_id: AccountId,
         block_timestamp: u64,
+        prepaid_gas: u64
     ) -> VMContext {
         VMContext {
             current_account_id: CONTRACT_ACCOUNT.to_string(),
@@ -219,7 +220,7 @@ mod tests {
             account_locked_balance: 0,
             storage_usage: 0,
             attached_deposit,
-            prepaid_gas: 10u64.pow(18),
+            prepaid_gas,
             random_seed: vec![0, 1, 2],
             is_view,
             output_data_receivers: vec![],
@@ -237,7 +238,7 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18)); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
         testing_env!(context);
 
         let contract = Contract::new(OWNER_ACCOUNT.to_string(), TOKEN_ACCOUNT.to_string());
@@ -248,7 +249,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "The contract is not initialized")]
     fn test_default() {
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
         let _contract = Contract::default();
     }
@@ -259,7 +260,7 @@ mod tests {
         // in case of refactoring you can safely disregard this test and erase it
         // Asserts that calculate_available_withdraw method of Contract is calculating the correct
         // amount.
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
         testing_env!(context);
         let mut contract = init_contract();
         let total_quantity: u128 = 1_000_000_000;
