@@ -2,6 +2,7 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, UnorderedMap};
 use near_sdk::json_types::{U128, U64};
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault};
+use near_sdk::serde::{Serialize, Deserialize};
 
 pub mod actions;
 pub mod errors;

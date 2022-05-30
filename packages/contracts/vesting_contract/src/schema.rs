@@ -1,7 +1,7 @@
 use crate::errors::{ERR_101, ERR_102, ERR_103};
 use crate::*;
 
-#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialEq, Debug)]
 pub struct Schema {
     pub category: String,
     pub allocated_quantity: u128, // how many tokens from this schema were already 'locked'
@@ -16,7 +16,7 @@ pub struct Schema {
     pub investments: Vec<String>,
 }
 
-#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialEq, Debug)]
 pub enum CurveType {
     Linear { discrete_period: u64 },
 }

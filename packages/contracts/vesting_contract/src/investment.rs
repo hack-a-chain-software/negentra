@@ -1,7 +1,7 @@
 use crate::errors::ERR_201;
 use crate::*;
 
-#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug)]
+#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, PartialEq, Debug)]
 pub struct Investment {
     pub account: AccountId,
     pub total_value: u128, // all the tokens avalible for this investor -  wont change
