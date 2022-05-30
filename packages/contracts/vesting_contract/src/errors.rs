@@ -14,29 +14,30 @@ pub(crate) const ERR_003: &str =
 
 pub(crate) const ERR_004: &str =
     "Vesting: Contract: new_investment: The allocated amount for this investment 
-is greater than the amount of tokens available on that  schema category:  
-(schema.aloccated_quantity + total_value) MUST be SMALLER then or EQUAL to schema.total_value ";
+    is greater than the amount of tokens available on that  schema category:  
+    (schema.aloccated_quantity + total_value) MUST be SMALLER then or EQUAL to schema.total_value";
 
-pub(crate) const ERR_005: &str = "Vesting: Contract: Schema: Schema does not exist ";
+pub(crate) const ERR_005: &str = "Vesting: Contract: Schema: Schema does not exist";
 
 pub(crate) const ERR_006: &str = "Vesting: Contract: Investment: Investment does not exist ";
 
 pub(crate) const ERR_007: &str =
     "Vesting: Contract: withdraw_investment: The value you are trying to withdraw is greater then 
-    this investment's balance ";
+    this investment's balance";
 
-pub(crate) const ERR_101: &str = "Vesting: Schema: Cannot create schema:  sum of 
-initial_release + cliff_release + final_release  MUST be equal to FRACTION_BASE "; //padrao constante de string
+pub(crate) const ERR_101: &str = 
+    "Vesting: Schema: Cannot create schema: sum of
+    initial_release + cliff_release + final_release  MUST be equal to FRACTION_BASE";
 
 pub(crate) const ERR_102: &str = "Vesting: Schema: CurveType: Return formula for this 
-curve type variant has not been implemented yet"; //padrao constante de string
+curve type variant has not been implemented yet";
 
 pub(crate) const ERR_103: &str = "Vesting: Schema: change_schema: The schema's new 
 total value cannot be SMALLER then the value that is already allocated for this schema 
-(total_value >= self.allocated_value)"; //padrao constante de string
+(total_value >= self.allocated_value)";
 
 pub(crate) const ERR_201: &str = "Vesting: Schema: Cannot withdraw value:  sum of 
-self.withdrawn_value + value_to_withdraw  MUST be SMALLER or EQUAL to self.total_value "; //padrao constante de string
+self.withdrawn_value + value_to_withdraw  MUST be SMALLER or EQUAL to self.total_value ";
 
 pub(crate) const ERR_301: &str =
     "Actions: owner_actions:ft_on_transfer: function is private to owner";
@@ -45,7 +46,8 @@ pub(crate) const ERR_302: &str =
     "Actions: owner_actions:ft_on_transfer: only the vesting token contract can be used 
     - no other token can be used on this contract";
 
-pub(crate) const ERR_303: &str = r#"Actions: owner_actions:ft_on_transfer: Cannot parse the message - please use the following format: 
+pub(crate) const ERR_303: &str = 
+    r#"Actions: owner_actions:ft_on_transfer: Cannot parse the message - please use the following format: 
     {
         "category": " ",
         "initial_release" : " ",

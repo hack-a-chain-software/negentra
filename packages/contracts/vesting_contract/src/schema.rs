@@ -16,7 +16,7 @@ pub struct Schema {
     pub investments: Vec<String>,
 }
 
-#[derive(BorshSerialize, BorshDeserialize)]
+#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug)]
 pub enum CurveType {
     Linear { discrete_period: u64 },
 }
@@ -33,8 +33,7 @@ impl CurveType {
             CurveType::Linear { discrete_period } => {
                 let discrete_elapsed = elapsed_curve_time as u128 / *discrete_period as u128;
                 let discrete_final = final_delta as u128 / *discrete_period as u128;
-                let percentage_elapsed =
-                    ( discrete_elapsed * FRACTION_BASE) / discrete_final;
+                let percentage_elapsed = (discrete_elapsed * FRACTION_BASE) / discrete_final;
 
                 (cliff_release * percentage_elapsed) / FRACTION_BASE
             }
@@ -55,9 +54,8 @@ impl Schema {
         final_delta: u64,
         curve_type: CurveType,
     ) -> Self {
-        assert_eq!(
-            (initial_release + cliff_release + final_release),
-            FRACTION_BASE,
+        assert!(
+            (initial_release + cliff_release + final_release) == FRACTION_BASE,
             "{}",
             ERR_101
         );
@@ -73,7 +71,7 @@ impl Schema {
             cliff_delta,
             final_delta,
             curve_type,
-            investments: Vec::new()
+            investments: Vec::new(),
         }
     }
 
@@ -123,26 +121,40 @@ mod tests {
         // correct result for the Linear variant
         let one_day: u64 = 1_000_000_000 * 60 * 60 * 24;
 
-        let curve_type: CurveType = CurveType::Linear{ discrete_period: one_day * 3 };
+        let curve_type: CurveType = CurveType::Linear {
+            discrete_period: one_day * 3,
+        };
 
         let final_delta = one_day * 360;
         let cliff_release = 100;
         let elapsed_curve_time = one_day * 10;
-        assert_eq!(curve_type.calculate_curve_return(final_delta, cliff_release, elapsed_curve_time), 2);
+        assert_eq!(
+            curve_type.calculate_curve_return(final_delta, cliff_release, elapsed_curve_time),
+            2
+        );
 
-        let curve_type2: CurveType = CurveType::Linear{ discrete_period: one_day * 30 };
+        let curve_type2: CurveType = CurveType::Linear {
+            discrete_period: one_day * 30,
+        };
 
         let final_delta2 = one_day * 90;
         let cliff_release2 = 100;
         let elapsed_curve_time2 = one_day * 45;
-        assert_eq!(curve_type2.calculate_curve_return(final_delta2, cliff_release2, elapsed_curve_time2), 33);
+        assert_eq!(
+            curve_type2.calculate_curve_return(final_delta2, cliff_release2, elapsed_curve_time2),
+            33
+        );
 
-        let curve_type3: CurveType = CurveType::Linear{ discrete_period: one_day * 30 };
+        let curve_type3: CurveType = CurveType::Linear {
+            discrete_period: one_day * 30,
+        };
 
         let final_delta3 = one_day * 150;
         let cliff_release3 = 100;
         let elapsed_curve_time3 = one_day * 149;
-        assert_eq!(curve_type3.calculate_curve_return(final_delta3, cliff_release3, elapsed_curve_time3), 80);
+        assert_eq!(
+            curve_type3.calculate_curve_return(final_delta3, cliff_release3, elapsed_curve_time3),
+            80
+        );
     }
-
 }

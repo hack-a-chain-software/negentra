@@ -79,7 +79,7 @@ impl Contract {
         if curve_type == "Linear" {
             curve = CurveType::Linear { discrete_period };
         } else {
-            panic!("Curve tyoe not supported. Currently, only curve type available is: 'Linear'");
+            panic!("Curve type not supported. Currently, only curve type available is: 'Linear'");
         }
 
         self.new_schema(
@@ -97,6 +97,7 @@ impl Contract {
         U128(0)
     }
 
+    #[payable]
     pub fn create_investment(
         &mut self,
         category: String,
@@ -105,6 +106,7 @@ impl Contract {
         date_in: Option<U64>,
     ) {
         //validate that the sender is the contract owner
+        assert_one_yocto();
         self.only_owner();
         self.new_investment(category, account, total_value, date_in);
     }
@@ -140,5 +142,403 @@ impl Contract {
             0,
             BASE_GAS,
         ))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::*;
+    use crate::*;
+
+    use serde_json::json;
+
+    // ft_on_transfer TEST_SUITE
+    // Asserts the correct behaviour of ft_on_transfer.
+    // Method must:
+    // (1) Assert that tokens transferred where from self.token_contract;
+    // (2) Assert that initializor of the transfer was self.owner;
+    // (3) Assert that cliff_release + final_release + final_delta equal FRACTION_BASE;
+    // (4) Assert that msg is correctly formatted;
+    // (5) Create a new Schema instance in the self.schemas UnorderedMap with the data from msg and
+    //     total_quantity equal to the transferred amount of tokens;
+    // (6) Return U128(0) after a succesful run;
+    #[test]
+    fn test_ft_on_tranfer_5_6() {
+        // Asserts:
+        // (5) Create a new Schema instance in the self.schemas UnorderedMap with the data from msg and
+        //     total_quantity equal to the transferred amount of tokens;
+        // (6) Return U128(0) after a succesful run;
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let transfer_amount: u128 = 10;
+
+        let category = "category_test".to_string();
+        let initial_release = "1000".to_string();
+        let cliff_release = "5000".to_string();
+        let final_release = "4000".to_string();
+        let initial_timestamp = "10000".to_string();
+        let cliff_delta = "100".to_string();
+        let final_delta = "100".to_string();
+        let curve_type = "Linear".to_string();
+        let discrete_period = "1".to_string();
+        let msg = json!({
+            "category": category,
+            "initial_release" : initial_release,
+            "cliff_release" : cliff_release,
+            "final_release": final_release,
+            "initial_timestamp": initial_timestamp,
+            "cliff_delta" : cliff_delta,
+            "final_delta" : final_delta,
+            "curve_type" : curve_type,
+            "discrete_period": discrete_period
+        })
+        .to_string();
+
+        let return_val =
+            contract.ft_on_transfer(OWNER_ACCOUNT.to_string(), U128(transfer_amount), msg);
+
+        //(5) asserts creation fo schema with correct data
+        let schema;
+        if let Some(value) = contract.schemas.get(&category) {
+            schema = value;
+        } else {
+            panic!("Schema was not created succesfully");
+        }
+
+        assert_eq!(schema.category, category);
+        assert_eq!(schema.allocated_quantity, 0);
+        assert_eq!(schema.total_quantity, transfer_amount);
+        assert_eq!(schema.initial_release, initial_release.parse().unwrap());
+        assert_eq!(schema.cliff_release, cliff_release.parse().unwrap());
+        assert_eq!(schema.final_release, final_release.parse().unwrap());
+        assert_eq!(schema.cliff_delta, cliff_delta.parse::<u64>().unwrap());
+        assert_eq!(schema.final_delta, final_delta.parse::<u64>().unwrap());
+        assert_eq!(
+            schema.curve_type,
+            schema::CurveType::Linear {
+                discrete_period: discrete_period.parse().unwrap()
+            }
+        );
+
+        //(6) asserts that function returns 0 so that interaction with token contract goes correctly
+        assert_eq!(return_val, U128(0));
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "Actions: owner_actions:ft_on_transfer: only the vesting token contract can be used 
+    - no other token can be used on this contract"
+    )]
+    fn test_ft_on_tranfer_1() {
+        // Asserts:
+        // (1) Assert that tokens transferred where from self.token_contract;
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.ft_on_transfer(OWNER_ACCOUNT.to_string(), U128(10), "msg".to_string());
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "Actions: owner_actions:ft_on_transfer: function is private to owner"
+    )]
+    fn test_ft_on_tranfer_2() {
+        // Asserts:
+        // (2) Assert that initializor of the transfer was self.owner;
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.ft_on_transfer(TOKEN_ACCOUNT.to_string(), U128(10), "msg".to_string());
+    }
+
+    #[test]
+    #[should_panic(expected = "Vesting: Schema: Cannot create schema: sum of
+    initial_release + cliff_release + final_release  MUST be equal to FRACTION_BASE")]
+    fn test_ft_on_tranfer_3() {
+        // Asserts:
+        // (3) Assert that cliff_release + final_release + final_delta equal FRACTION_BASE;
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let msg = json!({
+            "category": "category".to_string(),
+            "initial_release" : "4000".to_string(),
+            "cliff_release" : "4000".to_string(),
+            "final_release": "4000".to_string(),
+            "initial_timestamp": "10000".to_string(),
+            "cliff_delta" : "100".to_string(),
+            "final_delta" : "100".to_string(),
+            "curve_type" : "Linear".to_string(),
+            "discrete_period": "1".to_string()
+        })
+        .to_string();
+
+        contract.ft_on_transfer(OWNER_ACCOUNT.to_string(), U128(10), msg);
+    }
+
+    #[test]
+    #[should_panic(
+        expected = r#"Actions: owner_actions:ft_on_transfer: Cannot parse the message - please use the following format: 
+    {
+        "category": " ",
+        "initial_release" : " ",
+        "cliff_release" : " ", 
+        "final_release": " ",
+        "initial_timestamp": " ",
+        "cliff_delta" : " ",
+        "final_delta" : " ",
+        "curve_type" : " ",
+        "discrete_period": " "
+    }"#
+    )]
+    fn test_ft_on_tranfer_4() {
+        // Asserts:
+        // (4) Assert that msg is correctly formatted;
+        let context = get_context(vec![], false, 0, 0, TOKEN_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let msg = json!({
+            "category": "category",
+            "initial_release" : "4000",
+            "cliff_release" : "4000",
+            "final_release": "4000",
+            "initial_timestamp": "10000",
+            "cliff_delta" : 100,
+            "final_delta" : "100",
+            "curve_type" : "Linear",
+            "discrete_period": "1"
+        })
+        .to_string();
+
+        contract.ft_on_transfer(OWNER_ACCOUNT.to_string(), U128(10), msg);
+    }
+
+    // create_investment TEST_SUITE
+    // Asserts the correct behaviour of create_investment.
+    // Method must:
+    // (1) Assert that initializor of the transaction was self.owner;
+    // (2) Assert that caller deposited 1 yoctoNear
+    // (3) Assert that the schema associated with the new investment exists;
+    // (4) Assert that the total_value allocated to the investment is within the
+    //     availability of the schema;
+    // (5) Assert that there is no existing Investment with the same id;
+    // (6) Create Investment instance and persist it in self.investments at investment_id key
+    #[test]
+    fn test_create_investment_6() {
+        // Asserts:
+        // (6) Create Investment instance and persist it in self.investments at investment_id key
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let category = "category".to_string();
+        let account = "account".to_string();
+        let total_value = 100;
+        let date_in = None;
+
+        let investment_id = create_investment_id(category.clone(), account.clone());
+
+        contract.schemas.insert(
+            &category,
+            &schema::Schema {
+                category: category.clone(),
+                allocated_quantity: 0,
+                total_quantity: total_value,
+                initial_release: 10,
+                cliff_release: 10,
+                final_release: 80,
+                initial_timestamp: 0,
+                cliff_delta: 100,
+                final_delta: 100,
+                curve_type: schema::CurveType::Linear { discrete_period: 1 },
+                investments: Vec::new(),
+            },
+        );
+
+        contract.create_investment(
+            category.clone(),
+            account.clone(),
+            U128(total_value),
+            date_in,
+        );
+
+        let investment;
+
+        if let Some(value) = contract.investments.get(&investment_id) {
+            investment = value;
+        } else {
+            panic!("Investment was not created succesfuly");
+        }
+
+        assert_eq!(investment.account, account);
+        assert_eq!(investment.total_value, total_value);
+        assert_eq!(investment.withdrawn_value, 0);
+        assert_eq!(investment.date_in, date_in.map(|v| v.0));
+    }
+
+    #[test]
+    #[should_panic(expected = "Vesting: Contract: function is private to owner")]
+    fn test_create_investment_1() {
+        // Asserts:
+        // (1) Assert that initializor of the transaction was self.owner;
+        let context = get_context(vec![], false, 1, 0, TOKEN_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.create_investment(
+            "category".to_string(),
+            "account".to_string(),
+            U128(100),
+            None,
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "assertion failed: `(left == right)`\n  left: `0`,\n right: `1`: Requires attached deposit of exactly 1 yoctoNEAR"
+    )]
+    fn test_create_investment_2() {
+        // Asserts:
+        // (2) Assert that caller deposited 1 yoctoNear
+        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.create_investment(
+            "category".to_string(),
+            "account".to_string(),
+            U128(100),
+            None,
+        );
+    }
+
+    #[test]
+    #[should_panic(
+        expected = "Vesting: Contract: Schema: Schema does not exist"
+    )]
+    fn test_create_investment_3() {
+        // Asserts:
+        // (3) Assert that the schema associated with the new investment exists;
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.create_investment(
+            "category".to_string(),
+            "account".to_string(),
+            U128(100),
+            None,
+        );
+    }
+
+    #[test]
+    #[should_panic( expected = "Vesting: Contract: new_investment: The allocated amount for this investment 
+    is greater than the amount of tokens available on that  schema category:  
+    (schema.aloccated_quantity + total_value) MUST be SMALLER then or EQUAL to schema.total_value")]
+    fn test_create_investment_4() {
+        // Asserts:
+        // (4) Assert that the total_value allocated to the investment is within the
+        //     availability of the schema;
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let category = "category".to_string();
+        let account = "account".to_string();
+        let total_value = 100;
+        let date_in = None;
+
+        contract.schemas.insert(
+            &category,
+            &schema::Schema {
+                category: category.clone(),
+                allocated_quantity: 0,
+                total_quantity: total_value,
+                initial_release: 10,
+                cliff_release: 10,
+                final_release: 80,
+                initial_timestamp: 0,
+                cliff_delta: 100,
+                final_delta: 100,
+                curve_type: schema::CurveType::Linear { discrete_period: 1 },
+                investments: Vec::new(),
+            },
+        );
+
+        contract.create_investment(
+            category.clone(),
+            account.clone(),
+            U128(total_value + 1),
+            date_in,
+        );
+
+    }
+
+    
+    #[test]
+    #[should_panic( expected = "Vesting: Contract: new_investment: There is already an Investment with this ID 
+    (it uses the same schema and same acconunt)")]
+    fn test_create_investment_5() {
+        // Asserts:
+        // (5) Assert that there is no existing Investment with the same id;
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0);
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let category = "category".to_string();
+        let account = "account".to_string();
+        let total_value = 100;
+        let date_in = None;
+
+        let investment_id = create_investment_id(category.clone(), account.clone());
+
+        contract.schemas.insert(
+            &category,
+            &schema::Schema {
+                category: category.clone(),
+                allocated_quantity: 0,
+                total_quantity: total_value,
+                initial_release: 10,
+                cliff_release: 10,
+                final_release: 80,
+                initial_timestamp: 0,
+                cliff_delta: 100,
+                final_delta: 100,
+                curve_type: schema::CurveType::Linear { discrete_period: 1 },
+                investments: Vec::new(),
+            },
+        );
+
+        contract.investments.insert(&investment_id, &investment::Investment {
+            account: account.clone(),
+            total_value,
+            withdrawn_value: 0,
+            date_in: None
+        });
+
+        contract.create_investment(
+            category.clone(),
+            account.clone(),
+            U128(total_value),
+            date_in,
+        );
+
     }
 }

@@ -111,7 +111,7 @@ impl Contract {
             ERR_003
         );
 
-        let mut schema = self.schemas.get(&category).expect(ERR_002);
+        let mut schema = self.schemas.get(&category).expect(ERR_005);
         schema.investments.push(investment_id.clone());
         let allocated_quantity = schema.allocated_quantity + total_value.0;
         assert!(allocated_quantity <= schema.total_quantity, "{}", ERR_004);
