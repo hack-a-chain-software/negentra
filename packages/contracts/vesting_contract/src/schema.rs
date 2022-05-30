@@ -1,7 +1,7 @@
 use crate::errors::{ERR_101, ERR_102, ERR_103};
 use crate::*;
 
-#[derive(BorshSerialize, BorshDeserialize)]
+#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug)]
 pub struct Schema {
     pub category: String,
     pub allocated_quantity: u128, // how many tokens from this schema were already 'locked'

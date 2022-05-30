@@ -312,7 +312,7 @@ mod tests {
             schema.cliff_release,
             30_000,
         );
-        println!("{}", curve_percentage);
+        
         assert_eq!(
             contract.calculate_available_withdraw(130_000, investment_id.clone()),
             ((initial_release * total_quantity) + (curve_percentage * total_quantity))
