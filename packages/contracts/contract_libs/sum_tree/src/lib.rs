@@ -1,6 +1,6 @@
 use std::cmp::{PartialEq, PartialOrd};
 use std::collections::BTreeMap;
-use std::ops::{Add, Sub};
+use std::ops::{Add, Sub, SubAssign};
 
 #[derive(Debug)]
 pub struct SumTree<Tree, Vector, Map, InverseMap> {
@@ -22,7 +22,7 @@ enum Operation {
 
 impl<Value, Id> SumTree<BTreeMap<u64, Value>, Vec<u64>, BTreeMap<u64, Id>, BTreeMap<Id, u64>>
 where
-    Value: PartialOrd + PartialEq + Copy + Add<Output = Value> + Sub<Output = Value>,
+    Value: PartialOrd + PartialEq + Copy + Add<Output = Value> + Sub<Output = Value> + SubAssign,
     Id: Ord + Copy,
 {
     pub fn new() -> Self {
@@ -122,6 +122,34 @@ where
     pub fn root(&self) -> Option<Value> {
         self.get(&ROOT_INDEX)
     }
+
+    pub fn find(&self, value: Value) -> Option<Id> {
+        let mut index = ROOT_INDEX;
+        let mut value = value;
+
+        loop {
+            let node_value = match self.get(&index) {
+                None => break,
+                Some(v) => v,
+            };
+
+            if value <= node_value {
+                match self.leaf_map.get(&index) {
+                    None => {
+                        index -= lsz(index) >> 1; // left-child
+                    }
+                    Some(&id) => return Some(id),
+                }
+            } else if lsz(index) != !index {
+                value -= node_value;
+                index += breadth_step(index);
+            } else {
+                break; // value is greater than root
+            }
+        }
+
+        None
+    }
 }
 
 const fn next_index(index: u64) -> u64 {
@@ -177,6 +205,11 @@ const fn breadth_step(v: u64) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    enum OP {
+        Insert,
+        Remove,
+    }
 
     #[test]
     fn test_lsz() {
@@ -238,10 +271,6 @@ mod tests {
 
     #[test]
     fn test_sum_property() {
-        enum OP {
-            Insert,
-            Remove,
-        }
         const OPS: [(OP, u64); 12] = [
             (OP::Insert, 3),
             (OP::Insert, 3),
@@ -304,6 +333,46 @@ mod tests {
                     }
                     Some(_) => (),
                 }
+            }
+        }
+    }
+
+    #[test]
+    fn test_find() {
+        let table: Vec<(Vec<u64>, u64)> = vec![
+            (vec![1, 2, 3], 6),
+            (vec![4, 7, 5], 16),
+            (vec![1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 10),
+            (vec![1, 1, 1000, 1, 1, 1, 1, 1], 1007),
+        ];
+
+        for (nodes, sum) in table {
+            assert_eq!(nodes.iter().sum::<u64>(), sum);
+
+            let mut tree = SumTree::<
+                BTreeMap<u64, u64>,
+                Vec<u64>,
+                BTreeMap<u64, u64>,
+                BTreeMap<u64, u64>,
+            >::new();
+
+            let mut id = 0;
+            for &node in &nodes {
+                tree.insert(id, node);
+                id += 1;
+            }
+            let mut occurrences = vec![0; nodes.len()];
+            for value in 1..sum + 1 {
+                let selected_id = match tree.find(value) {
+                    None => panic!(),
+                    Some(id) => id,
+                };
+
+                occurrences[selected_id as usize] += 1;
+            }
+
+            for (i, &v) in nodes.iter().enumerate() {
+                assert_eq!(v, occurrences[i]);
             }
         }
     }
