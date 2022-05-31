@@ -62,6 +62,13 @@ where
         index
     }
 
+    fn get_index(&self, index: &u64) -> Option<Value> {
+        match self.tree.get(&index) {
+            None => None,
+            Some(&v) => Some(v),
+        }
+    }
+
     pub fn insert(&mut self, id: Id, value: Value) {
         let index = if self.dead_leaves.len() == 0 {
             self.shift_index()
@@ -112,7 +119,12 @@ where
         self.dead_leaves.push(index);
     }
 
-    pub fn get(&self, index: &u64) -> Option<Value> {
+    pub fn get(&self, id: Id) -> Option<Value> {
+        let index = match self.index_map.get(&id) {
+            None => return None,
+            Some(&v) => v,
+        };
+
         match self.tree.get(&index) {
             None => None,
             Some(&v) => Some(v),
@@ -120,7 +132,7 @@ where
     }
 
     pub fn root(&self) -> Option<Value> {
-        self.get(&ROOT_INDEX)
+        self.get_index(&ROOT_INDEX)
     }
 
     pub fn find(&self, value: Value) -> Option<Id> {
@@ -128,7 +140,7 @@ where
         let mut value = value;
 
         loop {
-            let node_value = match self.get(&index) {
+            let node_value = match self.get_index(&index) {
                 None => break,
                 Some(v) => v,
             };
@@ -362,6 +374,7 @@ mod tests {
                 tree.insert(id, node);
                 id += 1;
             }
+
             let mut occurrences = vec![0; nodes.len()];
             for value in 1..sum + 1 {
                 let selected_id = match tree.find(value) {
