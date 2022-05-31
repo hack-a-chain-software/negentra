@@ -3,13 +3,13 @@ use std::collections::BTreeMap;
 use std::ops::{Add, Sub};
 
 #[derive(Debug)]
-pub struct SumTree<T, L, I> {
+pub struct SumTree<Tree, Vector, Map, InverseMap> {
     index: u64,
-    dead_leaves: Vec<u64>,
+    dead_leaves: Vector,
 
-    tree: T,
-    leaf_map: L,
-    index_map: I,
+    tree: Tree,
+    leaf_map: Map,
+    index_map: InverseMap,
 }
 
 const ROOT_INDEX: u64 = u64::MAX >> 1;
@@ -20,10 +20,10 @@ enum Operation {
     Subtraction,
 }
 
-impl<V, I> SumTree<BTreeMap<u64, V>, BTreeMap<u64, I>, BTreeMap<I, u64>>
+impl<Value, Id> SumTree<BTreeMap<u64, Value>, Vec<u64>, BTreeMap<u64, Id>, BTreeMap<Id, u64>>
 where
-    V: PartialOrd + PartialEq + Copy + Add<Output = V> + Sub<Output = V>,
-    I: Ord + Copy,
+    Value: PartialOrd + PartialEq + Copy + Add<Output = Value> + Sub<Output = Value>,
+    Id: Ord + Copy,
 {
     pub fn new() -> Self {
         Self {
@@ -35,7 +35,7 @@ where
         }
     }
 
-    fn update_branch(&mut self, from_index: u64, value: V, op: Operation) {
+    fn update_branch(&mut self, from_index: u64, value: Value, op: Operation) {
         let mut parent_index = from_index;
 
         while parent_index != u64::MAX {
@@ -62,8 +62,12 @@ where
         index
     }
 
-    pub fn insert(&mut self, id: I, value: V) {
-        let index = self.dead_leaves.pop().unwrap_or(self.shift_index());
+    pub fn insert(&mut self, id: Id, value: Value) {
+        let index = if self.dead_leaves.len() == 0 {
+            self.shift_index()
+        } else {
+            self.dead_leaves.pop().unwrap()
+        };
 
         self.tree.insert(index, value);
         self.leaf_map.insert(index, id);
@@ -76,14 +80,11 @@ where
             Some(&parent_value) => match self.leaf_map.get(&parent_index) {
                 None => (),
                 Some(&parent_id) => {
-                    let sibling_index = next_index(index);
-                    self.index = next_index(sibling_index);
+                    let sibling_index = self.shift_index();
 
                     self.tree.insert(sibling_index, parent_value);
-
                     self.leaf_map.remove(&parent_index);
                     self.leaf_map.insert(sibling_index, parent_id);
-
                     self.index_map.insert(parent_id, sibling_index);
                 }
             },
@@ -92,7 +93,7 @@ where
         self.update_branch(parent_index, value, Operation::Sum);
     }
 
-    pub fn remove(&mut self, id: I) {
+    pub fn remove(&mut self, id: Id) {
         let index = match self.index_map.get(&id) {
             None => return,
             Some(&i) => i,
@@ -111,8 +112,15 @@ where
         self.dead_leaves.push(index);
     }
 
-    pub fn root(&self) -> V {
-        *self.tree.get(&ROOT_INDEX).unwrap()
+    pub fn get(&self, index: &u64) -> Option<Value> {
+        match self.tree.get(&index) {
+            None => None,
+            Some(&v) => Some(v),
+        }
+    }
+
+    pub fn root(&self) -> Option<Value> {
+        self.get(&ROOT_INDEX)
     }
 }
 
@@ -185,12 +193,11 @@ mod tests {
 
     #[test]
     fn test_parent() {
-        const TABLE: [(u64, u64); 5] = [
+        const TABLE: [(u64, u64); 4] = [
             (ROOT_INDEX >> 1, ROOT_INDEX),
             (ROOT_INDEX >> 2, ROOT_INDEX >> 1),
-            ((ROOT_INDEX >> 1) + (1 << 63), ROOT_INDEX),
-            (!(1 << 61), !(1 << 62)),
-            (!(1 << 61) - breadth_step(!(1 << 61)), !(1 << 62)),
+            (!(1 << 6), !(1 << 7)),
+            (!(1 << 6) - breadth_step(!(1 << 6)), !(1 << 7)),
         ];
 
         for (input, output) in TABLE {
@@ -209,23 +216,24 @@ mod tests {
 
     #[test]
     fn test_insert_and_remove() {
-        let mut tree = SumTree::<BTreeMap<u64, u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>>::new();
+        let mut tree =
+            SumTree::<BTreeMap<u64, u64>, Vec<u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>>::new();
 
         tree.insert(1, 15);
         tree.insert(2, 30);
         tree.insert(3, 45);
-        assert_eq!(tree.root(), 90);
+        assert_eq!(tree.root(), Some(90));
 
         tree.remove(1);
         assert_eq!(tree.dead_leaves.len(), 1);
-        assert_eq!(tree.root(), 75);
+        assert_eq!(tree.root(), Some(75));
 
-        tree.insert(427, 12);
+        tree.insert(20, 12);
         assert_eq!(tree.dead_leaves.len(), 0);
-        assert_eq!(tree.root(), 87);
+        assert_eq!(tree.root(), Some(87));
 
-        tree.insert(430, 3);
-        assert_eq!(tree.root(), 90);
+        tree.insert(25, 3);
+        assert_eq!(tree.root(), Some(90));
     }
 
     #[test]
@@ -234,21 +242,23 @@ mod tests {
             Insert,
             Remove,
         }
-        const OPS: [(OP, u64); 11] = [
+        const OPS: [(OP, u64); 12] = [
             (OP::Insert, 3),
             (OP::Insert, 3),
-            (OP::Insert, 123579845621),
+            (OP::Insert, 63),
             (OP::Insert, 7),
             (OP::Insert, 3),
             (OP::Remove, 5),
-            (OP::Remove, 1),
-            (OP::Insert, 428858),
+            (OP::Insert, 27),
             (OP::Remove, 2),
-            (OP::Insert, 342),
-            (OP::Insert, 124),
+            (OP::Remove, 1),
+            (OP::Insert, 30),
+            (OP::Insert, 78),
+            (OP::Insert, 40),
         ];
 
-        let mut tree = SumTree::<BTreeMap<u64, u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>>::new();
+        let mut tree =
+            SumTree::<BTreeMap<u64, u64>, Vec<u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>>::new();
         let mut id = 1;
 
         for (op, input) in OPS {
@@ -261,28 +271,39 @@ mod tests {
                     tree.remove(input);
                 }
             }
-        }
 
-        let mut queue: Vec<u64> = vec![ROOT_INDEX];
-        while queue.len() > 0 {
-            let index = queue.pop().unwrap();
-            match tree.leaf_map.get(&index) {
-                None => {
-                    let step = lsz(index) >> 1;
-                    let parent = match tree.tree.get(&index) {
-                        None => continue,
-                        Some(&v) => v,
-                    };
+            let mut queue: Vec<u64> = vec![ROOT_INDEX];
+            while queue.len() > 0 {
+                let index = queue.pop().unwrap();
+                match tree.leaf_map.get(&index) {
+                    None => {
+                        let step = lsz(index) >> 1;
+                        let parent = match tree.tree.get(&index) {
+                            None => continue,
+                            Some(&v) => {
+                                if v == 0 {
+                                    continue;
+                                } else {
+                                    v
+                                }
+                            }
+                        };
 
-                    let left_child = tree.tree[&(index - step)];
-                    let right_child = tree.tree[&(index + step)];
+                        let left_child = match tree.tree.get(&(index - step)) {
+                            None => 0,
+                            Some(&v) => v,
+                        };
+                        let right_child = match tree.tree.get(&(index + step)) {
+                            None => 0,
+                            Some(&v) => v,
+                        };
 
-                    assert_eq!(parent, left_child + right_child);
-
-                    queue.push(index - step);
-                    queue.push(index + step);
+                        assert_eq!(parent, left_child + right_child);
+                        queue.push(index - step);
+                        queue.push(index + step);
+                    }
+                    Some(_) => (),
                 }
-                Some(_) => (),
             }
         }
     }
