@@ -6,7 +6,7 @@ use std::ops::{Add, Sub, SubAssign};
 
 const ROOT_INDEX: u64 = u64::MAX >> 1;
 
-impl<Value, Id> SumTree<BTreeMap<u64, Value>, Vec<u64>, BTreeMap<u64, Id>, BTreeMap<Id, u64>>
+impl<Value, Id> SumTree<BTreeMap<u64, Value>, BTreeMap<u64, Id>, BTreeMap<Id, u64>, Vec<u64>>
 where
     Value: PartialOrd + PartialEq + Copy + Add<Output = Value> + Sub<Output = Value> + SubAssign,
     Id: Ord + Copy,
@@ -157,7 +157,7 @@ mod tests {
     #[test]
     fn test_insert_and_remove() {
         let mut tree =
-            SumTree::<BTreeMap<u64, u64>, Vec<u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>>::new();
+            SumTree::<BTreeMap<u64, u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>, Vec<u64>>::new();
 
         tree.insert(1, 15);
         tree.insert(2, 30);
@@ -194,7 +194,7 @@ mod tests {
         ];
 
         let mut tree =
-            SumTree::<BTreeMap<u64, u64>, Vec<u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>>::new();
+            SumTree::<BTreeMap<u64, u64>, BTreeMap<u64, u64>, BTreeMap<u64, u64>, Vec<u64>>::new();
         let mut id = 1;
 
         for (op, input) in OPS {
@@ -259,9 +259,9 @@ mod tests {
 
             let mut tree = SumTree::<
                 BTreeMap<u64, u64>,
+                BTreeMap<u64, u64>,
+                BTreeMap<u64, u64>,
                 Vec<u64>,
-                BTreeMap<u64, u64>,
-                BTreeMap<u64, u64>,
             >::new();
 
             let mut id = 0;

@@ -9,6 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 modified-contract-standards = { path = "../contract_libs/modified_contract_standards" }
+sum-tree = { path = "../contract_libs/sum_tree" }
 near-sdk = "3.1.0"
 serde = "1"
 serde_json = "1"

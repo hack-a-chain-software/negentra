@@ -1,5 +1,5 @@
 [package]
-name = "sum_tree"
+name = "sum-tree"
 version = "1.0.0"
 authors = ["Eduardo Bonilha <eduardo@hackachain.io>"]
 edition = "2021"
@@ -12,5 +12,3 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 near-sdk = "3.1.0"
 borsh = "0.8.1"
-
-[workspace]

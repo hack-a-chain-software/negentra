@@ -5,19 +5,19 @@ use near_sdk::IntoStorageKey;
 
 const ROOT_INDEX: u64 = u64::MAX >> 1;
 
-impl SumTree<LookupMap<u64, u64>, Vector<u64>, LookupMap<u64, u64>, LookupMap<u64, u64>> {
+impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vector<u64>> {
     pub fn new<T: IntoStorageKey>(
         tree_prefix: T,
-        vector_prefix: T,
         map_prefix: T,
         inverse_prefix: T,
+        vector_prefix: T,
     ) -> Self {
         Self {
             index: ROOT_INDEX,
-            dead_leaves: Vector::new(vector_prefix),
             tree: LookupMap::new(tree_prefix),
             leaf_map: LookupMap::new(map_prefix),
             index_map: LookupMap::new(inverse_prefix),
+            dead_leaves: Vector::new(vector_prefix),
         }
     }
 
@@ -181,9 +181,9 @@ mod tests {
 
         let mut tree = SumTree::<
             LookupMap<u64, u64>,
+            LookupMap<u64, u64>,
+            LookupMap<u64, u64>,
             Vector<u64>,
-            LookupMap<u64, u64>,
-            LookupMap<u64, u64>,
         >::new(0x0a, 0x0b, 0x0c, 0x0d);
         let mut id = 1;
 
@@ -251,9 +251,9 @@ mod tests {
 
             let mut tree = SumTree::<
                 LookupMap<u64, u64>,
+                LookupMap<u64, u64>,
+                LookupMap<u64, u64>,
                 Vector<u64>,
-                LookupMap<u64, u64>,
-                LookupMap<u64, u64>,
             >::new(0x0a, 0x0b, 0x0c, 0x0d);
 
             let mut id = 0;

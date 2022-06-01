@@ -11,6 +11,7 @@ use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::utils::assert_one_yocto;
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise};
 use std::collections::HashMap;
+use sum_tree::SumTree;
 
 use token_format::ItemType;
 
@@ -37,7 +38,9 @@ pub struct Contract {
 
     pub item_types: LookupMap<u64, ItemType>,
     pub item_count: u64,
-    pub random_minting: Vector<u64>,
+    pub item_amount_tree:
+        SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vector<u64>>,
+
     pub perpetual_royalties: HashMap<AccountId, u128>,
 
     pub mint_token: AccountId,
@@ -54,8 +57,11 @@ enum StorageKey {
     Enumeration,
     Approval,
     Royalties,
-    RandomMinting,
     ItemTypes,
+    ItemTree,
+    ItemTreeDeadLeaves,
+    ItemTreeLeaves,
+    ItemTreeIndexes,
 }
 
 #[near_bindgen]
@@ -83,7 +89,17 @@ impl Contract {
             metadata: LazyOption::new(StorageKey::Metadata, Some(&metadata)),
             item_types: LookupMap::new(StorageKey::ItemTypes),
             item_count: 0,
-            random_minting: Vector::new(StorageKey::RandomMinting),
+            item_amount_tree: SumTree::<
+                LookupMap<u64, u64>,
+                LookupMap<u64, u64>,
+                LookupMap<u64, u64>,
+                Vector<u64>,
+            >::new(
+                StorageKey::ItemTree,
+                StorageKey::ItemTreeLeaves,
+                StorageKey::ItemTreeIndexes,
+                StorageKey::ItemTreeDeadLeaves,
+            ),
             perpetual_royalties: HashMap::from([(royalties_account, royalties_value.0)]),
             mint_token,
             mint_cost: mint_cost.0,
