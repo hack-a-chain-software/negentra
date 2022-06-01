@@ -131,6 +131,7 @@ At last, the ``` FungibleTokenMetadata ``` ([reference](https://nomicon.io/Stand
 , that describes it. 
 
 This metadata has the following format:
+
 ```bash
 pub struct FungibleTokenMetadata {
     pub spec: String,
@@ -143,20 +144,24 @@ pub struct FungibleTokenMetadata {
 
 ```
 
-An implementing contract MUST include the following fields on-chain:
+An implementing contract **MUST** include the following fields on-chain:
+
 - ```spec```: a string. Should be ```ft-1.0.0``` to indicate that a Fungible Token contract adheres to the current versions of this Metadata and the Fungible Token Core specs. This will allow consumers of the Fungible Token to know if they support the features of a given contract
 - ```name```: the human-readable name of the token, E.g.: Bitcoin
 - ```symbol```: the abbreviation, E.g.: BTC
 - ```decimals```: used in frontends to show the proper significant digits of a token. This concept is explained well in this [OpenZeppelin](https://docs.openzeppelin.com/contracts/3.x/erc20#a-note-on-decimals) post - NEAR NEP-141 is 24 decimals.
 
-An implementing contract MAY include the following fields on-chain
+An implementing contract **MAY** include the following fields on-chain
+
 - ```icon```: a small image associated with this token. Must be a data URL, to help consumers display it quickly while protecting <br> user data [more information](https://nomicon.io/Standards/Tokens/FungibleToken/Metadata).
 - ```reference```: a link to a valid JSON file containing various keys offering supplementary details on the token. <br>Example: /ipfs/QmdmQXB2mzChmMeKY47C43LxUdg1NDJ5MWcKMKxDu7RgQm, https://example.com/token.json, etc. If the information given in this document conflicts with the on-chain attributes, the values in reference shall be considered the source of truth.
 - ```reference_hash```:the base64-encoded sha256 hash of the JSON file contained in the reference field. This is to guard against off-chain tampering.
 
 Although, we **strongly recommend** that you that you implement this following fields.
 
-Now that we have everything covered, 
+Now that we have everything covered, we can call the ```new``` function and set our token parameters. Below is the command that we are going to use to set the token parameters. 
+
+Note that the ```owner_id``` is the owner account for that contract, and that cannot be changed. Copy the code below, change all of the paramters and run the command on your terminal.
 
 ```bash
     near call $FT_CONTRACT_ID new '{
@@ -169,10 +174,19 @@ Now that we have everything covered,
          "icon": "data:image/svg+xml,%3C…",
          "reference": "https://example.com/wbtc.json",
          "reference_hash": "AK3YRHqKhCJNmKfV6SrutnlWW/icN5J8NUPtKsNXR1M=",
-         "decimals": 8
+         "decimals": 24
       }
     }' --accountId owner.new
 
 ```
 
+** If you do not want to set an icon, a reference and a reference hash, you must pass this parameters with the value ```null```** E.g.:
+
+```bash
+  "icon": null,
+```
+
+With these steps concluded, you'll have sucessfully deployed and configured your token contract. 
+
+For further reference on other functions that the contract has, you can always check the [NEP-141 Contract Standards](https://nomicon.io/Standards/Tokens/FungibleToken/Core).
 
