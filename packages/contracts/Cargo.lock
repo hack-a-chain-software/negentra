@@ -375,6 +375,8 @@ version = "1.0.0"
 dependencies = [
  "modified-contract-standards",
  "near-sdk",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
