@@ -157,7 +157,7 @@ An implementing contract **MAY** include the following fields on-chain
 - ```reference```: a link to a valid JSON file containing various keys offering supplementary details on the token. <br>Example: /ipfs/QmdmQXB2mzChmMeKY47C43LxUdg1NDJ5MWcKMKxDu7RgQm, https://example.com/token.json, etc. If the information given in this document conflicts with the on-chain attributes, the values in reference shall be considered the source of truth.
 - ```reference_hash```:the base64-encoded sha256 hash of the JSON file contained in the reference field. This is to guard against off-chain tampering.
 
-Although, we **strongly recommend** that you that you implement this following fields.
+Although it is note necessary, we **strongly recommend** that you that you implement the fields mentioned above.
 
 Now that we have everything covered, we can call the ```new``` function and set our token parameters. Below is the command that we are going to use to set the token parameters. 
 
