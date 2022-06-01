@@ -89,7 +89,7 @@ cd your-project-folder-path
 ```
 
 Now, check if your project folders have a folder called ``` out ``` 
-and a file called ``` main.wasm ``` if not, [check to near-sdk git](https://github.com/near/near-sdk-rs) 
+and a file called ``` main.wasm ``` if not, [check near-sdk git](https://github.com/near/near-sdk-rs) 
 on how to compile the code.
 
 
