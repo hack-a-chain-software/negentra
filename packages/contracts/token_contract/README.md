@@ -149,7 +149,7 @@ An implementing contract **MUST** include the following fields on-chain:
 - ```spec```: a string. Should be ```ft-1.0.0``` to indicate that a Fungible Token contract adheres to the current versions of this Metadata and the Fungible Token Core specs. This will allow consumers of the Fungible Token to know if they support the features of a given contract
 - ```name```: the human-readable name of the token, E.g.: Bitcoin
 - ```symbol```: the abbreviation, E.g.: BTC
-- ```decimals```: used in frontends to show the proper significant digits of a token. This concept is explained well in this [OpenZeppelin](https://docs.openzeppelin.com/contracts/3.x/erc20#a-note-on-decimals) post - NEAR NEP-141 is 24 decimals.
+- ```decimals```: used in frontends to show the proper significant digits of a token. This concept is explained well in this [OpenZeppelin](https://docs.openzeppelin.com/contracts/3.x/erc20#a-note-on-decimals) post - NEAR NEP-141 standard is to have 24 decimals.
 
 An implementing contract **MAY** include the following fields on-chain
 
@@ -190,5 +190,5 @@ Copy the code below, change all of the paramters and run the command on your ter
 
 With these steps concluded, you'll have sucessfully deployed and configured your token contract. 
 
-For further reference on other functions that the contract has, you can always check the [NEP-141 Contract Standards](https://nomicon.io/Standards/Tokens/FungibleToken/Core).
+For further reference on other functions that the contract has, you can always check the [Contract Standards](https://nomicon.io/Standards/Tokens/FungibleToken/Core).
 
