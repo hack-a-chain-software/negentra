@@ -161,7 +161,9 @@ Although, we **strongly recommend** that you that you implement this following f
 
 Now that we have everything covered, we can call the ```new``` function and set our token parameters. Below is the command that we are going to use to set the token parameters. 
 
-Note that the ```owner_id``` is the owner account for that contract, and that cannot be changed. Copy the code below, change all of the paramters and run the command on your terminal.
+Note that the ```owner_id``` is the owner account for that contract, and that cannot be changed. The owner of the contract is going to receive all of the tokens once you call the function. You are going to be able to check your NEAR Wallet and the tokens should be there.
+
+Copy the code below, change all of the paramters and run the command on your terminal.
 
 ```bash
     near call $FT_CONTRACT_ID new '{
@@ -180,7 +182,7 @@ Note that the ```owner_id``` is the owner account for that contract, and that ca
 
 ```
 
-** If you do not want to set an icon, a reference and a reference hash, you must pass this parameters with the value ```null```** E.g.:
+**If you do not want to set an icon, a reference and a reference hash, you must pass this parameters with the value ```null```** E.g.:
 
 ```bash
   "icon": null,
