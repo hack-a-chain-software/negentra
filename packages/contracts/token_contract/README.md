@@ -192,3 +192,40 @@ With these steps concluded, you'll have sucessfully deployed and configured your
 
 For further reference on other functions that the contract has, you can always check the [Contract Standards](https://nomicon.io/Standards/Tokens/FungibleToken/Core).
 
+### ADDITIONAL FUNCTIONALITIES 
+
+##TOKEN BURNING 
+
+Now that you have your contract deployed, for some reason you might want to burn your tokens. The token burning functionality is available to every user. In order to burn your tokens, you must utilize the ```ft_burn```function on the contract. This function takes the following parameters:
+
+```bash
+ amount: U128,
+ memo: Option<String>
+
+```
+The ```amount``` is the quantity of tokens that should be burned. While ```memo``` is a message that will be logged to the blockchain once the tokens are burned. There is no need to have a message, but you can, if you want to. 
+
+To call the function, you must be logged into a NEAR Wallet (already explained here how to log in).
+
+Let's say you want to burn 5 tokens. First, you must chek the amount of decimals you have on your contract. Let's assume you have 24 decimals. 
+
+To burn 5 tokens, you must take the amount that you want to burn, and multiply it by 10 elevated to the power (10<sup>24</sup>) wich is the amount of tokens that you have. In our case 5 * 10<sup>24</sup> = 5000000000000000000000000 - you can use [this website](https://www.mathsisfun.com/calculator-precision.html) to help with the decimals.
+
+Now, using your command line, you can call the function ```ft_burn```:
+
+```bash
+    near call $FT_CONTRACT_ID ft_burn '{
+      "amount": "5000000000000000000000000",
+      "memo": "message to log "
+      }
+    }' --accountId any_account.near
+
+```
+
+Make sure to change ```any_account.near```to the account address that is logged in. Also, if you don't want any message, you can pass the parameter as: ``` "memo": null ``` . 
+
+This concludes the instructions on how to burn tokens. 
+
+You can also use this function on a Web application, so that the final user does not need to burn the tokens directly.
+
+
