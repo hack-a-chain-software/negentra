@@ -178,7 +178,7 @@ Copy the code below, change all of the paramters and run the command on your ter
          "reference_hash": "AK3YRHqKhCJNmKfV6SrutnlWW/icN5J8NUPtKsNXR1M=",
          "decimals": 24
       }
-    }' --accountId owner.new
+    }' --accountId owner.near
 
 ```
 
