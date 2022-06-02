@@ -175,7 +175,7 @@ impl FungibleTokenCore for FungibleToken {
         memo: Option<String>,
         msg: String,
     ) -> PromiseOrValue<U128> {
-        assert_one_yocto();
+        assert!(env::attached_deposit() >= 1, "Requires attached deposit of 1 or more yoctoNEAR");
         let sender_id = env::predecessor_account_id();
         let amount: Balance = amount.into();
         self.internal_transfer(&sender_id, receiver_id.as_ref(), amount, memo);
@@ -185,7 +185,7 @@ impl FungibleTokenCore for FungibleToken {
             amount.into(),
             msg,
             receiver_id.as_ref(),
-            NO_DEPOSIT,
+            env::attached_deposit() - 1,
             env::prepaid_gas() - GAS_FOR_FT_TRANSFER_CALL,
         )
         .then(ext_self::ft_resolve_transfer(
