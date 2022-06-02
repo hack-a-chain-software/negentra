@@ -49,13 +49,8 @@ impl Royalty for NonFungibleToken {
         let mut payout_object = Payout {
             payout: HashMap::new(),
         };
-        //get the royalty object from token
-        let royalty = self
-            .royalties_by_id
-            .as_ref()
-            .unwrap()
-            .get(&token_id)
-            .unwrap();
+
+        let royalty = self.perpetual_royalties.clone();
 
         //make sure we're not paying out to too many people (GAS limits this)
         assert!(
@@ -120,13 +115,8 @@ impl Royalty for NonFungibleToken {
         let mut payout_object = Payout {
             payout: HashMap::new(),
         };
-        //get the royalty object from token
-        let royalty = self
-            .royalties_by_id
-            .as_ref()
-            .unwrap()
-            .get(&token_id)
-            .unwrap();
+
+        let royalty = self.perpetual_royalties.clone();
 
         //make sure we're not paying out to too many people (GAS limits this)
         assert!(

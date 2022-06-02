@@ -56,7 +56,6 @@ enum StorageKey {
     TokenMetadata,
     Enumeration,
     Approval,
-    Royalties,
     ItemTypes,
     ItemTree,
     ItemTreeDeadLeaves,
@@ -77,6 +76,9 @@ impl Contract {
     ) -> Self {
         assert!(!env::state_exists(), "Already initialized");
         metadata.assert_valid();
+
+        let perpetual_royalties = HashMap::from([(royalties_account, royalties_value.0)]);
+
         Self {
             tokens: NonFungibleToken::new(
                 StorageKey::NonFungibleToken,
@@ -84,7 +86,7 @@ impl Contract {
                 Some(StorageKey::TokenMetadata),
                 Some(StorageKey::Enumeration),
                 Some(StorageKey::Approval),
-                Some(StorageKey::Royalties),
+                perpetual_royalties.clone(),
             ),
             metadata: LazyOption::new(StorageKey::Metadata, Some(&metadata)),
             item_types: LookupMap::new(StorageKey::ItemTypes),
@@ -100,14 +102,16 @@ impl Contract {
                 StorageKey::ItemTreeIndexes,
                 StorageKey::ItemTreeDeadLeaves,
             ),
-            perpetual_royalties: HashMap::from([(royalties_account, royalties_value.0)]),
+            perpetual_royalties,
             mint_token,
             mint_cost: mint_cost.0,
         }
     }
 }
 
+modified_contract_standards::impl_non_fungible_token_core!(Contract, tokens);
 modified_contract_standards::impl_non_fungible_token_approval!(Contract, tokens);
+modified_contract_standards::impl_non_fungible_token_enumeration!(Contract, tokens);
 
 #[near_bindgen]
 impl NonFungibleTokenMetadataProvider for Contract {
