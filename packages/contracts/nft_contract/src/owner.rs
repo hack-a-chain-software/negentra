@@ -2,10 +2,9 @@ use crate::*;
 use near_sdk::serde::Serialize;
 
 #[derive(Serialize)]
-struct ContractView {
+pub struct ContractView {
     pub item_count: u64,
     pub perpetual_royalties: HashMap<AccountId, u128>,
-
     pub mint_token: AccountId,
     pub mint_cost: u128,
 }
@@ -14,9 +13,8 @@ impl ContractView {
     pub fn from(contract: &Contract) -> Self {
         ContractView {
             item_count: contract.item_count,
-            perpetual_royalties: contract.perpetual_royalties,
-
-            mint_token: contract.mint_token,
+            perpetual_royalties: contract.perpetual_royalties.clone(),
+            mint_token: contract.mint_token.clone(),
             mint_cost: contract.mint_cost,
         }
     }
