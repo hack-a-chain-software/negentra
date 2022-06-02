@@ -6,6 +6,7 @@ use sum_tree::Operation;
 
 #[near_bindgen]
 impl Contract {
+    #[allow(unused_variables)]
     #[payable]
     pub fn ft_on_transfer(
         &mut self,

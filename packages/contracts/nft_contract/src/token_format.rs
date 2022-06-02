@@ -58,7 +58,6 @@ impl Contract {
                 description: Some(description),
                 media: Some(media),
                 media_hash: None,
-                copies: Some(total_supply),
                 item_id,
 
                 reference: Some(reference),
@@ -94,7 +93,6 @@ impl Contract {
             description: Some(description),
             media: Some(media),
             media_hash: None,
-            copies: Some(total_supply),
             reference: Some(reference),
             reference_hash: None,
             item_id,
@@ -120,4 +118,60 @@ impl Contract {
 
         true
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::*; 
+
+    // test suit create_new_item
+    // method must:
+    // (1) Assert that caller is owner;
+    // (2) Asert that caller deposited one yocto
+    // (3) Increment item counter
+    // (4) Creat new item in contract's memory
+    #[test]
+    fn test_create_new_item() {
+        // (3) Increment item counter
+        // (4) Creat new item in contract's memory
+        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        let initial_item_count = contract.item_count;
+
+        let total_supply = 1000;
+        let title = "a great title".to_string();
+        let description = "description".to_string();
+        let media = "media".to_string();
+        let reference = "reference".to_string();
+
+        contract.create_new_item(
+            total_supply,
+            title.clone(),
+            description.clone(),
+            media.clone(),
+            reference.clone(),
+        );
+
+        // (3) Increment item counter
+        assert_eq!(contract.item_count, initial_item_count + 1);
+
+        // (4) Creat new item in contract's memory
+        let new_type = contract.item_types.get(&initial_item_count).unwrap();
+
+        assert_eq!(new_type.total_supply, total_supply);
+        assert_eq!(new_type.minted_items, 0);
+        assert_eq!(new_type.supply_available, total_supply);
+        assert_eq!(new_type.metadata.clone().unwrap().title, Some(title));
+        assert_eq!(new_type.metadata.clone().unwrap().description, Some(description));
+        assert_eq!(new_type.metadata.clone().unwrap().media, Some(media));
+        assert_eq!(new_type.metadata.clone().unwrap().item_id, initial_item_count);
+        assert_eq!(new_type.metadata.clone().unwrap().reference, Some(reference));
+        assert_eq!(new_type.metadata.clone().unwrap().reference_hash, None);
+
+
+    }
+
 }
