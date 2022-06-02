@@ -1,23 +1,28 @@
 use crate::*;
 use bits::*;
 use near_sdk::collections::{LookupMap, Vector};
-use near_sdk::IntoStorageKey;
+use near_sdk::{BorshIntoStorageKey, IntoStorageKey};
 
 const ROOT_INDEX: u64 = u64::MAX >> 1;
 
+fn append(id: &[u8], chr: u8) -> Vec<u8> {
+    append_slice(id, &[chr])
+}
+
+fn append_slice(id: &[u8], extra: &[u8]) -> Vec<u8> {
+    [id, extra].concat()
+}
+
 impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vector<u64>> {
-    pub fn new<T: IntoStorageKey>(
-        tree_prefix: T,
-        map_prefix: T,
-        inverse_prefix: T,
-        vector_prefix: T,
-    ) -> Self {
+    pub fn new<T: BorshIntoStorageKey>(prefix: T) -> Self {
+        let storage_key = prefix.into_storage_key();
+
         Self {
             index: ROOT_INDEX,
-            tree: LookupMap::new(tree_prefix),
-            leaf_map: LookupMap::new(map_prefix),
-            index_map: LookupMap::new(inverse_prefix),
-            dead_leaves: Vector::new(vector_prefix),
+            tree: LookupMap::new(append(&storage_key, b't')),
+            leaf_map: LookupMap::new(append(&storage_key, b'l')),
+            index_map: LookupMap::new(append(&storage_key, b'i')),
+            dead_leaves: Vector::new(append(&storage_key, b'd')),
         }
     }
 
@@ -164,6 +169,12 @@ mod tests {
         Remove,
     }
 
+    #[derive(BorshSerialize)]
+    enum StorageKey {
+        Prefix,
+    }
+    impl BorshIntoStorageKey for StorageKey {}
+
     fn get_context() -> VMContextBuilder {
         VMContextBuilder::new()
     }
@@ -193,7 +204,7 @@ mod tests {
             LookupMap<u64, u64>,
             LookupMap<u64, u64>,
             Vector<u64>,
-        >::new(0x0a, 0x0b, 0x0c, 0x0d);
+        >::new(StorageKey::Prefix);
         let mut id = 1;
 
         for (op, input) in OPS {
@@ -263,7 +274,7 @@ mod tests {
                 LookupMap<u64, u64>,
                 LookupMap<u64, u64>,
                 Vector<u64>,
-            >::new(0x0a, 0x0b, 0x0c, 0x0d);
+            >::new(StorageKey::Prefix);
 
             let mut id = 0;
             for &node in &nodes {
