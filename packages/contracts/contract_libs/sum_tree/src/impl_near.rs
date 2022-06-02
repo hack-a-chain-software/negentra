@@ -21,7 +21,7 @@ impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vect
         }
     }
 
-    fn update_branch(&mut self, from_index: u64, value: &u64, op: Operation) {
+    fn update_branch(&mut self, from_index: u64, value: u64, op: Operation) {
         let mut parent_index = from_index;
 
         while parent_index != u64::MAX {
@@ -52,14 +52,14 @@ impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vect
         self.tree.get(&index)
     }
 
-    pub fn insert(&mut self, id: &u64, value: &u64) {
+    pub fn insert(&mut self, id: &u64, value: u64) {
         let index = if self.dead_leaves.len() == 0 {
             self.shift_index()
         } else {
             self.dead_leaves.pop().unwrap()
         };
 
-        self.tree.insert(&index, value);
+        self.tree.insert(&index, &value);
         self.leaf_map.insert(&index, id);
         self.index_map.insert(id, &index);
 
@@ -97,7 +97,7 @@ impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vect
             Some(v) => v,
         };
 
-        self.update_branch(index, &value, Operation::Subtraction);
+        self.update_branch(index, value, Operation::Subtraction);
 
         self.dead_leaves.push(&index);
     }
@@ -139,6 +139,15 @@ impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vect
         }
 
         None
+    }
+
+    pub fn update(&mut self, id: &u64, value: u64, op: Operation) {
+        let index = match self.index_map.get(id) {
+            None => return,
+            Some(v) => v,
+        };
+
+        self.update_branch(index, value, op)
     }
 }
 
@@ -190,7 +199,7 @@ mod tests {
         for (op, input) in OPS {
             match op {
                 OP::Insert => {
-                    tree.insert(&id, &input);
+                    tree.insert(&id, input);
                     id += 1;
                 }
                 OP::Remove => {
@@ -258,7 +267,7 @@ mod tests {
 
             let mut id = 0;
             for &node in &nodes {
-                tree.insert(&id, &node);
+                tree.insert(&id, node);
                 id += 1;
             }
 

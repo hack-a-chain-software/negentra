@@ -1,5 +1,7 @@
 use crate::*;
 use near_sdk::PromiseOrValue;
+use std::convert::TryFrom;
+use sum_tree::Operation;
 
 #[near_bindgen]
 impl Contract {
@@ -25,51 +27,27 @@ impl Contract {
     /// `self.tokens.mint` will enforce `predecessor_account_id` to equal the `owner_id` given in
     /// initialization call to `new`.
 
-    //minter must be whitelisted possibility to mint multiple nfts in batch
-    fn nft_mint(&mut self, quantity: U128) -> Vec<Token> {
+    fn nft_mint(&mut self) -> Token {
         let account_id: AccountId = env::predecessor_account_id();
-        // let mut return_vector = Vec::new();
 
-        let initial_storage_usage = env::storage_usage();
+        let random_seed: u64 = (*env::random_seed().get(0).unwrap() + 1).into();
+        let total = self.item_amount_tree.root().unwrap_or(0);
 
-        // let mut i: u128 = 0;
-        // let mut random_seed: u64 = (*env::random_seed().get(0).unwrap()).into();
-        // random_seed = random_seed + 1;
-        // let mut random_range: u64;
-        // let mut current_id;
-        // while i < quantity.0 {
-        //     random_range = (u64::MAX / random_seed) % self.random_minting.len();
-        //     current_id = self.random_minting.swap_remove(random_range);
-        //     return_vector.push(self.tokens.internal_mint(
-        //         current_id.to_string(),
-        //         account_id.clone().try_into().unwrap(),
-        //         Some(TokenMetadata {
-        //             title: Some(format!("Tokonami #{}", &current_id)),
-        //             description: Some("2331 TOKONAMI Ready for the Revolution".to_string()),
-        //             media: Some(format!("{}/{}.png", self.url_media_base, &current_id)),
-        //             media_hash: None,
-        //             copies: None,
-        //             issued_at: None,
-        //             expires_at: None,
-        //             starts_at: None,
-        //             updated_at: None,
-        //             extra: None,
-        //             reference: Some(format!("{}/{}.json", self.url_reference_base, &current_id)),
-        //             reference_hash: None,
+        let drawn_number = (u64::MAX / random_seed) % total; // hash random seed with total
 
-        //             // special metadata
-        //             nft_type: Some((&current_id % 3 + 1).to_string()),
-        //         }),
-        //         self.mint_cost,
-        //         self.perpetual_royalties.clone(),
-        //     ));
-        //     i = i + 1;
-        // }
-        // refund_deposit_mint(
-        //     env::storage_usage() - initial_storage_usage,
-        //     self.mint_cost * quantity.0,
-        // );
-        // return_vector
-        vec![]
+        let id = self.item_amount_tree.find(drawn_number).unwrap();
+        let mut item = self.item_types.get(&id).unwrap();
+
+        self.item_amount_tree.update(&id, 1, Operation::Subtraction);
+        item.mint_item_update_count();
+
+        let token_id = format!("{} #{}", id, item.minted_items);
+
+        self.tokens.internal_mint(
+            token_id,
+            ValidAccountId::try_from(account_id.clone()).unwrap(),
+            item.metadata,
+            self.mint_cost,
+        )
     }
 }
