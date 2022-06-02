@@ -141,7 +141,7 @@ mod tests {
         account_balance: u128,
         signer_id: AccountId,
         block_timestamp: u64,
-        prepaid_gas: u64
+        prepaid_gas: u64,
     ) -> VMContext {
         VMContext {
             current_account_id: CONTRACT_ACCOUNT.to_string(),
@@ -174,15 +174,18 @@ mod tests {
                 Some(StorageKey::Approval),
                 royalties.clone(),
             ),
-            metadata: LazyOption::new(StorageKey::Metadata, Some(&NFTContractMetadata{
-                spec: "1.0.0".to_string(),              // required, essentially a version like "nft-1.0.0"
-                name: "test".to_string(),              // required, ex. "Mosaics"
-                symbol: "BLA".to_string(),            // required, ex. "MOSIAC"
-                icon: None,      // Data URL
-                base_uri: None, // Centralized gateway known to have reliable access to decentralized storage assets referenced by `reference` or `media` URLs
-                reference: None, // URL to a JSON file with more info
-                reference_hash: None, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
-            })),
+            metadata: LazyOption::new(
+                StorageKey::Metadata,
+                Some(&NFTContractMetadata {
+                    spec: "1.0.0".to_string(), // required, essentially a version like "nft-1.0.0"
+                    name: "test".to_string(),  // required, ex. "Mosaics"
+                    symbol: "BLA".to_string(), // required, ex. "MOSIAC"
+                    icon: None,                // Data URL
+                    base_uri: None, // Centralized gateway known to have reliable access to decentralized storage assets referenced by `reference` or `media` URLs
+                    reference: None, // URL to a JSON file with more info
+                    reference_hash: None, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
+                }),
+            ),
             item_types: LookupMap::new(StorageKey::ItemTypes),
             item_count: 0,
             item_amount_tree: SumTree::<
@@ -199,16 +202,24 @@ mod tests {
 
     #[test]
     fn test_new() {
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18)); // vec!() -> da pra inicializar assim, tem otimizacao ( macro vec)
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        ); // vec!() -> da pra inicializar assim, tem otimizacao (macro vec)
         testing_env!(context);
 
         let mint_cost = U128(10);
         let royalties_value = U128(15);
-        let metadata = NFTContractMetadata{
-            spec: "nft-1.0.0".to_string(),              // required, essentially a version like "nft-1.0.0"
-            name: "test".to_string(),              // required, ex. "Mosaics"
-            symbol: "BLA".to_string(),            // required, ex. "MOSIAC"
-            icon: None,      // Data URL
+        let metadata = NFTContractMetadata {
+            spec: "nft-1.0.0".to_string(), // required, essentially a version like "nft-1.0.0"
+            name: "test".to_string(),      // required, ex. "Mosaics"
+            symbol: "BLA".to_string(),     // required, ex. "MOSIAC"
+            icon: None,                    // Data URL
             base_uri: None, // Centralized gateway known to have reliable access to decentralized storage assets referenced by `reference` or `media` URLs
             reference: None, // URL to a JSON file with more info
             reference_hash: None, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
@@ -226,19 +237,30 @@ mod tests {
         assert_eq!(contract.tokens.owner_id, OWNER_ACCOUNT.to_string());
         assert_eq!(contract.metadata.get().unwrap(), metadata);
         assert_eq!(contract.mint_token, TOKEN_ACCOUNT.to_string());
-        assert_eq!(contract.perpetual_royalties.get(&OWNER_ACCOUNT.to_string()).unwrap(), &15u128);
-
+        assert_eq!(
+            contract
+                .perpetual_royalties
+                .get(&OWNER_ACCOUNT.to_string())
+                .unwrap(),
+            &15u128
+        );
     }
 
     #[test]
     #[should_panic(expected = "The contract is not initialized")]
     fn test_default() {
-        let context = get_context(vec![], false, 0, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
         let _contract = Contract::default();
     }
-    
-    
     // #[test]
     // #[should_panic(expected = "Already initialized")]
     // fn test_existing_state() {
@@ -248,7 +270,6 @@ mod tests {
     //     let _contract = init_contract();
 
     // }
-    
     // #[test]
     // fn implementation_test_calculate_avalibe_withdraw() {
     //     // This is an implementation test. It's used to assert that implementation of code is correct
@@ -307,7 +328,6 @@ mod tests {
     //         schema.cliff_release,
     //         30_000,
     //     );
-        
     //     assert_eq!(
     //         contract.calculate_available_withdraw(130_000, investment_id.clone()),
     //         ((initial_release * total_quantity) + (curve_percentage * total_quantity))

@@ -122,7 +122,7 @@ impl Contract {
 
 #[cfg(test)]
 mod tests {
-    use crate::tests::*; 
+    use crate::tests::*;
 
     // test suit create_new_item
     // method must:
@@ -134,7 +134,15 @@ mod tests {
     fn test_create_new_item() {
         // (3) Increment item counter
         // (4) Creat new item in contract's memory
-        let context = get_context(vec![], false, 1, 0, OWNER_ACCOUNT.to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -165,13 +173,19 @@ mod tests {
         assert_eq!(new_type.minted_items, 0);
         assert_eq!(new_type.supply_available, total_supply);
         assert_eq!(new_type.metadata.clone().unwrap().title, Some(title));
-        assert_eq!(new_type.metadata.clone().unwrap().description, Some(description));
+        assert_eq!(
+            new_type.metadata.clone().unwrap().description,
+            Some(description)
+        );
         assert_eq!(new_type.metadata.clone().unwrap().media, Some(media));
-        assert_eq!(new_type.metadata.clone().unwrap().item_id, initial_item_count);
-        assert_eq!(new_type.metadata.clone().unwrap().reference, Some(reference));
+        assert_eq!(
+            new_type.metadata.clone().unwrap().item_id,
+            initial_item_count
+        );
+        assert_eq!(
+            new_type.metadata.clone().unwrap().reference,
+            Some(reference)
+        );
         assert_eq!(new_type.metadata.clone().unwrap().reference_hash, None);
-
-
     }
-
 }
