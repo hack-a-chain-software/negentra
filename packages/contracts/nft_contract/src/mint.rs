@@ -27,7 +27,7 @@ impl Contract {
         );
 
         let initial_storage = env::storage_usage();
-        self.nft_mint();
+        self.nft_mint(sender_id);
         let final_storage = env::storage_usage();
 
         refund_deposit(final_storage - initial_storage);
@@ -38,7 +38,7 @@ impl Contract {
 }
 
 impl Contract {
-    fn nft_mint(&mut self) -> Token {
+    fn nft_mint(&mut self, sender_id: ValidAccountId) -> Token {
         let total = self.available_items();
         assert!(total > 0, "There are no available items to mint");
 
@@ -59,7 +59,7 @@ impl Contract {
 
         self.tokens.internal_mint(
             token_id,
-            ValidAccountId::try_from(env::predecessor_account_id().clone()).unwrap(),
+            sender_id,
             item.metadata,
             self.mint_cost,
         )
