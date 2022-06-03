@@ -1,7 +1,7 @@
 use crate::*;
 use modified_contract_standards::non_fungible_token::utils::refund_deposit;
 use near_sdk::PromiseOrValue;
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryInto;
 use sum_tree::Operation;
 
 #[near_bindgen]
@@ -57,12 +57,8 @@ impl Contract {
 
         let token_id = format!("{} #{}", id, item.minted_items);
 
-        self.tokens.internal_mint(
-            token_id,
-            sender_id,
-            item.metadata,
-            self.mint_cost,
-        )
+        self.tokens
+            .internal_mint(token_id, sender_id, item.metadata, self.mint_cost)
     }
 
     pub fn available_items(&self) -> u64 {
@@ -101,7 +97,7 @@ mod tests {
 
         let mut contract = init_contract();
 
-        contract.nft_mint();
+        contract.nft_mint(ValidAccountId::try_from(USER_ACCOUNT).unwrap());
     }
 
     #[test]
@@ -112,7 +108,7 @@ mod tests {
         let mut contract = init_contract();
         create_item(&mut contract);
 
-        contract.nft_mint();
+        contract.nft_mint(ValidAccountId::try_from(USER_ACCOUNT).unwrap());
         let item = contract.item_types.get(&0).unwrap();
 
         assert_eq!(item.minted_items, 1);
@@ -123,7 +119,15 @@ mod tests {
     #[test]
     #[should_panic(expected = "Contract only accepts calls from")]
     fn test_transfer_reject_cross_calls() {
-        let context = get_context(vec![], false, 1, 0, USER_ACCOUNT.to_string(), 0, 1u64 << 5);
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            USER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -138,7 +142,15 @@ mod tests {
     #[test]
     #[should_panic(expected = "Must deposit at least")]
     fn test_transfer_min_deposit() {
-        let context = get_context(vec![], false, 1, 0, "".to_string(), 0, 10u64.pow(18));
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
         testing_env!(context);
 
         let mut contract = init_contract();
@@ -151,6 +163,18 @@ mod tests {
     }
 
     #[test]
+    fn test_mint_right_fields() {
+        let context = get_context(vec![], false, 1, 0, "".to_string(), 0, 10u64.pow(18));
+        testing_env!(context);
+        let mut contract = init_contract();
+        create_item(&mut contract);
+
+        let token = contract.nft_mint(ValidAccountId::try_from(USER_ACCOUNT).unwrap());
+
+        assert_eq!(token.owner_id, USER_ACCOUNT);
+    }
+
+    #[test]
     fn test_transfer_mint_refund() {
         testing_env!(get_context(
             vec![],
@@ -159,7 +183,7 @@ mod tests {
             0,
             TOKEN_ACCOUNT.to_string(),
             0,
-            1u64 << 50,
+            10u64.pow(18),
         ));
 
         let mut contract = init_contract();
@@ -187,7 +211,7 @@ mod tests {
             0,
             TOKEN_ACCOUNT.to_string(),
             0,
-            1u64 << 50,
+            10u64.pow(18),
         ));
 
         let mut contract = init_contract();
