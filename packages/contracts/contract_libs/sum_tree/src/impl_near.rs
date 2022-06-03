@@ -12,7 +12,6 @@ fn append(id: &[u8], chr: u8) -> Vec<u8> {
 fn append_slice(id: &[u8], extra: &[u8]) -> Vec<u8> {
     [id, extra].concat()
 }
-
 impl SumTree<LookupMap<u64, u64>, LookupMap<u64, u64>, LookupMap<u64, u64>, Vector<u64>> {
     pub fn new<T: BorshIntoStorageKey>(prefix: T) -> Self {
         let storage_key = prefix.into_storage_key();
@@ -262,8 +261,8 @@ mod tests {
         let table: Vec<(Vec<u64>, u64)> = vec![
             (vec![1, 2, 3], 6),
             (vec![4, 7, 5], 16),
-            //(vec![1, 1, 1000, 1, 1, 1, 1, 1], 1007),
-            //(vec![1, 1, 0, 1, 1, 1, 1, 1], 7),
+            (vec![1, 1, 1, 1, 1, 1, 1, 200], 207),
+            (vec![1, 1, 0, 1, 1, 1, 1, 1], 7),
         ];
 
         for (nodes, sum) in table {
