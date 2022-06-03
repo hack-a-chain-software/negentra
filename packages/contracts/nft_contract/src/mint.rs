@@ -65,7 +65,7 @@ impl Contract {
         )
     }
 
-    fn available_items(&self) -> u64 {
+    pub fn available_items(&self) -> u64 {
         self.item_amount_tree.root().unwrap_or(0)
     }
 }

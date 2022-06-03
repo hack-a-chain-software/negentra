@@ -145,11 +145,11 @@ mod tests {
     // (1) Assert that caller is owner;
     // (2) Asert that caller deposited one yocto
     // (3) Increment item counter
-    // (4) Creat new item in contract's memory
+    // (4) Create new item in contract's memory
     #[test]
     fn test_create_new_item() {
         // (3) Increment item counter
-        // (4) Creat new item in contract's memory
+        // (4) Create new item in contract's memory
         let context = get_context(
             vec![],
             false,
@@ -182,7 +182,7 @@ mod tests {
         // (3) Increment item counter
         assert_eq!(contract.item_count, initial_item_count + 1);
 
-        // (4) Creat new item in contract's memory
+        // (4) Create new item in contract's memory
         let new_type = contract.item_types.get(&initial_item_count).unwrap();
 
         assert_eq!(new_type.total_supply, total_supply);
@@ -203,5 +203,136 @@ mod tests {
             Some(reference)
         );
         assert_eq!(new_type.metadata.clone().unwrap().reference_hash, None);
+    }
+
+    #[test]
+    fn test_update_item_decrease_supply() {
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.internal_create_new_item(
+            1000,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
+        assert_eq!(contract.available_items(), 1000);
+
+        let item = contract.item_types.get(&0).unwrap();
+        assert_eq!(item.total_supply, 1000);
+        assert_eq!(item.supply_available, 1000);
+
+        contract.update_item(
+            0,
+            800,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
+        assert_eq!(contract.available_items(), 800);
+
+        let updated_item = contract.item_types.get(&0).unwrap();
+        assert_eq!(updated_item.total_supply, 800);
+        assert_eq!(updated_item.supply_available, 800);
+    }
+
+    #[test]
+    fn test_update_item_increase_supply() {
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.internal_create_new_item(
+            1000,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
+        assert_eq!(contract.available_items(), 1000);
+
+        let item = contract.item_types.get(&0).unwrap();
+        assert_eq!(item.total_supply, 1000);
+        assert_eq!(item.supply_available, 1000);
+
+        contract.update_item(
+            0,
+            1200,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
+        assert_eq!(contract.available_items(), 1200);
+
+        let updated_item = contract.item_types.get(&0).unwrap();
+        assert_eq!(updated_item.total_supply, 1200);
+        assert_eq!(updated_item.supply_available, 1200);
+    }
+
+    #[test]
+    fn test_update_item_change_fields() {
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.internal_create_new_item(
+            1000,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
+
+        let new_title = "new_title".to_string();
+        let new_description = "new_description".to_string();
+        let new_media = "new_media".to_string();
+        let new_reference = "new_reference".to_string();
+
+        contract.update_item(
+            0,
+            1000,
+            new_title.clone(),
+            new_description.clone(),
+            new_media.clone(),
+            new_reference.clone(),
+        );
+
+        let updated_item = contract.item_types.get(&0).unwrap();
+        let metadata = updated_item.metadata.clone().unwrap();
+        assert_eq!(metadata.title, Some(new_title));
+        assert_eq!(metadata.description, Some(new_description));
+        assert_eq!(metadata.media, Some(new_media));
+        assert_eq!(metadata.reference, Some(new_reference));
     }
 }
