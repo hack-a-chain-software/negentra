@@ -76,28 +76,13 @@ mod tests {
     use crate::tests::*;
 
     fn create_item(contract: &mut Contract) {
-        let total_supply = 1000;
-        let item_id = contract.item_count;
-
-        let item = ItemType {
-            total_supply,
-            minted_items: 0,
-            supply_available: 1000,
-            metadata: Some(TokenMetadata {
-                item_id,
-
-                title: Some("a great title".to_string()),
-                description: Some("description".to_string()),
-                media: Some("media".to_string()),
-                media_hash: None,
-                reference: Some("reference".to_string()),
-                reference_hash: None,
-            }),
-        };
-
-        contract.item_types.insert(&item_id, &item);
-        contract.item_amount_tree.insert(&item_id, total_supply);
-        contract.item_count += 1;
+        contract.internal_create_new_item(
+            1000,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
     }
 
     #[test]
@@ -138,7 +123,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Contract only accepts calls from")]
     fn test_transfer_reject_cross_calls() {
-        let context = get_context(vec![], false, 1, 0, USER_ACCOUNT.to_string(), 0, 1u64 << 50);
+        let context = get_context(vec![], false, 1, 0, USER_ACCOUNT.to_string(), 0, 1u64 << 5);
         testing_env!(context);
 
         let mut contract = init_contract();

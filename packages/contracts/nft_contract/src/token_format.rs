@@ -47,26 +47,7 @@ impl Contract {
         assert_one_yocto();
         self.only_owner();
 
-        let item_id = self.item_count.clone();
-        self.item_count += 1;
-        let new_item = ItemType {
-            total_supply,
-            minted_items: 0,
-            supply_available: total_supply,
-            metadata: Some(TokenMetadata {
-                title: Some(title),
-                description: Some(description),
-                media: Some(media),
-                media_hash: None,
-                item_id,
-
-                reference: Some(reference),
-                reference_hash: None,
-            }),
-        };
-
-        self.item_types.insert(&item_id, &new_item);
-        self.item_amount_tree.insert(&item_id, total_supply);
+        self.internal_create_new_item(total_supply, title, description, media, reference);
 
         true
     }
@@ -117,6 +98,41 @@ impl Contract {
         self.item_types.insert(&item_id, &old_item);
 
         true
+    }
+}
+
+impl Contract {
+    pub fn internal_create_new_item(
+        &mut self,
+        total_supply: u64,
+        title: String,
+        description: String,
+        media: String,
+        reference: String,
+    ) -> ItemType {
+        let item_id = self.item_count.clone();
+        self.item_count += 1;
+
+        let new_item = ItemType {
+            total_supply,
+            minted_items: 0,
+            supply_available: total_supply,
+            metadata: Some(TokenMetadata {
+                title: Some(title),
+                description: Some(description),
+                media: Some(media),
+                media_hash: None,
+                item_id,
+
+                reference: Some(reference),
+                reference_hash: None,
+            }),
+        };
+
+        self.item_types.insert(&item_id, &new_item);
+        self.item_amount_tree.insert(&item_id, total_supply);
+
+        new_item
     }
 }
 
