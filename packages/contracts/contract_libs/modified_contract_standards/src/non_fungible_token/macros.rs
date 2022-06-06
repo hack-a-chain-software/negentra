@@ -3,7 +3,6 @@
 #[macro_export]
 macro_rules! impl_non_fungible_token_core {
     ($contract: ident, $token: ident) => {
-        use std::collections::HashMap;
         use $crate::non_fungible_token::core::NonFungibleTokenCore;
         use $crate::non_fungible_token::core::NonFungibleTokenResolver;
 
@@ -17,7 +16,8 @@ macro_rules! impl_non_fungible_token_core {
                 approval_id: Option<u64>,
                 memo: Option<String>,
             ) {
-                self.$token.nft_transfer(receiver_id, token_id, approval_id, memo)
+                self.$token
+                    .nft_transfer(receiver_id, token_id, approval_id, memo)
             }
 
             #[payable]
@@ -28,8 +28,9 @@ macro_rules! impl_non_fungible_token_core {
                 approval_id: Option<u64>,
                 memo: Option<String>,
                 msg: String,
-            ) -> PromiseOrValue<bool> {
-                self.$token.nft_transfer_call(receiver_id, token_id, approval_id, memo, msg)
+            ) -> near_sdk::PromiseOrValue<bool> {
+                self.$token
+                    .nft_transfer_call(receiver_id, token_id, approval_id, memo, msg)
             }
 
             fn nft_token(self, token_id: TokenId) -> Option<Token> {
@@ -54,7 +55,7 @@ macro_rules! impl_non_fungible_token_core {
                 previous_owner_id: AccountId,
                 receiver_id: AccountId,
                 token_id: TokenId,
-                approved_account_ids: Option<HashMap<AccountId, u64>>,
+                approved_account_ids: Option<std::collections::HashMap<AccountId, u64>>,
             ) -> bool {
                 self.$token.nft_resolve_transfer(
                     previous_owner_id,
@@ -102,7 +103,8 @@ macro_rules! impl_non_fungible_token_approval {
                 approved_account_id: ValidAccountId,
                 approval_id: Option<u64>,
             ) -> bool {
-                self.$token.nft_is_approved(token_id, approved_account_id, approval_id)
+                self.$token
+                    .nft_is_approved(token_id, approved_account_id, approval_id)
             }
         }
     };
@@ -113,12 +115,11 @@ macro_rules! impl_non_fungible_token_approval {
 #[macro_export]
 macro_rules! impl_non_fungible_token_enumeration {
     ($contract: ident, $token: ident) => {
-        use near_sdk::json_types::U128;
         use $crate::non_fungible_token::enumeration::NonFungibleTokenEnumeration;
 
         #[near_bindgen]
         impl NonFungibleTokenEnumeration for $contract {
-            fn nft_total_supply(self) -> U128 {
+            fn nft_total_supply(self) -> near_sdk::json_types::U128 {
                 self.$token.nft_total_supply()
             }
 
@@ -126,17 +127,21 @@ macro_rules! impl_non_fungible_token_enumeration {
                 self.$token.nft_tokens(from_index, limit)
             }
 
-            fn nft_supply_for_owner(self, account_id: ValidAccountId) -> U128 {
+            fn nft_supply_for_owner(
+                self,
+                account_id: ValidAccountId,
+            ) -> near_sdk::json_types::U128 {
                 self.$token.nft_supply_for_owner(account_id)
             }
 
             fn nft_tokens_for_owner(
                 &self,
                 account_id: ValidAccountId,
-                from_index: Option<U128>,
+                from_index: Option<near_sdk::json_types::U128>,
                 limit: Option<u64>,
             ) -> Vec<Token> {
-                self.$token.nft_tokens_for_owner(account_id, from_index, limit)
+                self.$token
+                    .nft_tokens_for_owner(account_id, from_index, limit)
             }
         }
     };

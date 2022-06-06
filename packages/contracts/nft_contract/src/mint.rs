@@ -1,82 +1,226 @@
 use crate::*;
+use modified_contract_standards::non_fungible_token::utils::refund_deposit;
 use near_sdk::PromiseOrValue;
+use std::convert::TryInto;
+use sum_tree::Operation;
 
 #[near_bindgen]
 impl Contract {
-
-    fn ft_on_transfer(
+    #[allow(unused_variables)]
+    #[payable]
+    pub fn ft_on_transfer(
         &mut self,
         sender_id: ValidAccountId,
         amount: U128,
         msg: String,
     ) -> PromiseOrValue<U128> {
-        PromiseOrValue::Value(U128(1))
+        assert_eq!(
+            env::predecessor_account_id(),
+            self.mint_token,
+            "Contract only accepts calls from {}",
+            self.mint_token
+        );
+        assert!(
+            amount.0 >= self.mint_cost,
+            "Must deposit at least {} to mint nfts",
+            self.mint_cost
+        );
+
+        let initial_storage = env::storage_usage();
+        self.nft_mint(sender_id);
+        let final_storage = env::storage_usage();
+
+        refund_deposit(final_storage - initial_storage);
+
+        let refund = amount.0 - self.mint_cost;
+        PromiseOrValue::Value(U128(refund))
     }
-    /// Mint a new token with ID=`token_id` belonging to `receiver_id`.
-    ///
-    /// Since this example implements metadata, it also requires per-token metadata to be provided
-    /// in this call. `self.tokens.mint` will also require it to be Some, since
-    /// `StorageKey::TokenMetadata` was provided at initialization.
-    ///
-    /// `self.tokens.mint` will enforce `predecessor_account_id` to equal the `owner_id` given in
-    /// initialization call to `new`.
+}
 
-    //minter must be whitelisted possibility to mint multiple nfts in batch
-    #[payable]
-    pub fn nft_mint(
-        &mut self,
-        quantity: U128
-    ) -> Vec<Token> {
-        let account_id: AccountId = env::predecessor_account_id();
-        let allowance: u128 = self.whitelist.get(&account_id).unwrap_or(0);
+impl Contract {
+    fn nft_mint(&mut self, sender_id: ValidAccountId) -> Token {
+        let total = self.available_items();
+        assert!(total > 0, "There are no available items to mint");
 
-        assert!(!self.sales_locked, "sales locked");
-        if self.only_whitelist {
-            assert!(&allowance >= &quantity.0, "Whitelist error: this account has no allowance for minitng this amount of NFTs");
-            self.whitelist.insert(&account_id, &(allowance - quantity.0));
-        }
-        
-        let mut return_vector = Vec::new();
+        let random_seed = *env::random_seed().get(0).unwrap();
+        let hash = env::keccak256(&[random_seed, (total % 256) as u8]);
+        let bytes = (hash[0..8]).try_into().unwrap();
 
-        let initial_storage_usage = env::storage_usage();
+        let drawn_number = (u64::MAX / u64::from_be_bytes(bytes)) % total;
 
-        let mut i: u128 = 0;
-        let mut random_seed: u64 = (*env::random_seed().get(0).unwrap()).into();
-        random_seed = random_seed + 1;
-        let mut random_range: u64;
-        let mut current_id;
-        while i < quantity.0 {
-            random_range = (u64::MAX / random_seed) % self.random_minting.len();
-            current_id = self.random_minting.swap_remove(random_range);
-            return_vector.push( 
-                self.tokens.internal_mint( 
-                    current_id.to_string(), 
-                    account_id.clone().try_into().unwrap(), 
-                    Some(TokenMetadata {
-                        title: Some(format!("Tokonami #{}", &current_id)),
-                        description: Some("2331 TOKONAMI Ready for the Revolution".to_string()),
-                        media: Some(format!("{}/{}.png", self.url_media_base, &current_id)),
-                        media_hash: None,
-                        copies: None,
-                        issued_at: None,
-                        expires_at: None,
-                        starts_at: None,
-                        updated_at: None,
-                        extra: None,
-                        reference: Some(format!("{}/{}.json", self.url_reference_base, &current_id)),
-                        reference_hash: None,
+        let id = self.item_amount_tree.find(drawn_number).unwrap();
+        let mut item = self.item_types.get(&id).unwrap();
 
-                        // special metadata
-                        nft_type: Some((&current_id % 3 + 1).to_string())
-                    }),
-                    self.mint_cost,
-                    self.perpetual_royalties.clone()
-                )
-            );
-            i = i + 1;
-        }
-        refund_deposit_mint(env::storage_usage() - initial_storage_usage, self.mint_cost * quantity.0);
-        return_vector
+        self.item_amount_tree.update(&id, 1, Operation::Subtraction);
+        item.mint_item_update_count();
+        self.item_types.insert(&id, &item);
+
+        let token_id = format!("{} #{}", id, item.minted_items);
+
+        self.tokens
+            .internal_mint(token_id, sender_id, item.metadata, self.mint_cost)
     }
-    
+
+    pub fn available_items(&self) -> u64 {
+        self.item_amount_tree.root().unwrap_or(0)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::tests::*;
+
+    fn create_item(contract: &mut Contract) {
+        contract.internal_create_new_item(
+            1000,
+            "a great title".to_string(),
+            "description".to_string(),
+            "media".to_string(),
+            "reference".to_string(),
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "There are no available items to mint")]
+    fn test_mint_no_items() {
+        let context = get_context(
+            vec![],
+            false,
+            0,
+            0,
+            OWNER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.nft_mint(ValidAccountId::try_from(USER_ACCOUNT).unwrap());
+    }
+
+    #[test]
+    fn test_mint_update_supply() {
+        let context = get_context(vec![], false, 1, 0, "".to_string(), 0, 10u64.pow(18));
+        testing_env!(context);
+
+        let mut contract = init_contract();
+        create_item(&mut contract);
+
+        contract.nft_mint(ValidAccountId::try_from(USER_ACCOUNT).unwrap());
+        let item = contract.item_types.get(&0).unwrap();
+
+        assert_eq!(item.minted_items, 1);
+        assert_eq!(item.supply_available, 999);
+        assert_eq!(contract.available_items(), 999);
+    }
+
+    #[test]
+    #[should_panic(expected = "Contract only accepts calls from")]
+    fn test_transfer_reject_cross_calls() {
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            USER_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.ft_on_transfer(
+            ValidAccountId::try_from(USER_ACCOUNT).unwrap(),
+            U128(1000),
+            "".to_string(),
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "Must deposit at least")]
+    fn test_transfer_min_deposit() {
+        let context = get_context(
+            vec![],
+            false,
+            1,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        );
+        testing_env!(context);
+
+        let mut contract = init_contract();
+
+        contract.ft_on_transfer(
+            ValidAccountId::try_from(USER_ACCOUNT).unwrap(),
+            U128(999),
+            "".to_string(),
+        );
+    }
+
+    #[test]
+    fn test_mint_right_fields() {
+        let context = get_context(vec![], false, 1, 0, "".to_string(), 0, 10u64.pow(18));
+        testing_env!(context);
+        let mut contract = init_contract();
+        create_item(&mut contract);
+
+        let token = contract.nft_mint(ValidAccountId::try_from(USER_ACCOUNT).unwrap());
+
+        assert_eq!(token.owner_id, USER_ACCOUNT);
+    }
+
+    #[test]
+    fn test_transfer_mint_refund() {
+        testing_env!(get_context(
+            vec![],
+            false,
+            5980000000000000000000,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        ));
+
+        let mut contract = init_contract();
+        create_item(&mut contract);
+
+        let refund = contract.ft_on_transfer(
+            ValidAccountId::try_from(USER_ACCOUNT).unwrap(),
+            U128(1001),
+            "".to_string(),
+        );
+
+        match refund {
+            PromiseOrValue::Promise(_) => panic!(),
+            PromiseOrValue::Value(U128(v)) => assert_eq!(v, 1),
+        }
+    }
+
+    #[should_panic(expected = "Must attach")]
+    #[test]
+    fn test_attach_deposit() {
+        testing_env!(get_context(
+            vec![],
+            false,
+            10,
+            0,
+            TOKEN_ACCOUNT.to_string(),
+            0,
+            10u64.pow(18),
+        ));
+
+        let mut contract = init_contract();
+        create_item(&mut contract);
+
+        contract.ft_on_transfer(
+            ValidAccountId::try_from(USER_ACCOUNT).unwrap(),
+            U128(1001),
+            "".to_string(),
+        );
+    }
 }

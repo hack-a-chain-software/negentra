@@ -1,11 +1,9 @@
 use super::resolver::NonFungibleTokenResolver;
 use crate::non_fungible_token::core::NonFungibleTokenCore;
-use crate::non_fungible_token::metadata::TokenMetadata;
 use crate::non_fungible_token::events::{NftMint, NftTransfer};
+use crate::non_fungible_token::metadata::TokenMetadata;
 use crate::non_fungible_token::token::{Token, TokenId};
-use crate::non_fungible_token::utils::{
-    hash_account_id, refund_approved_account_ids
-};
+use crate::non_fungible_token::utils::{hash_account_id, refund_approved_account_ids};
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{LookupMap, TreeMap, UnorderedSet};
 use near_sdk::json_types::{Base64VecU8, ValidAccountId};
@@ -73,8 +71,7 @@ pub struct NonFungibleToken {
     pub approvals_by_id: Option<LookupMap<TokenId, HashMap<AccountId, u64>>>,
     pub next_approval_id_by_id: Option<LookupMap<TokenId, u64>>,
 
-    //required by royalty extension
-    pub royalties_by_id: Option<LookupMap<TokenId, HashMap<AccountId, u128>>>
+    pub perpetual_royalties: HashMap<AccountId, u128>,
 }
 
 #[derive(BorshStorageKey, BorshSerialize)]
@@ -83,22 +80,20 @@ pub enum StorageKey {
     TokenPerOwnerInner { account_id_hash: CryptoHash },
 }
 
-
 impl NonFungibleToken {
-    pub fn new<Q, R, S, T, U>(
+    pub fn new<Q, R, S, T>(
         owner_by_id_prefix: Q,
         owner_id: ValidAccountId,
         token_metadata_prefix: Option<R>,
         enumeration_prefix: Option<S>,
         approval_prefix: Option<T>,
-        royalties_prefix: Option<U>
+        perpetual_royalties: HashMap<AccountId, u128>,
     ) -> Self
     where
         Q: IntoStorageKey,
         R: IntoStorageKey,
         S: IntoStorageKey,
         T: IntoStorageKey,
-        U: IntoStorageKey,
     {
         let (approvals_by_id, next_approval_id_by_id) = if let Some(prefix) = approval_prefix {
             let prefix: Vec<u8> = prefix.into_storage_key();
@@ -118,7 +113,7 @@ impl NonFungibleToken {
             tokens_per_owner: enumeration_prefix.map(LookupMap::new),
             approvals_by_id,
             next_approval_id_by_id,
-            royalties_by_id: royalties_prefix.map(LookupMap::new),
+            perpetual_royalties,
         };
         this.measure_min_token_storage_cost();
         this
@@ -140,15 +135,9 @@ impl NonFungibleToken {
                     description: Some("a".repeat(64)),
                     media: Some("a".repeat(64)),
                     media_hash: Some(Base64VecU8::from("a".repeat(64).as_bytes().to_vec())),
-                    copies: Some(1),
-                    issued_at: None,
-                    expires_at: None,
-                    starts_at: None,
-                    updated_at: None,
-                    extra: None,
                     reference: None,
                     reference_hash: None,
-                    nft_type: None,
+                    item_id: 0,
                 },
             );
         }
@@ -168,9 +157,11 @@ impl NonFungibleToken {
             next_approval_id_by_id.insert(&tmp_token_id, &1u64);
         }
         let u = UnorderedSet::new(
-            StorageKey::TokenPerOwnerInner { account_id_hash: hash_account_id(&tmp_owner_id) }
-                .try_to_vec()
-                .unwrap(),
+            StorageKey::TokenPerOwnerInner {
+                account_id_hash: hash_account_id(&tmp_owner_id),
+            }
+            .try_to_vec()
+            .unwrap(),
         );
         if let Some(tokens_per_owner) = &mut self.tokens_per_owner {
             tokens_per_owner.insert(&tmp_owner_id, &u);
@@ -231,7 +222,13 @@ impl NonFungibleToken {
             receiver_tokens.insert(&token_id);
             tokens_per_owner.insert(&to, &receiver_tokens);
         }
-        NonFungibleToken::emit_transfer(&from, to, token_id, Some(&env::predecessor_account_id()), Some("a".to_string()));
+        NonFungibleToken::emit_transfer(
+            &from,
+            to,
+            token_id,
+            Some(&env::predecessor_account_id()),
+            Some("a".to_string()),
+        );
     }
 
     fn emit_transfer(
@@ -266,8 +263,10 @@ impl NonFungibleToken {
 
         // clear approvals, if using Approval Management extension
         // this will be rolled back by a panic if sending fails
-        let approved_account_ids =
-            self.approvals_by_id.as_mut().and_then(|by_id| by_id.remove(&token_id));
+        let approved_account_ids = self
+            .approvals_by_id
+            .as_mut()
+            .and_then(|by_id| by_id.remove(&token_id));
 
         // check if authorized
         if sender_id != &owner_id {
@@ -299,7 +298,12 @@ impl NonFungibleToken {
 
         self.internal_transfer_unguarded(&token_id, &owner_id, &receiver_id);
 
-        log!("Transfer {} from {} to {}", token_id, sender_id, receiver_id);
+        log!(
+            "Transfer {} from {} to {}",
+            token_id,
+            sender_id,
+            receiver_id
+        );
         if let Some(memo) = memo {
             log!("Memo: {}", memo);
         }
@@ -315,7 +319,6 @@ impl NonFungibleToken {
         token_owner_id: ValidAccountId,
         token_metadata: Option<TokenMetadata>,
         mint_cost: u128,
-        perpetual_royalties: HashMap<AccountId, u128>,
     ) -> Token {
         if self.token_metadata_by_id.is_some() && token_metadata.is_none() {
             env::panic(b"Must provide metadata");
@@ -348,27 +351,28 @@ impl NonFungibleToken {
         }
 
         // Approval Management extension: return empty HashMap as part of Token
-        let approved_account_ids =
-            if self.approvals_by_id.is_some() { Some(HashMap::new()) } else { None };
-
-        // Royalty Management extension
-        let mut royalty = HashMap::<AccountId, u128>::new();
-        if let Some(royalties_by_id) = &mut self.royalties_by_id {
-            //make sure that the length of the perpetual royalties is below 7 since we won't have enough GAS to pay out that many people
-            assert!(perpetual_royalties.len() < 7, "Cannot add more than 6 perpetual royalty amounts");
-
-            //iterate through the perpetual royalties and insert the account and amount in the royalty map
-            for (account, amount) in perpetual_royalties {
-                royalty.insert(account, amount);
-            }
-            royalties_by_id.insert(&token_id, &royalty);
-        }
+        let approved_account_ids = if self.approvals_by_id.is_some() {
+            Some(HashMap::new())
+        } else {
+            None
+        };
 
         // Return any extra attached deposit not used for storage
-        NftMint { owner_id: &token_owner_id.to_string(), token_ids: &[&token_id], memo: None }.emit();
-        Token { token_id, owner_id, metadata: token_metadata, approved_account_ids, royalty: Some(royalty) }
-    }
+        NftMint {
+            owner_id: &token_owner_id.to_string(),
+            token_ids: &[&token_id],
+            memo: None,
+        }
+        .emit();
 
+        Token {
+            token_id,
+            owner_id,
+            metadata: token_metadata,
+            approved_account_ids,
+            royalty: Some(self.perpetual_royalties.clone()),
+        }
+    }
 }
 
 impl NonFungibleTokenCore for NonFungibleToken {
@@ -381,7 +385,13 @@ impl NonFungibleTokenCore for NonFungibleToken {
     ) {
         assert_one_yocto();
         let sender_id = env::predecessor_account_id();
-        self.internal_transfer(&sender_id, receiver_id.as_ref(), &token_id, approval_id, memo);
+        self.internal_transfer(
+            &sender_id,
+            receiver_id.as_ref(),
+            &token_id,
+            approval_id,
+            memo,
+        );
     }
 
     fn nft_transfer_call(
@@ -394,8 +404,13 @@ impl NonFungibleTokenCore for NonFungibleToken {
     ) -> PromiseOrValue<bool> {
         assert_one_yocto();
         let sender_id = env::predecessor_account_id();
-        let (old_owner, old_approvals) =
-            self.internal_transfer(&sender_id, receiver_id.as_ref(), &token_id, approval_id, memo);
+        let (old_owner, old_approvals) = self.internal_transfer(
+            &sender_id,
+            receiver_id.as_ref(),
+            &token_id,
+            approval_id,
+            memo,
+        );
         // Initiating receiver's call and the callback
         ext_receiver::nft_on_transfer(
             sender_id.clone(),
@@ -420,14 +435,19 @@ impl NonFungibleTokenCore for NonFungibleToken {
 
     fn nft_token(self, token_id: TokenId) -> Option<Token> {
         let owner_id = self.owner_by_id.get(&token_id)?;
-        let metadata = self.token_metadata_by_id.and_then(|by_id| by_id.get(&token_id));
+        let metadata = self
+            .token_metadata_by_id
+            .and_then(|by_id| by_id.get(&token_id));
         let approved_account_ids = self
             .approvals_by_id
             .and_then(|by_id| by_id.get(&token_id).or_else(|| Some(HashMap::new())));
-        let royalty = self
-            .royalties_by_id
-            .and_then(|by_id| by_id.get(&token_id).or_else(|| Some(HashMap::new())));
-        Some(Token { token_id, owner_id, metadata, approved_account_ids, royalty: royalty })
+        Some(Token {
+            token_id,
+            owner_id,
+            metadata,
+            approved_account_ids,
+            royalty: Some(self.perpetual_royalties.clone()),
+        })
     }
 
     fn mint(
@@ -436,10 +456,14 @@ impl NonFungibleTokenCore for NonFungibleToken {
         token_owner_id: ValidAccountId,
         token_metadata: Option<TokenMetadata>,
     ) -> Token {
-        Token { token_id, owner_id: token_owner_id.to_string(), metadata: token_metadata, approved_account_ids: {None}, royalty: Some(HashMap::new()) }
+        Token {
+            token_id,
+            owner_id: token_owner_id.to_string(),
+            metadata: token_metadata,
+            approved_account_ids: { None },
+            royalty: Some(HashMap::new()),
+        }
     }
-
-    
 }
 
 impl NonFungibleTokenResolver for NonFungibleToken {
@@ -486,7 +510,12 @@ impl NonFungibleTokenResolver for NonFungibleToken {
             return true;
         };
 
-        log!("Return token {} from @{} to @{}", token_id, receiver_id, previous_owner_id);
+        log!(
+            "Return token {} from @{} to @{}",
+            token_id,
+            receiver_id,
+            previous_owner_id
+        );
 
         self.internal_transfer_unguarded(&token_id, &receiver_id, &previous_owner_id);
 

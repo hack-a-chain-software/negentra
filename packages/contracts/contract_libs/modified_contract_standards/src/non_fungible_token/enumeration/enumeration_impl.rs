@@ -3,7 +3,6 @@ use crate::non_fungible_token::token::Token;
 use crate::non_fungible_token::NonFungibleToken;
 use near_sdk::json_types::{ValidAccountId, U128};
 use near_sdk::AccountId;
-use std::collections::HashMap;
 use std::convert::TryFrom;
 
 type TokenId = String;
@@ -15,9 +14,7 @@ impl NonFungibleToken {
         let metadata = self.token_metadata_by_id.as_ref().unwrap().get(&token_id);
         let approved_account_ids =
             Some(self.approvals_by_id.as_ref().unwrap().get(&token_id).unwrap_or_default());
-        let royalty = self
-            .royalties_by_id.as_ref()
-            .and_then(|by_id| by_id.get(&token_id).or_else(|| Some(HashMap::new())));
+        let royalty = Some(self.perpetual_royalties.clone());
 
         Token { token_id, owner_id, metadata, approved_account_ids, royalty }
     }

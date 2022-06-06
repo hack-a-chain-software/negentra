@@ -14,7 +14,9 @@ impl<'a> NearEvent<'a> {
     fn to_json_string(&self) -> String {
         // Events cannot fail to serialize so fine to panic on error
         #[allow(clippy::redundant_closure)]
-        serde_json::to_string(self).ok().unwrap_or_else(|| panic!("noUnwrap"))
+        serde_json::to_string(self)
+            .ok()
+            .unwrap_or_else(|| panic!("noUnwrap"))
     }
 
     fn to_json_event_string(&self) -> String {
