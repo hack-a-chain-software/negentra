@@ -1,13 +1,8 @@
-use crate::non_fungible_token::refund_approved_account_ids;
-use crate::non_fungible_token::NonFungibleToken;
-use crate::non_fungible_token::TokenId;
-use near_sdk::assert_one_yocto;
-use near_sdk::env;
 use near_sdk::json_types::U128;
-use near_sdk::AccountId;
-use near_sdk::Balance;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use crate::non_fungible_token::{refund_approved_account_ids, NonFungibleToken, TokenId};
+use near_sdk::{env, Balance, AccountId, assert_one_yocto};
+use serde::{Deserialize, Serialize};
 use std::convert::TryInto;
 
 #[derive(Serialize, Deserialize)]

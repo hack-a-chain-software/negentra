@@ -1,5 +1,3 @@
-/// The core methods for a basic fungible token. Extension standards may be
-/// added in addition to this macro.
 #[macro_export]
 macro_rules! impl_fungible_token_core {
     ($contract: ident, $token: ident $(, $on_tokens_burned_fn:ident)?) => {
@@ -46,12 +44,13 @@ macro_rules! impl_fungible_token_core {
                 sender_id: ValidAccountId,
                 receiver_id: ValidAccountId,
                 amount: U128,
+
             ) -> U128 {
                 let sender_id: AccountId = sender_id.into();
                 let (used_amount, burned_amount) =
                     self.$token.internal_ft_resolve_transfer(&sender_id, receiver_id, amount);
                 if burned_amount > 0 {
-                    $(self.$on_tokens_burned_fn(sender_id, burned_amount);)?
+                    $(self.$on_tokens_burned_fn(sender_id, burned_amount, Some("ft_resolve_transfer on closed account".to_string()));)?
                 }
                 used_amount.into()
             }
