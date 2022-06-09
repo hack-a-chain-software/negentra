@@ -71,8 +71,11 @@ More info about it can be found [here](https://rustwasm.github.io/docs/book/).
 If you followed correctly the steps above, you are now ready to go. 
 You can read more about the NEAR CLI and the deployment of rust codes [here](https://www.near-sdk.io/zero-to-hero/basics/set-up-skeleton)
 
+If the contract is not compiled (it should be), you can compile it using: 
 
-
+```bash
+RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
+```
 
 ## Deployment
 
