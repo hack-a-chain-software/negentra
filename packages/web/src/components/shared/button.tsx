@@ -1,5 +1,4 @@
 import React from "react";
-import { Spinner } from "../../assets/animations";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
@@ -13,7 +12,6 @@ export function Button({ loading = false, children, ...props }: ButtonProps) {
       }
       {...props}
     >
-      <Spinner />
       {children}
     </button>
   ) : (
