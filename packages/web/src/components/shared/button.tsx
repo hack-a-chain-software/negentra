@@ -1,5 +1,5 @@
 import React from "react";
-import { Spinner } from "../assets/animations";
+import { Spinner } from "../../assets/animations";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;

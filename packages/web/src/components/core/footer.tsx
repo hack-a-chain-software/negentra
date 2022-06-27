@@ -1,12 +1,13 @@
 import { useNearUser, useNearWallet } from "react-near";
-import { contractName } from "../env/contract";
-import { Button } from "./button";
-import { If } from "./if";
+import { contractName } from "../../env/contract";
+import { Button } from "../shared/button";
+import { If } from "../if";
 
 export function Header() {
   const user = useNearUser(contractName);
+  
   return (
-    <div className="w-screen h-[80px] flex items-center justify-center">
+    <div className="w-screen h-[80px] flex items-center justify-center absolute">
       <div className="flex px-5 items-center max-w-[1400px] w-[100%] justify-between">
         <svg
           height="20"

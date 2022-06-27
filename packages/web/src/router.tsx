@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components";
-import { Home } from "./pages/home";
+import { Index } from "./pages";
 import { routes } from "./routes";
 
 /**
@@ -13,7 +13,7 @@ function Router() {
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path={routes.home} element={<Home />} />
+        <Route path={routes.home} element={<Index />} />
       </Routes>
     </BrowserRouter>
   );
