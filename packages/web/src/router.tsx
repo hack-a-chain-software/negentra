@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Header } from "./components";
+import { Header, Footer } from "./components";
 import { Index } from "./pages";
 import { routes } from "./routes";
 
@@ -15,6 +15,7 @@ function Router() {
       <Routes>
         <Route path={routes.home} element={<Index />} />
       </Routes>
+      <Footer/>
     </BrowserRouter>
   );
 }
