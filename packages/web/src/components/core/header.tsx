@@ -29,7 +29,7 @@ const menuItems = [
     name: 'Whitepaper',
     path: '#',
   },
-]
+];
 
 export function Header() {
   return (
