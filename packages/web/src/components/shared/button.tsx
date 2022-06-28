@@ -1,27 +1,40 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-empty-interface */
+import { Button as ChakraButton, ButtonProps, Flex } from "@chakra-ui/react";
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  loading?: boolean;
-};
+interface IButtonProps extends ButtonProps {}
 
-export function Button({ loading = false, children, ...props }: ButtonProps) {
-  return loading ? (
-    <button
-      className={
-        "inline-flex items-center gap-3 justify-center px-5 py-2 border border-transparent text-base font-medium rounded-xl text-black bg-[#00FFAD]"
-      }
+/**
+ * @description - Chakra custom button component
+ */
+export function Button({
+  bg = "linear-gradient(180deg, #D484F5 0%, #9B59B6 100%)",
+  justifyContent = 'start',
+  borderBottom = 'solid 8px #71368A',
+  color = "white",
+  ...props
+}: IButtonProps) {
+  return (
+    <ChakraButton
+      bg={bg}
+      color={color}
+      justifyContent={justifyContent}
+      borderBottom={borderBottom}
+      borderRadius="18px"
+      px="32px"
+      py="16px"
+      minHeight="72px"
+      fontSize="18px"
+      fontFamily="Inter"
+      alignItems="center"
+      fontWeight="regular"
+      lineHeight="21px"
+      _active={{
+        // opacity: 0.4,
+      }}
+      _hover={{
+        // opacity: 0.4,
+      }}
       {...props}
-    >
-      {children}
-    </button>
-  ) : (
-    <button
-      className={
-        "inline-flex items-center gap-3 justify-center px-5 py-2 border border-transparent text-base font-medium rounded-xl text-black bg-[#00FFAD]"
-      }
-      {...props}
-    >
-      {children}
-    </button>
+    />
   );
 }

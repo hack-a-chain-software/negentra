@@ -1,4 +1,4 @@
-import { Container, Image, Flex, Grid, GridItem, Text, Link, Box } from "@chakra-ui/react";
+import { Container, Image, Flex, Grid, Text, Link, Box } from "@chakra-ui/react";
 
 const menuItems = [
   {
