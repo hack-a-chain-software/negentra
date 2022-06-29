@@ -31,7 +31,7 @@ export function Hero() {
               <Text
                 color="#333333"
                 fontSize="22px"
-                fontWeight="medium"
+                fontWeight="500"
                 marginBottom="-16px"
               >
                 FUNNIES, PARTIES, FRIENDS.
