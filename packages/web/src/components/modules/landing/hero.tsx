@@ -59,6 +59,10 @@ export function Hero() {
               <Button
                 flex="1"
                 maxWidth="273px"
+                disabled={true}
+                _active={{
+                  //
+                }}
               >
                 <Flex
                   alignItems="center"

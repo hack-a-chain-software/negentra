@@ -61,8 +61,7 @@ export function Roadmap() {
           marginRight="24px"
           alignItems="center"
           justifyContent="center"
-          borderBottom="solid 4px #EEEEEE"
-          _selected={{ bg: '#9959B4', borderBottom: 'solid 4px #71368A', color: 'white' }}
+          className="border-[#EEEEEE] border-b-[4px] hover:border-white"
         >
           <Image
             h="28px"
@@ -85,8 +84,7 @@ export function Roadmap() {
           marginLeft="24px"
           alignItems="center"
           justifyContent="center"
-          borderBottom="solid 4px #EEEEEE"
-          _selected={{ bg: '#9959B4', borderBottom: 'solid 4px #71368A', color: 'white' }}
+          className="border-[#EEEEEE] border-b-[4px] hover:border-white"
         >
           <Image
             h="28px"

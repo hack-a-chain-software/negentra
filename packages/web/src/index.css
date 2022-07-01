@@ -36,6 +36,10 @@ body {
   border-bottom: solid 4px #EEEEEE !important;
 }
 
+.slick-arrow:active {
+  border-bottom: solid 4px white !important;
+}
+
 .slick-arrow.slick-prev {
   left: -70px;
 }
