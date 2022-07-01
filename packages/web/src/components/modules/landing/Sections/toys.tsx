@@ -5,42 +5,42 @@ import { Container, Image, Flex } from '@chakra-ui/react';
 
 import toys from '@negentra/public/json/toys.json';
 
-export function Toys() {
-  const slider = useRef<typeof Slider>();
+const settings = {
+  speed: 100,
+  dots: false,
+  arrows: false,
+  infinite: true,
+  slidesToShow: 7,
+  centerMode: true,
+  slidesToScroll: 1,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 5,
+      }
+    },
+    {
+      breakpoint: 640,
+      settings: {
+        slidesToShow: 1,
+        infinite: false,
+        centerMode: false,
+      }
+    },
+  ],
+  className: 'neg-skins-carousel bg-[url(/images/slider-bg.jpg)] h-[700px] bg-[length:706px_240px] bg-[center_bottom] bg-no-repeat items-center',
+};
 
-  const settings = {
-    speed: 500,
-    dots: false,
-    arrows: false,
-    infinite: true,
-    slidesToShow: 7,
-    centerMode: true,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 5,
-        }
-      },
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 1,
-          infinite: false,
-          centerMode: false,
-        }
-      },
-    ],
-    className: 'neg-skins-carousel bg-[url(/images/slider-bg.jpg)] h-[700px] bg-[length:706px_240px] bg-[center_bottom] bg-no-repeat items-center',
-  };
+export function Toys() {
+  const slider = useRef<Slider>();
 
   const onNext = useCallback(() => {
-    slider.current.slickNext();
+    slider.current?.slickNext();
   }, [slider.current]);
 
   const onPrev = useCallback(() => {
-    slider.current.slickPrev();
+    slider.current?.slickPrev();
   }, [slider.current]);
 
   return (
@@ -79,7 +79,7 @@ export function Toys() {
 
       <Slider
         {...settings}
-        ref={slider}
+        ref={slider as any}
       >
         {toys && toys.map((toy: string, i: number) => (
           <Flex
@@ -118,7 +118,7 @@ export function Toys() {
           style={{
             '--primary': '#FF6F00',
             '--secondary': '#CA6110',
-          }}
+          } as any}
         >
           <Image
             h="24px"
@@ -172,7 +172,7 @@ export function Toys() {
           style={{
             '--primary': '#FF6F00',
             '--secondary': '#CA6110',
-          }}
+          } as any}
         >
           <Image
             h="24px"

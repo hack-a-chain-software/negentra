@@ -1,8 +1,9 @@
 import {
   Grid,
   GridItem,
-  Container, Flex,
+  Container, Flex, ResponsiveValue,
 } from '@chakra-ui/react';
+import * as CSS from "csstype";
 import { Text, Title } from '@negentra/src/components';
 
 import tokenomics from '@negentra/public/json/tokenomics.json';
@@ -90,7 +91,7 @@ export function Tokenomics () {
                 fontSize="22px"
                 fontWeight="400"
                 fontFamily="Titan One"
-                textAlign={textAlign}
+                textAlign={textAlign as ResponsiveValue<CSS.Property.TextAlign>}
               >
                 { label }
               </Text>

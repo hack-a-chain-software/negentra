@@ -5,16 +5,15 @@ import { Container, Flex, Image } from '@chakra-ui/react';
 
 import roadmap from '@negentra/public/json/roadmap.json';
 
-
 export function Roadmap() {
-  const slider = useRef<typeof Slider>();
+  const slider = useRef<Slider>();
 
   const onNext = useCallback(() => {
-    slider.current.slickNext();
+    slider.current?.slickNext();
   }, [slider.current]);
 
   const onPrev = useCallback(() => {
-    slider.current.slickPrev();
+    slider.current?.slickPrev();
   }, [slider.current]);
 
   const settings = {
@@ -49,7 +48,7 @@ export function Roadmap() {
           alignItems: 'center',
           justifyContent: 'center',
         }}
-      >      
+      >
         <Flex
           w="64px"
           h="64px"
@@ -71,9 +70,9 @@ export function Roadmap() {
             src="/svg/lg-arrow-left.svg"
           />
         </Flex>
-
+  
         <ul style={{ margin: "0px", height: '8px' }}> {dots} </ul>
-
+  
         <Flex
           w="64px"
           h="64px"
@@ -131,9 +130,8 @@ export function Roadmap() {
         </Flex>
 
         <Slider
-          w="100%"
           {...settings}
-          ref={slider}
+          ref={slider as any}
         >
           { roadmap && roadmap.map(({ title, description }, i) => (
             <Container

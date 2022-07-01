@@ -1,21 +1,24 @@
-import { Container, Image } from '@chakra-ui/react';
-import { useCallback, useEffect, useState } from 'react';
+import { Container } from '@chakra-ui/react';
+import { useEffect } from 'react';
+import YouTubeIframeLoader from 'youtube-iframe';
 
 export function Trailer() {
   useEffect(() => {
-    new YT.Player('ytplayer', {
-      width: '100%',
-      height: '100%',
-      list: 'PLf6f-5FHUCV4AnrxwU_Ylyhax0ID-TOt2',
-      playerVars: {
-        fs: 0,
-        rel: 0,
-        mute: 1,
-        loop: 1,
-        autoplay: 1,
-        controls: 0,
-        playlist: 'tsNznAue32A',
-      },
+    YouTubeIframeLoader.load((YT) => {
+      new YT.Player('ytplayer', {
+        width: '100%',
+        height: '100%',
+        list: 'PLf6f-5FHUCV4AnrxwU_Ylyhax0ID-TOt2',
+        playerVars: {
+          fs: 0,
+          rel: 0,
+          mute: 1,
+          loop: 1,
+          autoplay: 1,
+          controls: 0,
+          playlist: 'tsNznAue32A',
+        },
+      });
     });
   }, []);
 

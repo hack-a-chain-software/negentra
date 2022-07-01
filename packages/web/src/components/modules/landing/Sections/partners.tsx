@@ -61,7 +61,6 @@ export function Partners() {
 
         <Slider
           {...settings}
-          padding="10px 48px"
           className="mx-[80px]"
         >
           {partners && partners.map((logo: string, i: number) => (
