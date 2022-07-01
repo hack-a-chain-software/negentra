@@ -31,7 +31,8 @@ export function Hero() {
               <Text
                 fontSize="22px"
                 fontWeight="600"
-                marginBottom="-16px"
+                marginBottom="-8px"
+                className="text-center md:text-left"
               >
                 FUNNIES, PARTIES, FRIENDS.
               </Text>
@@ -39,19 +40,21 @@ export function Hero() {
               <Title
                 marginBottom="25px"
                 maxWidth="578px"
+                className="text-[80px] leading-[1] mt-[10px] text-center sm:text-[100px] sm:leading-[100px] sm:mt-0 md:text-left"
               >
                 PLAY {'&'} COLLECT!
               </Title>
 
               <Text
                 maxWidth="669px"
+                className="text-center md:text-left"
               >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus nisi a quam accumsan dapibus. Curabitur turpis massa, pretium id risus sed, gravida tincidunt tellus.
               </Text>
             </Flex>
 
             <Flex
-              className='space-x-[30px]'
+              className='sm:space-x-[30px] space-y-[12px] flex-col items-center sm:flex-row sm:space-y-0'
             >
               <Button
                 flex="1"

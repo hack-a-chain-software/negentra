@@ -5,22 +5,20 @@ import { Text, Title } from '@negentra/src/components';
 export function Play() {
   return (
     <Container
-      h="100%"
-      w="100vw"
-      marginBottom="134px"
+      marginBottom="180px"
       maxWidth="1410px"
       position="relative"
-      className="flex justify-end"
+      className="flex justify-end px-0"
     >
       <Image
         src="/images/prism.png"
         position="absolute"
         bottom="-130px"
         left="-20px"
+        className="hidden xl:block"
       />
 
       <Tabs
-        h="662px"
         w="100vw"
         maxW="1331px"
         align="center"
@@ -29,11 +27,11 @@ export function Play() {
         paddingBottom="117px"
         paddingTop="88px"
         flexDirection="column-reverse"
-        className="bg-[url(/images/play-bg.jpeg)] bg-[length:auto_100%] bg-[center] bg-no-repeat"
+        className="bg-[linear-gradient(110deg,_#9B59B6_60%,_#FF6F00_60%)] px-[18px] xl:px-0 xl:bg-[url(/images/play-bg.jpeg)] xl:bg-[length:auto_100%] xl:bg-[center] xl:bg-no-repeat lg:h-[662px]"
       >
         <TabList
           bg="white"
-          width="501px"
+          maxWidth="501px"
           marginX="auto"
           paddingY="8px"
           paddingX="9px"
@@ -41,6 +39,7 @@ export function Play() {
           borderRadius="15px"
           display="flex"
           flexDirection="row"
+          className="w-full"
         >
           {items && items.map(({ button }, i) => (
             <Flex
@@ -94,6 +93,7 @@ export function Play() {
                     fontSize="80px"
                     color="white"
                     lineHeight="94px"
+                    className="text-[60px] leading-[1] sm:text-[80px] sm:leading-[94px]"
                   >
                     { title }
                   </Title>

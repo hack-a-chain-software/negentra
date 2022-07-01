@@ -4,23 +4,22 @@ import { Button, Text, Title } from '@negentra/src/components';
 export function FollowUp() {
   return (
     <Container
-      w="100vw"
       maxWidth="1410px"
       marginBottom="200px"
-      className="flex items-center flex-col mb-[142px]"
+      className="flex items-center flex-col mb-[142px] px-0"
     >
       <Flex
-        width="1091px"
+        w="100%"
         height="640px"
+        maxW="1091px"
         direction="column"
-        paddingTop="101px"
-        paddingLeft="112px"
         position="relative"
-        className="bg-[url(/svg/follow-up-bg.svg)] bg-[center_top_-88px]"
+        className="bg-[linear-gradient(110deg,_#FF6F00_60%,_#9B59B6_60%)] px-[18px] items-center justify-center lg:px-0 lg:items-start lg:justify-start lg:bg-[url(/svg/follow-up-bg.svg)] lg:bg-[center_top_-88px] lg:pt-[101px] lg:pl-[112px]"
       >
         <Flex
           maxWidth="600px"
           marginBottom="20px"
+          className="text-center lg:text-left"
         >
           <Title
             color="white"
@@ -34,6 +33,7 @@ export function FollowUp() {
         <Flex
           maxWidth="700px"
           marginBottom="50px"
+          className="text-center lg:text-left"
         >
           <Text
             color="white"
@@ -82,6 +82,7 @@ export function FollowUp() {
           bottom="-30%"
           right="-17%"
           pointerEvents="none"
+          className="hidden xl:block"
         />
       </Flex>
     </Container>

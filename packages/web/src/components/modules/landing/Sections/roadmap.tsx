@@ -25,6 +25,14 @@ export function Roadmap() {
     slidesToShow: 3,
     centerMode: true,
     slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: 1,
+        }
+      },
+    ],
     centerPadding: '0px 80px',
     className: 'neg-roadmap-carousel',
     customPaging: i => (
@@ -93,7 +101,6 @@ export function Roadmap() {
 
   return (
     <Container
-      w="100vw"
       minHeight="1124px"
       maxWidth="1920px"
       paddingTop="150px"
@@ -109,12 +116,14 @@ export function Roadmap() {
           mx="auto"
           alignItems="center"
           justifyContent="center"
+          marginBottom="22px"
         >
           <Flex>
             <Title
               color="white"
               fontSize="100px"
               textTransform="uppercase"
+              className="text-[60px] leading-[1] sm:text-[100px] leading-[114.5px]"
             >
               Roadmap
             </Title>
@@ -129,20 +138,19 @@ export function Roadmap() {
           { roadmap && roadmap.map(({ title, description }, i) => (
             <Container
               key={'neg-roadmap-item' + i}
-              className="flex items-center justify-center"
+              className="flex items-center justify-center h-[450px]"
             >
               <Flex
-                key={i}
-                display="flex"
                 width="392px"
-                height="342px"
+                color="white"
+                display="flex"
+                paddingX="24px"
+                minHeight="342px"
                 direction="column"
                 alignItems="center"
-                justifyContent="center"
-                paddingX="24px"
                 paddingBottom="44px"
-                color="white"
-                className="reg-roadmap-carousel-slide bg-[url(/svg/roadmap-border.svg)] bg-[length:100%_100%] bg-no-repeat ml-[12px]"
+                justifyContent="center"
+                className="reg-roadmap-carousel-slide bg-[url(/svg/roadmap-border.svg)] bg-[length:100%_100%] bg-no-repeat"
               >
                 <Text
                   fontSize="30px"

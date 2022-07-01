@@ -28,7 +28,7 @@ export function Header() {
           >
             {menus.map((menu, i) =>
               <Flex
-                key={i}
+                key={'header-menu-item' + i}
               >
                 <Link
                   isExternal

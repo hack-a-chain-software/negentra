@@ -11,10 +11,27 @@ export function Toys() {
   const settings = {
     speed: 500,
     dots: false,
+    arrows: false,
     infinite: true,
     slidesToShow: 7,
     centerMode: true,
     slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 5,
+        }
+      },
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          infinite: false,
+          centerMode: false,
+        }
+      },
+    ],
     className: 'neg-skins-carousel bg-[url(/images/slider-bg.jpg)] h-[700px] bg-[length:706px_240px] bg-[center_bottom] bg-no-repeat items-center',
   };
 
@@ -45,6 +62,7 @@ export function Toys() {
         >
           <Title
             textTransform="uppercase"
+            className="text-[80px] leading-[1] sm:text-[100px] leading-[114.5px]"
           >
             Characters
           </Title>
@@ -76,6 +94,7 @@ export function Toys() {
             <Image
               w="231px"
               src={toy}
+              className="relative left-[60px] sm:left-0"
             />
           </Flex>
         ))}
@@ -85,7 +104,7 @@ export function Toys() {
         width="100%"
         alignItems="center"
         justifyContent="center"
-        className="space-x-[36px] mt-[32px]"
+        className="space-x-[16px] mt-[32px] lg:space-x-[36px]"
       >
         <Flex
           onClick={() => onPrev()}

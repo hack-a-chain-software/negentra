@@ -5,23 +5,23 @@ import items from '@negentra/public/json/about-section.json';
 export function About() {
   return (
     <Container
-      h="100%"
-      w="100vw"
-      maxWidth="1410px"
+      maxWidth="1280px"
       marginBottom="174px"
       className="flex items-center"
     >
       <Tabs
-        w="100%"
         align="center"
         variant="unstyled"
         orientation="vertical"
         flexDirection="row-reverse"
+        className="xl:w-full mx-auto"
       >
-        <TabList>
+        <TabList
+          className="ml-[32px] hidden sm:block my-auto"
+        >
           {[...Array(items.length)].map((_, i) => (
             <Flex
-              key={i}
+              key={'about-tab-list-item' + i}
               align="start"
               position="relative"
               direction="column"
@@ -51,7 +51,8 @@ export function About() {
               >
                 <Text
                   fontSize="18px"
-                  fontWeight="500"
+                  fontWeight="800"
+                  color="currentColor"
                 >
                   { i + 1 }
                 </Text>
@@ -63,22 +64,25 @@ export function About() {
         <TabPanels>
           {items.map(({ title, description, image }, i) => (
             <TabPanel
-              key={i}
+              key={'about-tab-panel-item' + i}
             >
               <Grid
                 templateColumns="auto 546px"
+                className="block xl:grid"
               >
                 <Flex
                   direction="column"
+                  className="mb-[52px] xl:mb-0"
                 >
                   <Flex
-                    maxW="450px"
+                    maxW="510px"
                     marginBottom="26px"
+                    className="mx-auto xl:mx-0 xl:max-w-[510px]"
                   >
                     <Title
                       fontSize="80px"
                       lineHeight="94px"
-                      textAlign="start"
+                      className="text-center xl:text-left text-[60px] leading-[1] sm:text-[80px] sm:leading-[94px]"
                     >
                       { title }
                     </Title>
@@ -86,9 +90,8 @@ export function About() {
       
                   <Flex
                     maxWidth="570px"
-                    textAlign="start"
                     direction="column"
-                    className="space-y-[21px]"
+                    className="space-y-[21px] mx-auto xl:mx-0 text-center xl:text-left"
                   >
                     { description?.map((text: string, i: number) => (
                       <Text
@@ -101,6 +104,8 @@ export function About() {
                 </Flex>
 
                 <Image
+                  w="100%"
+                  maxWidth="546px"
                   src={image}
                 />
               </Grid>

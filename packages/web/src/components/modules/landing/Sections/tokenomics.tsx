@@ -53,6 +53,7 @@ export function Tokenomics () {
           <Title
             textAlign="center"
             textTransform="uppercase"
+            className="text-[65px] leading-[1] sm:text-[100px] leading-[114.5px]"
           >
             Tokenomics
           </Title>
@@ -195,6 +196,7 @@ export function Tokenomics () {
         align="center"
         marginTop="35px"
         justifyContent="space-between"
+        className="flex-col justify-start items-center space-y-[12px] sm:flex-row sm:justify-between"
       >
         <Flex
           direction="column"

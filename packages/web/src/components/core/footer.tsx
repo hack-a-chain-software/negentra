@@ -1,26 +1,25 @@
 import { Container, Image, Flex, Grid, Link } from "@chakra-ui/react";
 import { Text } from '@negentra/src/components';
 import menuItems from '@negentra/public/json/header.json';
-import menuLinks from '@negentra/public/json/policy.json';
+import policyItems from '@negentra/public/json/policy.json';
 import socialLinks from '@negentra/public/json/social.json';
 
 export function Footer() {  
   return (
     <Container
-      w="100vw"
       maxW="1920px"
-      className="bg-[url('/images/footer-bg.png')] bg-[length:100%_530px] bg-bottom bg-no-repeat h-[640px]"
+      className="bg-[url('/images/footer-bg.png')] bg-[length:100%_530px] bg-bottom bg-no-repeat xl:h-[640px]"
     >
       <Container
-        w="100%"
-        h="100%"
         maxW="1410px"
       >
         <Grid
           templateColumns="585px auto"
+          className="xl:grid"
         >
           <Flex
             w="100%"
+            className="hidden xl:block"
           >
             <Image
               src="/images/footer-toy.png"
@@ -30,9 +29,8 @@ export function Footer() {
 
           <Flex
             w="100%"
-            h="400px"
-            marginLeft="-85px"
-            className="mt-auto space-x-[135px] pt-[66px]"
+            minH="400px"
+            className="mt-auto sm:space-x-[135px] pt-[66px] xl:ml-[-85px] space-y-[18px] flex-col sm:flex-row"
           >
             <Flex
               direction="column"
@@ -40,7 +38,7 @@ export function Footer() {
             >
               {menuItems.map((menu, i) =>
                 <Flex
-                  key={i}
+                  key={'footer-menu-item' + i}
                 >
                   <Link
                     isExternal
@@ -64,11 +62,11 @@ export function Footer() {
 
             <Flex
               direction="column"
-              className="space-y-[4px]"
+              className="space-y-[4px] hidden md:block"
             >
-              {menuLinks.map((policy, i) =>
+              {policyItems.map((policy, i) =>
                 <Flex
-                  key={i}
+                  key={'footer-policy-item' + i}
                 >
                   <Link
                     isExternal
@@ -111,7 +109,7 @@ export function Footer() {
                   <Link
                     isExternal
                     href={social.path}
-                    key={i}
+                    key={'footer-social-item' + i}
                     _hover={{
                       textDecoration: 'unset',
                     }}

@@ -6,9 +6,7 @@ import team from '@negentra/public/json/team.json';
 export function Team() {
   return (
     <Container
-      h="100%"
-      w="100vw"
-      maxWidth="1410px"
+      maxWidth="1500px"
       marginBottom="125px"
       className="flex flex-col items-center"
     >
@@ -17,12 +15,14 @@ export function Team() {
       >
         <Title
           textTransform="uppercase"
+          className="text-[80px] leading-[1] sm:text-[100px] leading-[114.5px]"
         >
           Our Team
         </Title>
       </Flex>
 
       <Flex
+        maxWidth="1184px"
         marginBottom="50px"
       >
         <Text
@@ -33,8 +33,10 @@ export function Team() {
       </Flex>
 
       <Grid
-        templateColumns='repeat(6, 1fr)'
+        width="100%"
         rowGap="30px"
+        justifyContent="center"
+        className="grid-cols-[repeat(auto-fill,242px)]"
       >
         {team && team.map((person, i) => (
           <PersonCard
