@@ -19,6 +19,7 @@ export function Header() {
         >
           <Flex
             flexShrink="0"
+            className="mx-auto md:mx-0"
           >
             <Image src="/svg/logo.svg" h='52px' />
           </Flex>

@@ -62,7 +62,7 @@ export function Toys() {
         >
           <Title
             textTransform="uppercase"
-            className="text-[80px] leading-[1] sm:text-[100px] leading-[114.5px]"
+            className="text-[65px] leading-[1] sm:text-[100px] leading-[114.5px]"
           >
             Characters
           </Title>
