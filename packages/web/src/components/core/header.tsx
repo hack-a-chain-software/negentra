@@ -1,35 +1,7 @@
-import { Image, Flex, Text, Link, Button } from "@chakra-ui/react";
+import { Image, Flex, Link } from '@chakra-ui/react';
+import { Text } from '@negentra/src/components';
 
-const menuItems = [
-  {
-    name: 'Sociapol',
-    path: '#',
-  },
-  {
-    name: 'NFT',
-    path: '#',
-  },
-  {
-    name: 'SPOL',
-    path: '#',
-  },
-  {
-    name: 'Roadmap',
-    path: '#',
-  },
-  {
-    name: 'Crew',
-    path: '#',
-  },
-  {
-    name: 'Partners',
-    path: '#',
-  },
-  {
-    name: 'Whitepaper',
-    path: '#',
-  },
-];
+import menus from '@negentra/public/json/header.json';
 
 export function Header() {
   return (
@@ -45,25 +17,32 @@ export function Header() {
           justifyContent="space-between"
           className="rounded-b-[20px] bg-[url('/images/header-bg.png')] bg-[length:100%_100%]"
         >
-          <Flex>
+          <Flex
+            flexShrink="0"
+          >
             <Image src="/svg/logo.svg" h='52px' />
           </Flex>
 
           <Flex
-            className="space-x-[32px]"
+            className="space-x-[16px] lg:space-x-[32px] hidden md:flex"
           >
-            {menuItems.map((menu, i) =>
+            {menus.map((menu, i) =>
               <Flex
                 key={i}
               >
                 <Link
                   isExternal
                   href={menu.path}
+                  _hover={{
+                    textDecoration: 'unset',
+                  }}
                 >
                   <Text
-                    color='#EEEEEE'
+                    color='white'
                     fontSize='14px'
-                    className="uppercase"
+                    fontFamily="Titan One"
+                    textTransform="uppercase"
+                    _hover={{ color: '#EEEEEE' }}
                   >
                     { menu.name }
                   </Text>
@@ -71,21 +50,6 @@ export function Header() {
               </Flex>
             )}
           </Flex>
-        </Flex>
-
-        <Flex
-          h="100%"
-          w="90px"
-          alignItems="center"
-          justifyContent="center"
-          className="rounded-b-[19px] bg-[url('/images/wallet-bg.png')] bg-[length:100%_100%] pb-[12px]"
-        >
-          <Button
-            bg="transparent"
-            _hover={{ bg: 'transparent' }}
-          >
-            <Image src="/svg/wallet.svg" h='26px' />
-          </Button>
         </Flex>
       </nav>
     </div>

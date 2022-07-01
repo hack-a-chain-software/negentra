@@ -1,0 +1,65 @@
+[
+  {
+    "label": "Pre-seed",
+    "percentage": "6.75%",
+    "tge": "-",
+    "cliff": "9 Months",
+    "vesting": "24 Months DLV"
+  },
+  {
+    "label": "Seed",
+    "percentage": "5.50%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "Private",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "Public Token Sale",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "Team and Advisors",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "LP",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "Foundation",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "Community and Marketing",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  },
+  {
+    "label": "Rewards and Staking",
+    "percentage": "7.75%",
+    "tge": "5%",
+    "cliff": "4.5 Months",
+    "vesting": "15 Months DLV"
+  }
+]

@@ -1,69 +1,8 @@
-import { Container, Image, Flex, Grid, Text, Link, Box } from "@chakra-ui/react";
-
-const menuItems = [
-  {
-    name: 'Sociapol',
-    path: '#',
-  },
-  {
-    name: 'NFT',
-    path: '#',
-  },
-  {
-    name: 'SPOL',
-    path: '#',
-  },
-  {
-    name: 'Roadmap',
-    path: '#',
-  },
-  {
-    name: 'Crew',
-    path: '#',
-  },
-  {
-    name: 'Partners',
-    path: '#',
-  },
-  {
-    name: 'Whitepaper',
-    path: '#',
-  },
-];
-
-const menuLinks = [
-  {
-    name: 'Privacy Policy',
-    path: '#',
-  },
-  {
-    name: 'Cookie Policy',
-    path: '#',
-  },
-  {
-    name: 'Clarification Policy',
-    path: '#',
-  },
-];
-
-const socialLinks = [
-  {
-    path: '#',
-    icon: 'facebook',
-  },
-  {
-    path: '#',
-    icon: 'twitter',
-  },
-  {
-    path: '#',
-    icon: 'instagram',
-  },
-  {
-    path: '#',
-    icon: 'discord',
-  },
-];
+import { Container, Image, Flex, Grid, Link } from "@chakra-ui/react";
+import { Text } from '@negentra/src/components';
+import menuItems from '@negentra/public/json/header.json';
+import menuLinks from '@negentra/public/json/policy.json';
+import socialLinks from '@negentra/public/json/social.json';
 
 export function Footer() {  
   return (
@@ -106,12 +45,15 @@ export function Footer() {
                   <Link
                     isExternal
                     href={menu.path}
+                    _hover={{
+                      textDecoration: 'unset',
+                    }}
                   >
                     <Text
-                      color='#EEEEEE'
-                      fontSize='18px'
-                      lineHeight="24px"
-                      className="uppercase"
+                      color='white'
+                      fontFamily="Titan One"
+                      textTransform="uppercase"
+                      _hover={{ color: '#EEEEEE' }}
                     >
                       { menu.name }
                     </Text>
@@ -124,21 +66,24 @@ export function Footer() {
               direction="column"
               className="space-y-[4px]"
             >
-              {menuLinks.map((menu, i) =>
+              {menuLinks.map((policy, i) =>
                 <Flex
                   key={i}
                 >
                   <Link
                     isExternal
-                    href={menu.path}
+                    href={policy.path}
+                    _hover={{
+                      textDecoration: 'unset',
+                    }}
                   >
                     <Text
-                      color='#EEEEEE'
-                      fontSize='18px'
-                      lineHeight="24px"
-                      className="uppercase"
+                      color='white'
+                      fontFamily="Titan One"
+                      textTransform="uppercase"
+                      _hover={{ color: '#EEEEEE' }}
                     >
-                      { menu.name }
+                      { policy.name }
                     </Text>
                   </Link>
                 </Flex>
@@ -153,7 +98,7 @@ export function Footer() {
               >
                 <Text
                   color="white"
-                  fontSize="18px"
+                  fontFamily="Titan One"
                 >
                   Follow Us
                 </Text>
@@ -162,11 +107,14 @@ export function Footer() {
               <Flex
                 className="space-x-[10px]"
               >   
-                {socialLinks.map((menu, i) =>
+                {socialLinks.map((social, i) =>
                   <Link
                     isExternal
-                    href={menu.path}
+                    href={social.path}
                     key={i}
+                    _hover={{
+                      textDecoration: 'unset',
+                    }}
                   >
                     <Flex
                       w="42px"
@@ -175,10 +123,11 @@ export function Footer() {
                       borderRadius="50%"
                       background="#71368A"
                       justifyContent="center"
+                      className="hover:bg-[#71368A]/80"
                     >
-                        <Image
-                          src={`/svg/${menu.icon}.svg`}
-                        />
+                      <Image
+                        src={`/svg/${social.icon}.svg`}
+                      />
                     </Flex>
                   </Link>
                 )}

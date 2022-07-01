@@ -1,11 +1,10 @@
-import { Button } from '../../shared';
-import { Container, Grid, Flex, Image, Text } from '@chakra-ui/react';
+import { Button, Title, Text } from '@negentra/src/components';
+import { Container, Grid, Flex, Image } from '@chakra-ui/react';
 
 export function Hero() {
   return (
     <Container
       w="100vw"
-      minHeight="100vh"
       maxWidth="1920px"
       className="bg-[url('/images/hero-bg.png')] bg-[length:auto_auto] bg-[left_-20px_top_42px] bg-no-repeat"
     >
@@ -16,9 +15,10 @@ export function Hero() {
       >
         <Grid
           w="100%"
-          templateColumns="auto 690px"
           paddingTop="72px"
-          gap="112px"
+          templateColumns="578px auto"
+          justifyContent="space-between"
+          className="block xl:grid"
         >
           <Flex
             direction="column"
@@ -26,29 +26,24 @@ export function Hero() {
           >
             <Flex
               direction="column"
-              marginBottom="66px"
+              className="mb-[33px] xl:66px"
             >
               <Text
-                color="#333333"
                 fontSize="22px"
-                fontWeight="500"
+                fontWeight="600"
                 marginBottom="-16px"
               >
                 FUNNIES, PARTIES, FRIENDS.
               </Text>
 
-              <Text
-                fontSize="100px"
-                lineHeight="117px"
-                color="#333333"
-                marginBottom="28px"
+              <Title
+                marginBottom="25px"
+                maxWidth="578px"
               >
                 PLAY {'&'} COLLECT!
-              </Text>
+              </Title>
 
               <Text
-                fontSize="18px"
-                color="#333333"
                 maxWidth="669px"
               >
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris rhoncus nisi a quam accumsan dapibus. Curabitur turpis massa, pretium id risus sed, gravida tincidunt tellus.
@@ -60,6 +55,7 @@ export function Hero() {
             >
               <Button
                 flex="1"
+                maxWidth="273px"
               >
                 <Flex
                   alignItems="center"
@@ -89,7 +85,9 @@ export function Hero() {
                 flex="1"
                 bg="white"
                 color="#333333"
+                maxWidth="273px"
                 border="1px solid #979797"
+                _active={{ background: '#333333', color: 'white' }}
               >
                 <Flex
                   justifyContent="start"
@@ -101,9 +99,10 @@ export function Hero() {
           </Flex>
 
           <Flex
-            w="full"
             align="center"
             justifyContent="center"
+            className="hidden xl:flex"
+            maxWidth="690px"
           >
             <Image
               src="/images/hero.png"

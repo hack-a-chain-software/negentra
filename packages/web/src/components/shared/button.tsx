@@ -11,6 +11,9 @@ export function Button({
   justifyContent = 'start',
   borderBottom = 'solid 8px #71368A',
   color = "white",
+  _active = {
+    borderBottomWidth: 0.4,
+  },
   ...props
 }: IButtonProps) {
   return (
@@ -24,13 +27,11 @@ export function Button({
       py="16px"
       minHeight="72px"
       fontSize="18px"
-      fontFamily="Inter"
+      fontFamily="Titan One"
       alignItems="center"
       fontWeight="regular"
       lineHeight="21px"
-      _active={{
-        // opacity: 0.4,
-      }}
+      _active={_active}
       _hover={{
         // opacity: 0.4,
       }}

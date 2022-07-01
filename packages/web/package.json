@@ -25,6 +25,8 @@
     "react-near": "^3.4.8",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
+    "react-slick": "^0.29.0",
+    "slick-carousel": "^1.8.1",
     "tailwindcss": "^3.0.24",
     "use-mediaquery": "^1.0.1",
     "xstate": "^4.32.0",

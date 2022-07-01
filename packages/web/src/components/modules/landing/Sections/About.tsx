@@ -1,112 +1,6 @@
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Container, Flex, Text, Grid, Image } from '@chakra-ui/react'
-
-const items = [
-  {
-    title: 'What is Sociapol ?',
-    image: '/images/about1.jpeg',
-    description: (
-      <Flex
-        maxWidth="570px"
-        direction="column"
-        className="space-y-[21px]"
-      >
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-           Negentra ekibinin geliştirmiş olduğu Sociapol, size sanal bir dünyanın kapılarını aralıyor. Bu sanal dünya üzerinde çok farklı eğlence araçları ve karakterler bulunuyor. Sanal dünya üzerinde yapacağın etkileşimlerini, diğer insanlar ile beraber gerçekleştir.
-        </Text>
-        
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-          Sürekli gelişen ve yapısal olarak kendini güncelleyen Sociapol, yenilikleri ile beraber sınırsız eğlenceyi size sunuyor. Futbol oyna, aksiyon eğlencelerine katıl, partilerin üyesi ol. Veya kripto alt yapısı ile alışverişlerini gerçekleştir. Bunların hepsi Sociapol ile mümkün.
-        </Text>
-      </Flex>
-    )
-  },
-  {
-    title: 'What is Sociapol ?',
-    image: '/images/about1.jpeg',
-    description: (
-      <Flex
-        direction="column"
-        className="space-y-[21px]"
-      >
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-           Negentra ekibinin geliştirmiş olduğu Sociapol, size sanal bir dünyanın kapılarını aralıyor. Bu sanal dünya üzerinde çok farklı eğlence araçları ve karakterler bulunuyor. Sanal dünya üzerinde yapacağın etkileşimlerini, diğer insanlar ile beraber gerçekleştir.
-        </Text>
-        
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-          Sürekli gelişen ve yapısal olarak kendini güncelleyen Sociapol, yenilikleri ile beraber sınırsız eğlenceyi size sunuyor. Futbol oyna, aksiyon eğlencelerine katıl, partilerin üyesi ol. Veya kripto alt yapısı ile alışverişlerini gerçekleştir. Bunların hepsi Sociapol ile mümkün.
-        </Text>
-      </Flex>
-    )
-  },
-  {
-    title: 'What is Sociapol ?',
-    image: '/images/about1.jpeg',
-    description: (
-      <Flex
-        direction="column"
-        className="space-y-[21px]"
-      >
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-           Negentra ekibinin geliştirmiş olduğu Sociapol, size sanal bir dünyanın kapılarını aralıyor. Bu sanal dünya üzerinde çok farklı eğlence araçları ve karakterler bulunuyor. Sanal dünya üzerinde yapacağın etkileşimlerini, diğer insanlar ile beraber gerçekleştir.
-        </Text>
-        
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-          Sürekli gelişen ve yapısal olarak kendini güncelleyen Sociapol, yenilikleri ile beraber sınırsız eğlenceyi size sunuyor. Futbol oyna, aksiyon eğlencelerine katıl, partilerin üyesi ol. Veya kripto alt yapısı ile alışverişlerini gerçekleştir. Bunların hepsi Sociapol ile mümkün.
-        </Text>
-      </Flex>
-    )
-  },
-  {
-    title: 'What is Sociapol ?',
-    image: '/images/about1.jpeg',
-    description: (
-      <Flex
-        direction="column"
-        className="space-y-[21px]"
-      >
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-           Negentra ekibinin geliştirmiş olduğu Sociapol, size sanal bir dünyanın kapılarını aralıyor. Bu sanal dünya üzerinde çok farklı eğlence araçları ve karakterler bulunuyor. Sanal dünya üzerinde yapacağın etkileşimlerini, diğer insanlar ile beraber gerçekleştir.
-        </Text>
-        
-        <Text
-          fontSize="18px"
-          color="#333333"
-          lineHeight="21px"
-        >
-          Sürekli gelişen ve yapısal olarak kendini güncelleyen Sociapol, yenilikleri ile beraber sınırsız eğlenceyi size sunuyor. Futbol oyna, aksiyon eğlencelerine katıl, partilerin üyesi ol. Veya kripto alt yapısı ile alışverişlerini gerçekleştir. Bunların hepsi Sociapol ile mümkün.
-        </Text>
-      </Flex>
-    )
-  },
-];
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Container, Flex, Grid, Image } from '@chakra-ui/react';
+import { Text, Title } from '@negentra/src/components';
+import items from '@negentra/public/json/about-section.json';
 
 export function About() {
   return (
@@ -114,6 +8,7 @@ export function About() {
       h="100%"
       w="100vw"
       maxWidth="1410px"
+      marginBottom="174px"
       className="flex items-center"
     >
       <Tabs
@@ -154,12 +49,12 @@ export function About() {
                 color="#9959B4"
                 _selected={{ bg: '#9959B4', borderBottom: 'solid 4px #71368A', color: 'white' }}
               >
-                  <Text
-                    fontSize="18px"
-                    fontWeight="500"
-                  >
-                    { i + 1 }
-                  </Text>
+                <Text
+                  fontSize="18px"
+                  fontWeight="500"
+                >
+                  { i + 1 }
+                </Text>
               </Tab>
             </Flex>
           ))}
@@ -177,24 +72,31 @@ export function About() {
                   direction="column"
                 >
                   <Flex
-                    maxW="385px"
+                    maxW="450px"
                     marginBottom="26px"
                   >
-                    <Text
+                    <Title
                       fontSize="80px"
-                      color="#333333"
                       lineHeight="94px"
                       textAlign="start"
                     >
                       { title }
-                    </Text>
+                    </Title>
                   </Flex>
-
+      
                   <Flex
                     maxWidth="570px"
                     textAlign="start"
+                    direction="column"
+                    className="space-y-[21px]"
                   >
-                    { description }
+                    { description?.map((text: string, i: number) => (
+                      <Text
+                        key={'neg-description' + i}
+                      > 
+                      { text }
+                      </Text>
+                    ))}
                   </Flex>
                 </Flex>
 
