@@ -1,9 +1,41 @@
-import { Image, Flex, Link } from '@chakra-ui/react';
+import { WalletConnection } from "near-api-js";
+import { Image, Flex, Link, Button } from '@chakra-ui/react';
 import { Text } from '@negentra/src/components';
+import { useCallback, useMemo, useEffect } from 'react';
+import { useNearWallet, useNearUser } from 'react-near';
+import { contractName } from '../../env/contract';
+import { useContract } from '../../stores/contract';
 
 import menus from '@negentra/public/json/header.json';
 
 export function Header() {
+  const wallet = useNearWallet();
+  const user = useNearUser(contractName);
+
+  const {
+    initializeContract,
+  } = useContract();
+
+  useEffect(() => {
+    if (user.account && user.isConnected)
+      initializeContract(
+        wallet as WalletConnection,
+        user.account?.accountId as string
+      );
+  }, [user.isConnected]);
+
+  const login = useCallback(async () => {
+    await wallet?.requestSignIn();
+    await user.connect();
+  }, [wallet]);
+  
+  const logout = useCallback(async () => {
+    await wallet?.signOut();
+    await user.disconnect();
+  }, [wallet]);
+
+  const walletConnected = useMemo(() => !!wallet?.isSignedIn(), [wallet]);
+
   return (
     <div className="w-screen flex items-center justify-center absolute">
       <nav
@@ -51,6 +83,36 @@ export function Header() {
               </Flex>
             )}
           </Flex>
+        </Flex>
+
+        <Flex
+          h="100%"
+          w="90px"
+          alignItems="center"
+          justifyContent="center"
+          className="rounded-b-[19px] bg-[url('/images/wallet-bg.png')] bg-[length:100%_100%] pb-[12px]"
+        >
+          {
+            walletConnected
+            ? (
+              <Button
+                bg="transparent"
+                onClick={() => logout()}
+                _hover={{ bg: 'transparent' }}
+              >
+              <Image src="/svg/logout.svg" h='32px' />
+              </Button>
+            )
+            : (
+              <Button
+                bg="transparent"
+                onClick={() => login()}
+                _hover={{ bg: 'transparent' }}
+              >
+                <Image src="/svg/wallet.svg" h='26px' />
+              </Button>
+            )
+          }
         </Flex>
       </nav>
     </div>
