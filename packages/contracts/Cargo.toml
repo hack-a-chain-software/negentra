@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "./base_char_nft",
     "./nft_contract",
     "./token_contract",
     "./vesting_contract",
