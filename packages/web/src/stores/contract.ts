@@ -1,33 +1,47 @@
-import create from "zustand";
-import { GreetingContract } from "@near/contracts";
-import { Contract, WalletConnection } from "near-api-js";
-import { contractName } from "../env/contract";
+import create from 'zustand';
+import { Contract, WalletConnection } from 'near-api-js';
+import negentraNFT from '../../../contracts/testnet_settings/accounts/negentra_nft.testnet.json';
+import negentraToken from '../../../contracts/testnet_settings/accounts/negentra_token.testnet.json';
 
 export const useContract = create<{
-  contract: GreetingContract | null;
+  contractNFT,
+  contractToken,
   isUpdating: boolean;
-  initializeContract: (
+  initializeContracts: (
     walletConnection: WalletConnection,
     accountID: string
   ) => Promise<void>;
 }>((set, get) => ({
-  contract: null,
+  contractNFT: null,
+  contractToken: null,
   isUpdating: false,
 
-  initializeContract: async (walletConnection: WalletConnection) => {
+  initializeContracts: async (walletConnection: WalletConnection) => {
     set({ isUpdating: true });
-    const contract = new GreetingContract(
-      new Contract(await walletConnection.account(), contractName, {
-        // View methods are read only. They don't modify the state, but usually return some value.
-        viewMethods: ["get_greeting"],
-        // Change methods can modify the state. But you don't receive the returned value when called.
-        changeMethods: ["set_greeting"],
-      })
-    );
+
+    const contractNFT = new Contract(await walletConnection.account(), negentraNFT.account_id, {
+      viewMethods: [
+        'nft_burn',
+        'update_item',
+        'ft_on_transfer',
+        'create_new_item',
+        'change_mint_cost',
+        'change_mint_token',
+        'nft_transfer_payout',
+        'change_perpetual_royalties',
+      ],
+      changeMethods: [],
+    });
+
+    const contractToken = new Contract(await walletConnection.account(), negentraToken.account_id, {
+      viewMethods: [],
+      changeMethods: [],
+    });
 
     try {
       set({
-        contract,
+        contractNFT,
+        contractToken,
       });
       
     } finally {

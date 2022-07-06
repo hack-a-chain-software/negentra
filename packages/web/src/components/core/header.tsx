@@ -3,22 +3,23 @@ import { Image, Flex, Link, Button } from '@chakra-ui/react';
 import { Text } from '@negentra/src/components';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useNearWallet, useNearUser } from 'react-near';
-import { contractName } from '../../env/contract';
 import { useContract } from '../../stores/contract';
+
+import negentraNFT from '../../../../contracts/testnet_settings/accounts/negentra_nft.testnet.json';
 
 import menus from '@negentra/public/json/header.json';
 
 export function Header() {
   const wallet = useNearWallet();
-  const user = useNearUser(contractName);
+  const user = useNearUser(negentraNFT.account_id);
 
   const {
-    initializeContract,
+    initializeContracts,
   } = useContract();
 
   useEffect(() => {
     if (user.account && user.isConnected)
-      initializeContract(
+      initializeContracts(
         wallet as WalletConnection,
         user.account?.accountId as string
       );
