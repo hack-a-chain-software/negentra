@@ -1,9 +1,24 @@
 import { useState } from 'react';
-import { Button, Title, Text } from '@negentra/src/components';
-import { Container, Grid, Flex, Image } from '@chakra-ui/react';
+import { useContract } from '@negentra/src/stores/contract';
+import { Button, Title, Text, RadioCard } from '@negentra/src/components';
+import { Container, Grid, Flex, Image, useRadioGroup, HStack } from '@chakra-ui/react';
 
 export function MintHero() {
   const [soldOut, setSoldOut] = useState(false);
+
+  const options = ['Male', 'Female']
+
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: 'framework',
+    defaultValue: 'react',
+    onChange: console.log,
+  })
+
+  const group = getRootProps()
+
+  const {
+    mint,
+  } = useContract();
 
   return (
     <Container
@@ -30,7 +45,7 @@ export function MintHero() {
           >
             <Flex
               direction="column"
-              className="mb-[33px] xl:66px"
+              className="mb-[8px] xl:66px"
             >
               <Text
                 fontSize="22px"
@@ -48,61 +63,106 @@ export function MintHero() {
               >
                 MINT <br className="hidden md:block" /> NOW!
               </Title>
+            </Flex>
 
+            <Flex>
               <Text
                 maxWidth="669px"
                 fontSize="24px"
-                marginBottom="32px"
+                marginBottom="12px"
                 className="text-center md:text-left"
               >
-                Get one of the 10.000 unique sociapol characters, Mint yours now.
-              </Text>
-
-
-              <Text
-                fontSize="36px"
-                letterSpacing="-3px"
-                fontFamily="Titan One"
-                className="text-center md:text-left"
-              >
-                {
-                  soldOut 
-                  ? ( 'SOLD OUT!' ) 
-                  : ( '0 / 10.000' )
-                }
+                Select your character's gender
               </Text>
             </Flex>
 
             <Flex
-              className='justify-center md:justify-start'
+              className='justify-center md:justify-start flex-col space-y-[32px]'
             >
-              <Button
-                flex="1"
-                maxWidth="273px"
+              <Flex
+                w="100%"
               >
-                <Flex
-                  alignItems="center"
-                  justifyContent="center"
+                <Flex 
+                  {...group}
+                  className="space-x-[12px]"
+                >
+                  {options.map((value) => {
+                    const radio = getRadioProps({ value })
+
+                    return (
+                      <RadioCard key={value} {...radio}>
+                        <Flex
+                          outline="none"
+                          alignItems="center"
+                          justifyContent="start"
+                          height="52px"
+                        >
+                          <Flex
+                            alignItems="center"
+                            justifyContent="center"
+                            marginRight="12px"
+                          >
+                            <Image
+                              h="40px"
+                              w="auto"
+                              src={ value === 'Male' ? '/images/maleHead.png' : '/images/femaleHead.png' }
+                            />
+                          </Flex>
+                          
+                          <Text
+                            color="white"
+                            fontFamily="Titan One"
+                          >
+                            { value }
+                          </Text>
+                        </Flex>
+                      </RadioCard>
+                    )
+                  })}
+                </Flex>
+              </Flex>
+
+              <Flex
+                flexDirection="column"
+              >
+                <Text
+                  maxWidth="669px"
+                  fontSize="24px"
+                  marginBottom="12px"
+                  className="text-center md:text-left"
+                >
+                  Mint to play the game!
+                </Text>
+
+                <Button
+                  flex="1"
+                  maxWidth="352px"
+                  onClick={() => mint()}
                 >
                   <Flex
-                    w="34px"
-                    h="34px"
-                    bg="white"
-                    marginRight="15px"
-                    borderRadius="50%"
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <Image
-                      src="/svg/market.svg"
-                      h="16px"
-                      w="16px"
-                    />
-                  </Flex>
+                    <Flex
+                      w="34px"
+                      h="34px"
+                      bg="white"
+                      marginRight="15px"
+                      borderRadius="50%"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Image
+                        src="/svg/market.svg"
+                        h="16px"
+                        w="16px"
+                      />
+                    </Flex>
 
-                  Mint Your NFT
-                </Flex>
-              </Button>
+                    Mint Your character
+                  </Flex>
+                </Button>
+              </Flex>
             </Flex>
           </Flex>
 

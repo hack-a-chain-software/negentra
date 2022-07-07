@@ -1,28 +1,30 @@
 import { WalletConnection } from "near-api-js";
 import { Image, Flex, Link, Button } from '@chakra-ui/react';
 import { Text } from '@negentra/src/components';
+import { useNavigate } from "react-router";
 import { useCallback, useMemo, useEffect } from 'react';
 import { useNearWallet, useNearUser } from 'react-near';
-import { useContract } from '../../stores/contract';
+import { useContract } from '@negentra/src/stores/contract';
 
-import negentraNFT from '../../../../contracts/testnet_settings/accounts/negentra_nft.testnet.json';
+import contract from '../../../../contracts/testnet_settings/accounts/negentra_base_nft.testnet.json';
 
 import menus from '@negentra/public/json/header.json';
 
 export function Header() {
   const wallet = useNearWallet();
-  const user = useNearUser(negentraNFT.account_id);
+  const navigate = useNavigate();
+  const user = useNearUser(contract.account_id);
 
   const {
-    initializeContracts,
+    initializeContract,
   } = useContract();
 
   useEffect(() => {
-    if (user.account && user.isConnected)
-      initializeContracts(
+    if (user.account && user.isConnected) {
+      initializeContract(
         wallet as WalletConnection,
-        user.account?.accountId as string
       );
+    }
   }, [user.isConnected]);
 
   const login = useCallback(async () => {
@@ -53,6 +55,8 @@ export function Header() {
           <Flex
             flexShrink="0"
             className="mx-auto md:mx-0"
+            cursor="pointer"
+            onClick={() => {navigate('/')}}
           >
             <Image src="/svg/logo.svg" h='52px' />
           </Flex>
