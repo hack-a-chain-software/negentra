@@ -11,6 +11,7 @@ export function Button3d({
   height = 'auto',
   borderRadius = '18px',
   bg =  '#71368A',
+  minHeight = '72px',
   padding = '16px 32px',
   color = "linear-gradient(180deg, #D484F5 0%, #9B59B6 100%)",
   ...props
@@ -19,8 +20,8 @@ export function Button3d({
     <ChakraButton
       bg={bg}
       width="max"
-      minHeight="72px"
-      padding="0"
+      padding="0px"
+      minHeight={minHeight}
       borderRadius={borderRadius}
       _hover={{
         //
@@ -35,7 +36,7 @@ export function Button3d({
         color="white"
         width={width}
         height={height}
-        minHeight="72px"
+        minHeight={minHeight}
         borderRadius={borderRadius}
         padding={padding}
         transform="translateY(-6px)"
