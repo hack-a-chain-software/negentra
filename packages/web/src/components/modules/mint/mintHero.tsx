@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useNearUser } from 'react-near';
 import { useContract } from '@negentra/src/stores/contract';
 import { Title, Text, RadioCard, Button3d, If } from '@negentra/src/components';
 import { Container, Grid, Flex, Image, useRadioGroup } from '@chakra-ui/react';
@@ -19,8 +18,6 @@ export function MintHero() {
   })
 
   const group = getRootProps();
-
-  const user = useNearUser('negentra_base_nft.testnet');
 
   const {
     mintedChar,
