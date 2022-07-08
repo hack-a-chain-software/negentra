@@ -6,7 +6,7 @@ import { useCallback, useMemo, useEffect } from 'react';
 import { useNearWallet, useNearUser } from 'react-near';
 import { useContract } from '@negentra/src/stores/contract';
 
-import contract from '../../../../contracts/testnet_settings/accounts/negentra_base_nft.testnet.json';
+import contract from '@negentra/src/env/contract.json';
 
 import menus from '@negentra/public/json/header.json';
 
@@ -145,7 +145,7 @@ export function Header() {
               }
             </Flex>
           </Flex>
-          </Flex>
+        </Flex>
       </nav>
     </div>
   );

@@ -1,10 +1,14 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useState, useCallback } from 'react';
 import { useContract } from '@negentra/src/stores/contract';
 import { Title, Text, RadioCard, Button3d, If } from '@negentra/src/components';
 import { Container, Grid, Flex, Image, useRadioGroup } from '@chakra-ui/react';
+import { useNearUser, useNearWallet } from 'react-near';
+
+import contract from '@negentra/src/env/contract.json';
 
 export function MintHero() {
+  const wallet = useNearWallet();
   const [ type, setType ] = useState('Male');
 
   const options = ['Male', 'Female']
@@ -13,13 +17,21 @@ export function MintHero() {
     name: 'char',
     defaultValue: type,
     onChange: (value) => {
-      setType(value)
+      setType(value);
     },
-  })
+  });
+
+  const login = useCallback(async () => {
+    await wallet?.requestSignIn();
+    await user.connect();
+  }, [wallet]);
 
   const group = getRootProps();
 
+  const user = useNearUser(contract.account_id);
+
   const {
+    mint,
     mintedChar,
   } = useContract();
 
@@ -148,7 +160,15 @@ export function MintHero() {
 
                     <Button3d
                       width="352px"
-                      onClick={() => mint(type)}
+                      onClick={() => {
+                        if (!user.isConnected) {
+                          login();
+
+                          return;
+                        }
+
+                        mint(type)
+                      }}
                     >
                       <Flex
                         alignItems="center"
