@@ -94,6 +94,7 @@ export function Play() {
                     color="white"
                     lineHeight="94px"
                     className="text-[60px] leading-[1] sm:text-[80px] sm:leading-[94px]"
+                    textShadow="0px 5px 0px #DDDDDD"
                   >
                     { title }
                   </Title>

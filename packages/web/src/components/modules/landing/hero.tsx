@@ -1,4 +1,4 @@
-import { Button, Title, Text } from '@negentra/src/components';
+import { Button3d, Button, Title, Text } from '@negentra/src/components';
 import { Container, Grid, Flex, Image } from '@chakra-ui/react';
 
 export function Hero() {
@@ -56,13 +56,9 @@ export function Hero() {
             <Flex
               className='sm:space-x-[30px] space-y-[12px] flex-col items-center sm:flex-row sm:space-y-0'
             >
-              <Button
-                flex="1"
-                maxWidth="273px"
+              <Button3d
+                width="273px"
                 disabled={true}
-                _active={{
-                  //
-                }}
               >
                 <Flex
                   alignItems="center"
@@ -75,25 +71,36 @@ export function Hero() {
                     marginRight="15px"
                     borderRadius="50%"
                     alignItems="center"
+                    background="white"
                     justifyContent="center"
                   >
                     <Image
-                      src="/svg/market.svg"
                       h="16px"
                       w="16px"
+                      src="/svg/market.svg"
                     />
                   </Flex>
-
-                  NFT Marketplace
+    
+                  <Text
+                    fontSize="18px"
+                    color="white"
+                    fontFamily="Titan One"
+                    textShadow="0px 2px 0px #AAAAAA"
+                  >
+                    NFT Marketplace
+                  </Text>
                 </Flex>
-              </Button>
+              </Button3d>
 
               <Button
                 flex="1"
                 bg="white"
                 color="#333333"
+                height="77px"
                 maxWidth="273px"
                 border="1px solid #979797"
+                position="relative"
+                top="-3px"
                 _active={{ background: '#333333', color: 'white' }}
               >
                 <Flex

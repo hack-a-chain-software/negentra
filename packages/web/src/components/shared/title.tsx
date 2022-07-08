@@ -16,6 +16,7 @@ export function Title({
       fontSize={fontSize}
       lineHeight={lineHeight}
       fontFamily={fontFamily}
+      textShadow="0px 6px 0px #DDDDDD"
       {...props}
     />
   );

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useContract } from '@negentra/src/stores/contract';
-import { Button, Title, Text, RadioCard } from '@negentra/src/components';
-import { Container, Grid, Flex, Image, useRadioGroup, HStack } from '@chakra-ui/react';
+import { Title, Text, RadioCard, Button3d } from '@negentra/src/components';
+import { Container, Grid, Flex, Image, useRadioGroup } from '@chakra-ui/react';
 
 export function MintHero() {
   const [soldOut, setSoldOut] = useState(false);
@@ -9,8 +9,8 @@ export function MintHero() {
   const options = ['Male', 'Female']
 
   const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'framework',
-    defaultValue: 'react',
+    name: 'char',
+    defaultValue: 'Male',
     onChange: console.log,
   })
 
@@ -68,8 +68,8 @@ export function MintHero() {
             <Flex>
               <Text
                 maxWidth="669px"
-                fontSize="24px"
-                marginBottom="12px"
+                fontSize="22px"
+                marginBottom="18px"
                 className="text-center md:text-left"
               >
                 Select your character's gender
@@ -127,17 +127,16 @@ export function MintHero() {
               >
                 <Text
                   maxWidth="669px"
-                  fontSize="24px"
-                  marginBottom="12px"
+                  fontSize="22px"
+                  marginBottom="18px"
                   className="text-center md:text-left"
                 >
                   Mint to play the game!
                 </Text>
 
-                <Button
-                  flex="1"
-                  maxWidth="352px"
-                  onClick={() => mint()}
+                <Button3d
+                  width="352px"
+                  onClick={() => {}}
                 >
                   <Flex
                     alignItems="center"
@@ -159,9 +158,15 @@ export function MintHero() {
                       />
                     </Flex>
 
-                    Mint Your character
+                    <Text
+                      color="white"
+                      fontSize="18px"
+                      fontFamily="Titan One"
+                    >
+                      Mint and play!
+                    </Text>
                   </Flex>
-                </Button>
+                </Button3d>
               </Flex>
             </Flex>
           </Flex>
