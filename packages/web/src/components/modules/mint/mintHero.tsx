@@ -1,32 +1,22 @@
 import { motion } from 'framer-motion';
 import { useState, useCallback } from 'react';
 import { useContract } from '@negentra/src/stores/contract';
-import { Title, Text, RadioCard, Button3d, If } from '@negentra/src/components';
-import { Container, Grid, Flex, Image, useRadioGroup } from '@chakra-ui/react';
+import { Title, Text, Button3d, If } from '@negentra/src/components';
+import { Container, Grid, Flex, Image, Box } from '@chakra-ui/react';
 import { useNearUser, useNearWallet } from 'react-near';
 
 import contract from '@negentra/src/env/contract.json';
 
 export function MintHero() {
   const wallet = useNearWallet();
-  const [ type, setType ] = useState('Male');
+  const [type, setType] = useState<string | undefined>(undefined);
 
-  const options = ['Male', 'Female']
-
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: 'char',
-    defaultValue: type,
-    onChange: (value) => {
-      setType(value);
-    },
-  });
+  const types = ['Male', 'Female'];
 
   const login = useCallback(async () => {
     await wallet?.requestSignIn();
     await user.connect();
   }, [wallet]);
-
-  const group = getRootProps();
 
   const user = useNearUser(contract.account_id);
 
@@ -107,14 +97,22 @@ export function MintHero() {
                     w="100%"
                   >
                     <Flex 
-                      {...group}
                       className="space-x-[12px]"
                     >
-                      {options.map((value) => {
-                        const radio = getRadioProps({ value })
-
+                      {types.map((value) => {
                         return (
-                          <RadioCard key={value} {...radio}>
+                          <Box
+                            key={value}
+                            onClick={() => setType(value === type ? undefined : value)}
+                            cursor='pointer'
+                            borderRadius="18px"
+                            opacity={ type === value ? '1' : '.7'}
+                            minWidth="170px"
+                            border="solid 1px white"
+                            padding="6px 12px"
+                            background={ type === value ? '#FF6F00' : 'linear-gradient(180deg, #D484F5 0%, #9B59B6 100%)' }
+                            outline="none"
+                          >
                             <Flex
                               outline="none"
                               alignItems="center"
@@ -140,7 +138,7 @@ export function MintHero() {
                                 { value }
                               </Text>
                             </Flex>
-                          </RadioCard>
+                          </Box>
                         )
                       })}
                     </Flex>

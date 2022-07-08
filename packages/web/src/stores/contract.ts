@@ -1,4 +1,5 @@
 import create from 'zustand';
+import toast from 'react-hot-toast';
 import { Contract, WalletConnection, utils } from 'near-api-js';
 
 import baseContract from '../../../contracts/testnet_settings/accounts/negentra_base_nft.testnet.json';
@@ -54,14 +55,20 @@ export const useContract = create<{
     }
   },
 
-  mint: async (type: string = 'Male') => {
+  mint: async (type: string | undefined) => {
+    if (!type) {
+      toast("Select character's gender to mint");
+
+      return;
+    }
+
     await get().contract?.nft_mint({
       args: {
         user_type: {
           type,
         },
       },
-      amount: utils.format.parseNearAmount('1'),
+      amount: utils.format.parseNearAmount('0.5'),
     });
 
     console.log('aguardando.......');
