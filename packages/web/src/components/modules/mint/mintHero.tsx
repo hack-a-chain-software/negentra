@@ -1,24 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNearUser } from 'react-near';
 import { useContract } from '@negentra/src/stores/contract';
-import { Title, Text, RadioCard, Button3d } from '@negentra/src/components';
+import { Title, Text, RadioCard, Button3d, If } from '@negentra/src/components';
 import { Container, Grid, Flex, Image, useRadioGroup } from '@chakra-ui/react';
 
 export function MintHero() {
-  const [soldOut, setSoldOut] = useState(false);
+  const [ type, setType ] = useState('Male');
 
   const options = ['Male', 'Female']
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: 'char',
-    defaultValue: 'Male',
-    onChange: console.log,
+    defaultValue: type,
+    onChange: (value) => {
+      setType(value)
+    },
   })
 
-  const group = getRootProps()
+  const group = getRootProps();
+
+  const user = useNearUser('negentra_base_nft.testnet');
 
   const {
-    mint,
+    mintedChar,
   } = useContract();
 
   return (
@@ -71,111 +76,130 @@ export function MintHero() {
                   MINT <br className="hidden md:block" /> NOW!
                 </Title>
               </Flex>
-
-              <Flex>
-                <Text
-                  maxWidth="669px"
-                  fontSize="22px"
-                  marginBottom="18px"
-                  className="text-center md:text-left"
-                >
-                  Select your character's gender
-                </Text>
-              </Flex>
-
-              <Flex
-                className='justify-center md:justify-start flex-col space-y-[32px]'
+              
+              <If
+                condition={!mintedChar}
               >
-                <Flex
-                  w="100%"
-                >
-                  <Flex 
-                    {...group}
-                    className="space-x-[12px]"
-                  >
-                    {options.map((value) => {
-                      const radio = getRadioProps({ value })
-
-                      return (
-                        <RadioCard key={value} {...radio}>
-                          <Flex
-                            outline="none"
-                            alignItems="center"
-                            justifyContent="start"
-                            height="52px"
-                          >
-                            <Flex
-                              alignItems="center"
-                              justifyContent="center"
-                              marginRight="12px"
-                            >
-                              <Image
-                                h="40px"
-                                w="auto"
-                                src={ value === 'Male' ? '/images/maleHead.png' : '/images/femaleHead.png' }
-                              />
-                            </Flex>
-                            
-                            <Text
-                              color="white"
-                              fontFamily="Titan One"
-                            >
-                              { value }
-                            </Text>
-                          </Flex>
-                        </RadioCard>
-                      )
-                    })}
-                  </Flex>
-                </Flex>
-
-                <Flex
-                  flexDirection="column"
-                >
+                <Flex>
                   <Text
                     maxWidth="669px"
                     fontSize="22px"
                     marginBottom="18px"
                     className="text-center md:text-left"
                   >
-                    Mint to play the game!
+                    Select your character's gender
                   </Text>
+                </Flex>
 
-                  <Button3d
-                    width="352px"
-                    onClick={() => {}}
+                <Flex
+                  className='justify-center md:justify-start flex-col space-y-[32px]'
+                >
+                  <Flex
+                    w="100%"
                   >
-                    <Flex
-                      alignItems="center"
-                      justifyContent="center"
+                    <Flex 
+                      {...group}
+                      className="space-x-[12px]"
+                    >
+                      {options.map((value) => {
+                        const radio = getRadioProps({ value })
+
+                        return (
+                          <RadioCard key={value} {...radio}>
+                            <Flex
+                              outline="none"
+                              alignItems="center"
+                              justifyContent="start"
+                              height="52px"
+                            >
+                              <Flex
+                                alignItems="center"
+                                justifyContent="center"
+                                marginRight="12px"
+                              >
+                                <Image
+                                  h="40px"
+                                  w="auto"
+                                  src={ value === 'Male' ? '/images/maleHead.png' : '/images/femaleHead.png' }
+                                />
+                              </Flex>
+                              
+                              <Text
+                                color="white"
+                                fontFamily="Titan One"
+                              >
+                                { value }
+                              </Text>
+                            </Flex>
+                          </RadioCard>
+                        )
+                      })}
+                    </Flex>
+                  </Flex>
+
+                  <Flex
+                    flexDirection="column"
+                  >
+                    <Text
+                      maxWidth="669px"
+                      fontSize="22px"
+                      marginBottom="18px"
+                      className="text-center md:text-left"
+                    >
+                      Mint to play the game!
+                    </Text>
+
+                    <Button3d
+                      width="352px"
+                      onClick={() => mint(type)}
                     >
                       <Flex
-                        w="34px"
-                        h="34px"
-                        bg="white"
-                        marginRight="15px"
-                        borderRadius="50%"
                         alignItems="center"
                         justifyContent="center"
                       >
-                        <Image
-                          src="/svg/market.svg"
-                          h="16px"
-                          w="16px"
-                        />
-                      </Flex>
+                        <Flex
+                          w="34px"
+                          h="34px"
+                          bg="white"
+                          marginRight="15px"
+                          borderRadius="50%"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <Image
+                            src="/svg/market.svg"
+                            h="16px"
+                            w="16px"
+                          />
+                        </Flex>
 
-                      <Text
-                        color="white"
-                        fontSize="18px"
-                        fontFamily="Titan One"
-                      >
-                        Mint and play!
-                      </Text>
-                    </Flex>
-                  </Button3d>
+                        <Text
+                          color="white"
+                          fontSize="18px"
+                          fontFamily="Titan One"
+                        >
+                          Mint and play!
+                        </Text>
+                      </Flex>
+                    </Button3d>
+                  </Flex>
                 </Flex>
-              </Flex>
+              </If>
+
+              <If
+                condition={mintedChar}
+              >
+                <Flex
+                  height="80px"
+                  alignItems="center"
+                >
+                  <Text
+                    color="red"
+                  >
+                    Ooops! You already minted a character
+                  </Text>
+                </Flex>
+              </If>
             </Flex>
 
             <Flex

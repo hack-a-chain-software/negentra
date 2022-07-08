@@ -16,6 +16,7 @@ export function Header() {
   const user = useNearUser(contract.account_id);
 
   const {
+    checkMinted,
     initializeContract,
   } = useContract();
 
@@ -23,7 +24,9 @@ export function Header() {
     if (user.account && user.isConnected) {
       initializeContract(
         wallet as WalletConnection,
-      );
+      ).then(() => {
+        checkMinted(user.address);
+      });
     }
   }, [user.isConnected]);
 
