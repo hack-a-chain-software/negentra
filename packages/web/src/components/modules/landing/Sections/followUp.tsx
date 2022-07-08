@@ -4,6 +4,7 @@ import { Button3d, Text, Title } from '@negentra/src/components';
 export function FollowUp() {
   return (
     <Container
+      id="followup"
       maxWidth="1410px"
       marginBottom="200px"
       className="flex items-center flex-col mb-[142px] px-0"

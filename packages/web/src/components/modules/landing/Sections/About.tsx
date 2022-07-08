@@ -5,6 +5,7 @@ import items from '@negentra/public/json/about-section.json';
 export function About() {
   return (
     <Container
+      id="sociapol"
       maxWidth="1280px"
       marginBottom="174px"
       className="flex items-center"

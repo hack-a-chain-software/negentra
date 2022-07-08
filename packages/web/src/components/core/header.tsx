@@ -69,7 +69,7 @@ export function Header() {
                 key={'header-menu-item' + i}
               >
                 <Link
-                  isExternal
+                  isExternal={! menu.path?.startsWith('#')}
                   href={menu.path}
                   _hover={{
                     textDecoration: 'unset',

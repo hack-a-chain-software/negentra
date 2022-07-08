@@ -88,6 +88,7 @@ export function Roadmap() {
 
   return (
     <Container
+      id="roadmap"
       minHeight="1124px"
       maxWidth="1920px"
       paddingTop="150px"

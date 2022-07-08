@@ -35,6 +35,7 @@ export function Partners() {
 
   return (
     <Container
+      id="partners"
       minHeight="1124px"
       maxWidth="1920px"
       paddingTop="150px"

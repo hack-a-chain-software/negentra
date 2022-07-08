@@ -45,6 +45,7 @@ export function Toys() {
 
   return (
     <Container
+      id="toys"
       h="100%"
       w="100vw"
       minHeight="100vh" 

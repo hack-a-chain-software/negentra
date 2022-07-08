@@ -5,6 +5,7 @@ import { Text, Title } from '@negentra/src/components';
 export function Play() {
   return (
     <Container
+      id="play"
       marginBottom="180px"
       maxWidth="1410px"
       position="relative"

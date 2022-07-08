@@ -6,6 +6,7 @@ import team from '@negentra/public/json/team.json';
 export function Team() {
   return (
     <Container
+      id="team"
       maxWidth="1500px"
       marginBottom="125px"
       className="flex flex-col items-center"

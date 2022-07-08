@@ -39,6 +39,7 @@ const headers = [
 export function Tokenomics () {
   return (
     <Container
+      id="tokenomics"
       h="100%"
       w="100vw"
       maxWidth="1214px"
