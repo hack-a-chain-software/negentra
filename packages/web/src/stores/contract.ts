@@ -27,7 +27,7 @@ export const useContract = create<{
       changeMethods: [
         'nft_mint',
       ],
-    }) as any;
+    });
 
     const mintedTokens = await contract?.nft_tokens_for_owner({
       account_id: account.accountId,
@@ -44,7 +44,7 @@ export const useContract = create<{
     }
   },
 
-  mint: async (type: string | undefined) => {
+  mint: async (type: string) => {
     if (!type) {
       toast("Select character's gender to mint");
 

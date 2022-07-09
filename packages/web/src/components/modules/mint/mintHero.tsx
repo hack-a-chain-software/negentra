@@ -11,7 +11,7 @@ export function MintHero() {
   const wallet = useNearWallet();
   const user = useNearUser(contract.account_id);
 
-  const [type, setType] = useState<string | undefined>(undefined);
+  const [type, setType] = useState<undefined | string>();
 
   const types = ['Male', 'Female'];
 
@@ -165,7 +165,7 @@ export function MintHero() {
                           return;
                         }
 
-                        mint(type)
+                        mint(type ?? '')
                       }}
                     >
                       <Flex
