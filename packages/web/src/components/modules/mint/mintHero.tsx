@@ -9,6 +9,8 @@ import contract from '@negentra/src/env/contract.json';
 
 export function MintHero() {
   const wallet = useNearWallet();
+  const user = useNearUser(contract.account_id);
+
   const [type, setType] = useState<string | undefined>(undefined);
 
   const types = ['Male', 'Female'];
@@ -18,11 +20,9 @@ export function MintHero() {
     await user.connect();
   }, [wallet]);
 
-  const user = useNearUser(contract.account_id);
-
   const {
     mint,
-    mintedChar,
+    hasMinted,
   } = useContract();
 
   return (
@@ -77,7 +77,7 @@ export function MintHero() {
               </Flex>
               
               <If
-                condition={!mintedChar}
+                condition={!hasMinted}
               >
                 <Flex>
                   <Text
@@ -202,7 +202,7 @@ export function MintHero() {
               </If>
 
               <If
-                condition={mintedChar}
+                condition={hasMinted}
               >
                 <Flex
                   height="80px"

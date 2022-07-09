@@ -11,22 +11,20 @@ import contract from '@negentra/src/env/contract.json';
 import menus from '@negentra/public/json/header.json';
 
 export function Header() {
-  const wallet = useNearWallet();
   const navigate = useNavigate();
+
+  const wallet = useNearWallet();
   const user = useNearUser(contract.account_id);
 
   const {
-    checkMinted,
     initializeContract,
   } = useContract();
 
   useEffect(() => {
-    if (user.account && user.isConnected) {
+    if (user.isConnected) {
       initializeContract(
         wallet as WalletConnection,
-      ).then(() => {
-        checkMinted(user.address);
-      });
+      );
     }
   }, [user.isConnected]);
 

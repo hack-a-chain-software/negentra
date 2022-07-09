@@ -6,22 +6,21 @@ import baseContract from '../../../contracts/testnet_settings/accounts/negentra_
 
 export const useContract = create<{
   contract;
-  mintedChar: boolean
+  hasMinted: boolean
   initializeContract: (
     walletConnection: WalletConnection,
   ) => Promise<void>;
   mint: (
     type: string,
   ) => Promise<void>;
-  checkMinted: (
-    accountId: string
-  ) => Promise<void>;
 }>((set, get) => ({
   contract: null,
-  mintedChar: false,
+  hasMinted: false,
 
   initializeContract: async (walletConnection: WalletConnection) => {
-    const contract = new Contract(await walletConnection.account(), baseContract.account_id, {
+    const account = await walletConnection.account();
+
+    const contract = new Contract(account, baseContract.account_id, {
       viewMethods: [
         'nft_tokens_for_owner'
       ],
@@ -30,24 +29,14 @@ export const useContract = create<{
       ],
     });
 
-    try {
-      set({
-        contract,
-      });
-      
-    } catch(e) {
-      console.warn(e);
-    }
-  },
-
-  checkMinted: async (accountId: string) => {
-    const tokens = await get().contract?.nft_tokens_for_owner({
-      account_id: accountId,
+    const mintedTokens = await contract?.nft_tokens_for_owner({
+      account_id: account.accountId,
     });
 
     try {
       set({
-        mintedChar: tokens && tokens.length > 0,
+        contract,
+        hasMinted: mintedTokens?.length > 0,
       });
       
     } catch(e) {
