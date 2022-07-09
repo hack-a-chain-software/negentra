@@ -59,7 +59,5 @@ export const useContract = create<{
       },
       amount: utils.format.parseNearAmount('0.5'),
     });
-
-    console.log('aguardando.......');
   },
 }));
