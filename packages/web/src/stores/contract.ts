@@ -2,7 +2,7 @@ import create from 'zustand';
 import toast from 'react-hot-toast';
 import { Contract, WalletConnection, utils } from 'near-api-js';
 
-import baseContract from '../../../contracts/testnet_settings/accounts/negentra_base_nft.testnet.json';
+import baseContract from '@negentra/src/env/contract.json';
 
 export const useContract = create<{
   contract;
@@ -27,7 +27,7 @@ export const useContract = create<{
       changeMethods: [
         'nft_mint',
       ],
-    });
+    }) as any;
 
     const mintedTokens = await contract?.nft_tokens_for_owner({
       account_id: account.accountId,
