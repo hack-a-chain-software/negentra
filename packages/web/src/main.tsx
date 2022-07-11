@@ -1,10 +1,10 @@
-import "./index.css";
-import { Buffer } from "buffer";
-import React from "react";
-import ReactDOM from "react-dom/client";
-import Router from "./router";
-import { NearEnvironment } from "react-near";
-import { ProviderNear } from "./hooks/near";
+import './index.css';
+import { Buffer } from 'buffer';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import Router from './router';
+import { NearEnvironment } from 'react-near';
+import { ProviderNear } from './hooks/near';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
