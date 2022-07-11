@@ -9,10 +9,9 @@ interface IButtonProps extends ButtonProps {}
 export function Button({
   bg = "linear-gradient(180deg, #D484F5 0%, #9B59B6 100%)",
   justifyContent = 'start',
-  borderBottom = 'solid 8px #71368A',
-  color = "white",
+  color = 'white',
   _active = {
-    borderBottomWidth: 0.4,
+    //
   },
   ...props
 }: IButtonProps) {
@@ -21,7 +20,6 @@ export function Button({
       bg={bg}
       color={color}
       justifyContent={justifyContent}
-      borderBottom={borderBottom}
       borderRadius="18px"
       px="32px"
       py="16px"

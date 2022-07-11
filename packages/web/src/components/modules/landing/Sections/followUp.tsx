@@ -1,9 +1,10 @@
 import { Container, Flex, Image } from '@chakra-ui/react';
-import { Button, Text, Title } from '@negentra/src/components';
+import { Button3d, Text, Title } from '@negentra/src/components';
 
 export function FollowUp() {
   return (
     <Container
+      id="followup"
       maxWidth="1410px"
       marginBottom="200px"
       className="flex items-center flex-col mb-[142px] px-0"
@@ -43,14 +44,14 @@ export function FollowUp() {
         </Flex>
 
         <Flex>
-          <Button
-            bg="white"
-            color="#9B59B6"
-            borderBottom="solid 8px #EEEEEE"
+          <Button3d
+            bg="#EEEEEE"
+            color="white"
           >
             <Flex
               alignItems="center"
               justifyContent="center"
+              color="#9B59B6"
             >
               <Flex
                 w="34px"
@@ -69,9 +70,15 @@ export function FollowUp() {
                 />
               </Flex>
 
-              JOIN DISCORD CHANNEL
+              <Text
+                fontSize="18px"
+                color="#9B59B6"
+                fontFamily="Titan One"
+              >
+                JOIN DISCORD CHANNEL
+              </Text>
             </Flex>
-          </Button>
+          </Button3d>
         </Flex>
 
         <Image

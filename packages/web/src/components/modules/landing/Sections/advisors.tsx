@@ -5,6 +5,7 @@ import { PersonCard, Title, Text } from '@negentra/src/components';
 export function Advisors() {
   return (
     <Container
+      id="advisors"
       maxWidth="1500px"
       marginBottom="125px"
       className="flex flex-col items-center"

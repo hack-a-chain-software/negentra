@@ -1,6 +1,6 @@
 import Slider from 'react-slick';
 import { useCallback, useRef } from 'react';
-import { Text, Title } from '@negentra/src/components';
+import { Text, Title, Button3d } from '@negentra/src/components';
 import { Container, Flex, Image } from '@chakra-ui/react';
 
 import roadmap from '@negentra/public/json/roadmap.json';
@@ -17,7 +17,7 @@ export function Roadmap() {
   }, [slider.current]);
 
   const settings = {
-    speed: 500,
+    speed: 100,
     dots: true,
     infinite: true,
     arrows: false,
@@ -49,55 +49,46 @@ export function Roadmap() {
           justifyContent: 'center',
         }}
       >
-        <Flex
-          w="64px"
-          h="64px"
-          bg="white"
-          flexShrink="0"
+        <Button3d
+          bg="#EEEEEE"
+          color="white"
+          width="64px"
           borderRadius="50%"
-          color="#9959B4"
-          cursor="pointer"
+          marginRight="16px"
+          padding="16px 0px"
           onClick={() => onPrev()}
-          marginRight="24px"
-          alignItems="center"
-          justifyContent="center"
-          className="border-[#EEEEEE] border-b-[4px] hover:border-white"
         >
           <Image
-            h="28px"
             w="28px"
             src="/svg/lg-arrow-left.svg"
+            className="mx-auto"
           />
-        </Flex>
+        </Button3d>
   
         <ul style={{ margin: "0px", height: '8px' }}> {dots} </ul>
   
-        <Flex
-          w="64px"
-          h="64px"
-          bg="white"
-          flexShrink="0"
+        <Button3d
+          bg="#EEEEEE"
+          color="white"
+          width="64px"
+          marginLeft="16px"
           borderRadius="50%"
-          color="#9959B4"
-          cursor="pointer"
+          padding="16px 0px"
           onClick={() => onNext()}
-          marginLeft="24px"
-          alignItems="center"
-          justifyContent="center"
-          className="border-[#EEEEEE] border-b-[4px] hover:border-white"
         >
           <Image
-            h="28px"
             w="28px"
             src="/svg/lg-arrow-right.svg"
+            className="mx-auto"
           />
-        </Flex>
+        </Button3d>
       </div>
     ),
   };
 
   return (
     <Container
+      id="roadmap"
       minHeight="1124px"
       maxWidth="1920px"
       paddingTop="150px"

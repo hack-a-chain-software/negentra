@@ -7,6 +7,7 @@ import partners from '@negentra/public/json/partners.json';
 export function Partners() {
   const settings = {
     rows: 2,
+    speed: 100,
     infinite: true,
     slidesToShow: 4,
     slidesPerRow: 1,
@@ -34,6 +35,7 @@ export function Partners() {
 
   return (
     <Container
+      id="partners"
       minHeight="1124px"
       maxWidth="1920px"
       paddingTop="150px"

@@ -5,6 +5,7 @@ import { Text, Title } from '@negentra/src/components';
 export function Play() {
   return (
     <Container
+      id="play"
       marginBottom="180px"
       maxWidth="1410px"
       position="relative"
@@ -94,6 +95,7 @@ export function Play() {
                     color="white"
                     lineHeight="94px"
                     className="text-[60px] leading-[1] sm:text-[80px] sm:leading-[94px]"
+                    textShadow="0px 5px 0px #DDDDDD"
                   >
                     { title }
                   </Title>

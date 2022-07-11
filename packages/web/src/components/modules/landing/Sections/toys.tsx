@@ -1,6 +1,6 @@
 import Slider from 'react-slick';
 import { useCallback, useRef } from 'react';
-import { Button, Text, Title } from '@negentra/src/components';
+import { Button, Text, Title, Button3d } from '@negentra/src/components';
 import { Container, Image, Flex } from '@chakra-ui/react';
 
 import toys from '@negentra/public/json/toys.json';
@@ -45,6 +45,7 @@ export function Toys() {
 
   return (
     <Container
+      id="toys"
       h="100%"
       w="100vw"
       minHeight="100vh" 
@@ -106,34 +107,27 @@ export function Toys() {
         justifyContent="center"
         className="space-x-[16px] mt-[32px] lg:space-x-[36px]"
       >
-        <Flex
+        <Button3d
           onClick={() => onPrev()}
-          align="center"
           cursor="pointer"
           justifyContent="center"
-          h="68px"
-          w="100px"
           borderRadius="50%"
-          className="button-3d"
-          style={{
-            '--primary': '#FF6F00',
-            '--secondary': '#CA6110',
-          } as any}
+          color="#FF6F00"
+          bg="#CA6110"
         >
           <Image
-            h="24px"
             w="24px"
             src="/svg/arrow-left.svg"
           />
-        </Flex>
+        </Button3d>
         
         <Flex
-          transform="translateY(6px)"
+          // transform="translateY(6px)"
         >
-          <Button
+          <Button3d
             flex="1"
-            bg="linear-gradient(180deg, #FC9F58 0%, #FF6F00 100%)"
-            borderBottom="solid 8px #CA6110"
+            bg="#CA6110"
+            color="linear-gradient(180deg, #FC9F58 0%, #FF6F00 100%)"
           >
             <Flex
               alignItems="center"
@@ -155,31 +149,31 @@ export function Toys() {
                 />
               </Flex>
 
-              Mint Yours Now
+              <Text
+                color="white"
+                fontSize="18px"
+                fontFamily="Titan One"
+                textShadow="0px 2px 0 #AAAAAA"
+              >
+                Mint Yours Now
+              </Text>
             </Flex>
-          </Button>
+          </Button3d>
         </Flex>
 
-        <Flex
+        <Button3d
           onClick={() => onNext()}
-          align="center"
           cursor="pointer"
           justifyContent="center"
-          className="button-3d"
-          h="68px"
-          w="100px"
           borderRadius="50%"
-          style={{
-            '--primary': '#FF6F00',
-            '--secondary': '#CA6110',
-          } as any}
+          color="#FF6F00"
+          bg="#CA6110"
         >
           <Image
-            h="24px"
             w="24px"
             src="/svg/arrow-right.svg"
           />
-        </Flex>
+        </Button3d>
       </Flex>
     </Container>
   );

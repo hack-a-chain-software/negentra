@@ -13,31 +13,15 @@ body {
   src: url("../public/fonts/TitanOne-Regular.ttf");
 }
 
-.neg-trailer::after {
-  content: '';
-  position: 'absolute';
-  width: 100%;
-  height: 50px;
-  background-color: blue;
-  top: 0;
-  z-index: 99999;
-  left: 0;
-}
-
 .slick-arrow {
   position: relative;
   width: 64px !important;
   height: 64px !important;
-  background: white !important;
+  background: #EEEEEE !important;
   flex-shrink: 0 !important;
   border-radius: 50%;
   background-repeat: no-repeat !important;
   background-position: center !important;
-  border-bottom: solid 4px #EEEEEE !important;
-}
-
-.slick-arrow:active {
-  border-bottom: solid 4px white !important;
 }
 
 .slick-arrow.slick-prev {
@@ -55,21 +39,32 @@ body {
   position: absolute;
   width: 64px !important;
   height: 64px !important;
+  border-radius: 50%;
+  background-color: white !important;
+  transform: translateY(-6px) !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
   background-image: url('/svg/lg-arrow-left.svg') !important;
 }
 
 .slick-arrow.slick-next::after {
+  top: 0;
   content: '';
+  right: 0;
   position: absolute;
+  border-radius: 50%;
   width: 64px !important;
   height: 64px !important;
-  right: 0;
-  top: 0;
+  background-color: white !important;
+  transform: translateY(-6px) !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
   background-image: url('/svg/lg-arrow-right.svg') !important;
+}
+
+.slick-arrow.slick-prev:active::after,
+.slick-arrow.slick-next:active::after {
+  transform: translateY(-2px) !important;
 }
 
 .neg-roadmap-carousel div.slick-active.slick-center .reg-roadmap-carousel-slide {
@@ -102,34 +97,3 @@ body {
   display: flex !important;
   align-items: center !important;
 }
-
-.button-3d {
-  background: var(--primary);
-  transform-style: preserve-3d;
-  transition: all 60ms cubic-bezier(0, 0, 1, 1);
-}
-
-.button-3d::before {
-  position: absolute;
-  content: "";
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: inherit;
-  box-shadow: 0 0 0 2px var(--primary), 0 0.75em 0 0 var(--secondary);
-  transition: all 60ms cubic-bezier(0, 0, 1, 1);
-}
-
-.button-3d:active {
-  transform: translate(0em, 0.75em);
-}
-
-.button-3d:active::before {
-  transform: translate3d(0, 0, -1em);
-
-  box-shadow: 0 0 0 2px var(--primary), 0 0.25em 0 0 var(--secondary);
-}
-
