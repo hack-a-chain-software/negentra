@@ -8,8 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: yarn web:build
-
       - uses: amondnet/vercel-action@v20
         with:
           vercel-args: '--prod'
