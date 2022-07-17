@@ -11,7 +11,7 @@ jobs:
 
       - uses: amondnet/vercel-action@v20
         with:
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || ''}}
+          vercel-args: --prod
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID}}
           vercel-project-id: ${{ secrets.PROJECT_ID}} 
