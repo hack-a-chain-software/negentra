@@ -1,0 +1,18 @@
+name: deploy vercel
+
+on: [pull_request]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: yarn web:build
+
+      - uses: amondnet/vercel-action@v20
+        with:
+          vercel-args: '--prod'
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID}}
+          vercel-project-id: ${{ secrets.PROJECT_ID}} 
