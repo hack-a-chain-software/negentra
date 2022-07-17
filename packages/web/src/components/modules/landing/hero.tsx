@@ -52,7 +52,7 @@ export function Hero() {
                   maxWidth="578px"
                   className="text-[80px] leading-[1] mt-[10px] text-center sm:text-[100px] sm:leading-[100px] sm:mt-0 md:text-left"
                 >
-                  PLAY {'&'} COLLECT!
+                  PLAY {'&'} COLLECT! TESTANDO AQUI 
                 </Title>
 
                 <Text
