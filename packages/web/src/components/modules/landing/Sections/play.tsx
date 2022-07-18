@@ -110,6 +110,7 @@ export function Play() {
                   {description && description?.map((text: string, i: number) => (
                     <Text
                       color="#FFFFFF"
+                      key={'neg-play-desc' + i}
                     >
                       { text }
                     </Text>

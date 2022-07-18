@@ -32,7 +32,6 @@
     "tailwindcss": "^3.0.24",
     "use-mediaquery": "^1.0.1",
     "xstate": "^4.32.0",
-    "youtube-iframe": "^1.0.3",
     "zustand": "^4.0.0-rc.1"
   },
   "devDependencies": {

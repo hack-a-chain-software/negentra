@@ -1,28 +1,6 @@
 import { Container } from '@chakra-ui/react';
-import { useEffect } from 'react';
-import YouTubeIframeLoader from 'youtube-iframe';
 
 export function Trailer() {
-  useEffect(() => {
-    YouTubeIframeLoader.load((YT) => {
-      new YT.Player('ytplayer', {
-        width: '100%',
-        height: '100%',
-        list: 'PLf6f-5FHUCV4AnrxwU_Ylyhax0ID-TOt2',
-        host: 'https://www.youtube.com',
-        playerVars: {
-          fs: 0,
-          rel: 0,
-          mute: 1,
-          loop: 1,
-          autoplay: 1,
-          controls: 0,
-          playlist: 'tsNznAue32A',
-        },
-      });
-    });
-  }, []);
-
   return (
     <Container
       display="flex"
@@ -39,9 +17,13 @@ export function Trailer() {
         <div
           className="scale-[.9] w-full max-w-[1280px] overflow-hidden aspect-video overflow-hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         >
-          <div
+          <iframe 
             id="ytplayer"
-            className="aspect-video"
+            width="100%" 
+            height="100%"
+            frameBorder="0"
+            type="text/html" 
+            src="http://www.youtube.com/embed/PLf6f-5FHUCV4AnrxwU_Ylyhax0ID-TOt2?enablejsapi=1&origin=http://localhost:3000&fs=0&rel=0&mute=1&loop=1&autoplay=1&controls=0&playlist=tsNznAue32A"
           />
         </div>
 
