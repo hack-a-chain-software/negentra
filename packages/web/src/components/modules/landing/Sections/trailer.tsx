@@ -38,9 +38,10 @@ export function Trailer() {
         <div
           className="scale-[.9] w-full max-w-[1280px] overflow-hidden aspect-video overflow-hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         >
-          <div
+          <iframe
             id="ytplayer"
             className="aspect-video"
+            src="https://www.youtube.com/embed/"
           />
         </div>
 
