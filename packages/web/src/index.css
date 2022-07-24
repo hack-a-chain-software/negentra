@@ -8,11 +8,6 @@ body {
   height: 100vh;
 }
 
-@font-face {
-  font-family: "TitanOne";
-  src: url("../public/fonts/TitanOne-Regular.ttf");
-}
-
 .slick-arrow {
   position: relative;
   width: 64px !important;
