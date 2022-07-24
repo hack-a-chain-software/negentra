@@ -51,7 +51,7 @@ export function Header() {
           alignItems="center"
           p='0px 54px 12px 54px'
           justifyContent="space-between"
-          className="rounded-b-[20px] bg-[url('/images/header-bg.png')] bg-[length:100%_100%]"
+          className="rounded-b-[20px] bg-[url('/svg/header.svg')] bg-[length:100%_92px]"
         >
           <Flex
             flexShrink="0"

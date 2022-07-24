@@ -28,7 +28,7 @@ export function Play() {
         paddingBottom="117px"
         paddingTop="88px"
         flexDirection="column-reverse"
-        className="bg-[linear-gradient(110deg,_#9B59B6_60%,_#FF6F00_60%)] px-[18px] xl:px-0 xl:bg-[url(/images/play-bg.jpeg)] xl:bg-[length:auto_100%] xl:bg-[center] xl:bg-no-repeat lg:h-[662px]"
+        className="bg-[linear-gradient(110deg,_#9B59B6_60%,_#FF6F00_60%)] px-[18px] xl:px-0 xl:bg-[url(/images/play-bg.jpg)] xl:bg-[length:auto_100%] xl:bg-[center] xl:bg-no-repeat lg:h-[662px]"
       >
         <TabList
           bg="white"
