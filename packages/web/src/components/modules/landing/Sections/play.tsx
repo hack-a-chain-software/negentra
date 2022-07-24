@@ -17,6 +17,7 @@ export function Play() {
         bottom="-130px"
         left="-20px"
         className="hidden xl:block"
+        loading="lazy"
       />
 
       <Tabs

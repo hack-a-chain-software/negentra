@@ -62,6 +62,7 @@ export function Roadmap() {
             w="28px"
             src="/svg/lg-arrow-left.svg"
             className="mx-auto"
+            loading="lazy"
           />
         </Button3d>
   
@@ -80,6 +81,7 @@ export function Roadmap() {
             w="28px"
             src="/svg/lg-arrow-right.svg"
             className="mx-auto"
+            loading="lazy"
           />
         </Button3d>
       </div>

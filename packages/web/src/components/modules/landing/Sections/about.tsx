@@ -108,6 +108,7 @@ export function About() {
                   w="100%"
                   maxWidth="546px"
                   src={image}
+                  loading="lazy"
                 />
               </Grid>
             </TabPanel>

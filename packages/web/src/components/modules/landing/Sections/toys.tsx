@@ -95,6 +95,7 @@ export function Toys() {
             <Image
               w="231px"
               src={toy}
+              loading="lazy"
               className="relative left-[60px] sm:left-0"
             />
           </Flex>

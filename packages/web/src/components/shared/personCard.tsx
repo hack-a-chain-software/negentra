@@ -16,6 +16,7 @@ export function PersonCard(props) {
         h="100%"
         w="100%"
         src="/svg/person-card-bg.svg"
+        loading="lazy"
       />
 
       <Flex
@@ -26,6 +27,7 @@ export function PersonCard(props) {
       >
         <Image
           src={props.image}
+          loading="lazy"
         />
       </Flex>
 

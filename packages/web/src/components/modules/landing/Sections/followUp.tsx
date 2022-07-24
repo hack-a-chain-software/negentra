@@ -67,6 +67,7 @@ export function FollowUp() {
                   src="/svg/discord.svg"
                   h="16px"
                   w="16px"
+                  loading="lazy"
                 />
               </Flex>
 
@@ -90,6 +91,7 @@ export function FollowUp() {
           right="-17%"
           pointerEvents="none"
           className="hidden xl:block"
+          loading="lazy"
         />
       </Flex>
     </Container>

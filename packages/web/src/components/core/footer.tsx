@@ -24,6 +24,7 @@ export function Footer() {
             <Image
               src="/images/bitmap.png"
               h="100%"
+              loading="lazy"
             />
           </Flex>
 
@@ -125,6 +126,7 @@ export function Footer() {
                     >
                       <Image
                         src={`/svg/${social.icon}.svg`}
+                        loading="lazy"
                       />
                     </Flex>
                   </Link>

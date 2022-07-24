@@ -82,6 +82,7 @@ export function Partners() {
                 <Image
                   src={logo}
                   h="52px"
+                  loading="lazy"
                 />
               </Flex>
             </Container>
