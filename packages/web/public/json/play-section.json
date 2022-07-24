@@ -1,0 +1,20 @@
+[
+  {
+    "button": "Play",
+    "subtitle": "PLAY, HAVE FUN, WIN!",
+    "title": "PLAY & WIN",
+    "description": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dolor urna, sagittis eu aliquet vel, tristique in sem. Fusce velit mi, auctor vitae laoreet ut, mattis placerat arcu. Pellentesque efficitur diam nisl, eu mollis ipsum pretium a. Fusce sit amet finibus justo, ut ullamcorper orci. Proin ullamcorper ipsum ac nisi tincidunt faucibus. Sed feugiat velit vitae rhoncus euismod. Vivamus quis gravida sapien, egestas sagittis metus. Sed in tellus dictum, sollicitudin risus ut, rutrum lacus.", "Curabitur auctor ante vitae nisl molestie, id dictum massa facilisis. Cras gravida magna eget turpis placerat, in tempus erat faucibus. Nam nec luctus risus. "]
+  },
+  {
+    "button": "Collect",
+    "subtitle": "PLAY, HAVE FUN, WIN!",
+    "title": "Collect",
+    "description": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dolor urna, sagittis eu aliquet vel, tristique in sem. Fusce velit mi, auctor vitae laoreet ut, mattis placerat arcu. Pellentesque efficitur diam nisl, eu mollis ipsum pretium a. Fusce sit amet finibus justo, ut ullamcorper orci. Proin ullamcorper ipsum ac nisi tincidunt faucibus. Sed feugiat velit vitae rhoncus euismod. Vivamus quis gravida sapien, egestas sagittis metus. Sed in tellus dictum, sollicitudin risus ut, rutrum lacus.", "Curabitur auctor ante vitae nisl molestie, id dictum massa facilisis. Cras gravida magna eget turpis placerat, in tempus erat faucibus. Nam nec luctus risus. "]
+  },
+  {
+    "button": "Win",
+    "subtitle": "PLAY, HAVE FUN, WIN!",
+    "title": "Win",
+    "description": ["Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dolor urna, sagittis eu aliquet vel, tristique in sem. Fusce velit mi, auctor vitae laoreet ut, mattis placerat arcu. Pellentesque efficitur diam nisl, eu mollis ipsum pretium a. Fusce sit amet finibus justo, ut ullamcorper orci. Proin ullamcorper ipsum ac nisi tincidunt faucibus. Sed feugiat velit vitae rhoncus euismod. Vivamus quis gravida sapien, egestas sagittis metus. Sed in tellus dictum, sollicitudin risus ut, rutrum lacus.", "Curabitur auctor ante vitae nisl molestie, id dictum massa facilisis. Cras gravida magna eget turpis placerat, in tempus erat faucibus. Nam nec luctus risus. "]
+  }
+]

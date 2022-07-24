@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Sociapol",
+    "path": "#sociapol"
+  },
+  {
+    "name": "NFT",
+    "path": "#toys"
+  },
+  {
+    "name": "SPOL",
+    "path": "#tokenomics"
+  },
+  {
+    "name": "Roadmap",
+    "path": "#roadmap"
+  },
+  {
+    "name": "Crew",
+    "path": "#team"
+  },
+  {
+    "name": "Partners",
+    "path": "#partners"
+  },
+  {
+    "name": "Whitepaper",
+    "path": "#"
+  }
+]
