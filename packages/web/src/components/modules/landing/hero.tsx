@@ -16,6 +16,7 @@ export function Hero() {
       <Container
         w="100vw"
         maxWidth="1920px"
+        minH="100vh"
         className="bg-[url('/images/hero-bg.png')] bg-[length:auto_auto] bg-[left_-20px_top_42px] bg-no-repeat"
       >
         <Container
