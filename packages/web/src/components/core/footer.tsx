@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <Container
       maxW="1920px"
-      className="bg-[url('/svg/footer-bg.svg')] bg-[length:100%_530px] bg-bottom bg-no-repeat xl:h-[640px]"
+      className="bg-[url('/svg/footer-bg.svg')] bg-[length:1920px_530px] bg-bottom bg-no-repeat xl:h-[640px]"
     >
       <Container
         maxW="1410px"
